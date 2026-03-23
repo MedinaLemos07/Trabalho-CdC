@@ -13,9 +13,9 @@ Sistema relacionado à reciclagem.
 
 ## Integrantes
 - Luan Medina
-- 2
-- 3
-- 4
+- Enthony Silva
+- Luiz Manoel
+- Julia Keller
 
 ## Por Enquanto!
 Sempre no começo do projeto rode no terminal! Silva.: git pull
