@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Scanner — Recycle Agents</title>
+  <link rel="stylesheet" href="CSS/style.css" />
+  <link rel="stylesheet" href="CSS/scanner.css" />
+</head>
+<body>
+
+  <div class="scanner-wrapper">
+
+    <!-- Header -->
+    <header class="scanner-header">
+      <a href="home.html" class="back-btn">←</a>
+      <div class="scanner-header-info">
+        <h2>Scanner de Itens</h2>
+        <p>Aponte para o código de barras</p>
+      </div>
+    </header>
+
+    <!-- Viewfinder -->
+    <div class="viewfinder-wrap">
+      <video id="scanner-video" autoplay playsinline muted></video>
+      <div class="viewfinder-overlay">
+        <div class="scan-area">
+          <div class="scan-line"></div>
+          <div class="corner-br"></div>
+          <div class="corner-bl"></div>
+        </div>
+      </div>
+      <div class="camera-status" id="cameraStatus">Iniciando câmera...</div>
+    </div>
+
+    <!-- Instruções -->
+    <div class="scanner-instructions">
+      <p>Posicione o código de barras dentro da área de leitura</p>
+    </div>
+
+    <!-- Aviso de limite -->
+    <div class="limite-aviso" id="limiteAviso">
+      ⚠️ Você já escaneou este item 2 vezes hoje. Tente outro!
+    </div>
+
+    <!-- Resultado -->
+    <div class="resultado-card" id="resultadoCard">
+      <span class="resultado-icon" id="resultadoIcon">♻️</span>
+      <div class="resultado-material" id="resultadoMaterial">—</div>
+      <div class="resultado-xp">+<span id="resultadoXP">0</span> XP adicionados!</div>
+      <button class="btn btn-primary btn-full" id="btnEscanearNovamente">
+        Escanear outro item
+      </button>
+    </div>
+
+    <!-- Materiais referência -->
+    <div class="materiais-section">
+      <div class="section-header">
+        <span class="section-title">📋 Pontuação por material</span>
+      </div>
+      <div class="materiais-grid">
+        <div class="material-chip">
+          <span class="chip-icon">📄</span>
+          <div class="chip-nome">Papel</div>
+          <div class="chip-xp">+5 XP</div>
+        </div>
+        <div class="material-chip">
+          <span class="chip-icon">🧴</span>
+          <div class="chip-nome">Plástico</div>
+          <div class="chip-xp">+10 XP</div>
+        </div>
+        <div class="material-chip">
+          <span class="chip-icon">🍶</span>
+          <div class="chip-nome">Vidro</div>
+          <div class="chip-xp">+15 XP</div>
+        </div>
+        <div class="material-chip">
+          <span class="chip-icon">🥫</span>
+          <div class="chip-nome">Metal</div>
+          <div class="chip-xp">+20 XP</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <a href="home.html" class="nav-item">
+      <span class="nav-icon">🏠</span>
+      <span class="nav-label">Início</span>
+    </a>
+    <a href="scanner.html" class="nav-item active">
+      <span class="nav-icon">📷</span>
+      <span class="nav-label">Scanner</span>
+    </a>
+    <a href="missoes.html" class="nav-item">
+      <span class="nav-icon">⚔️</span>
+      <span class="nav-label">Missões</span>
+    </a>
+    <a href="ranking.html" class="nav-item">
+      <span class="nav-icon">🏆</span>
+      <span class="nav-label">Ranking</span>
+    </a>
+    <a href="perfil.html" class="nav-item">
+      <span class="nav-icon">👤</span>
+      <span class="nav-label">Perfil</span>
+    </a>
+  </nav>
+
+  <script src="LIBS/quagga.min.js"></script>
+  <script type="module" src="JS/scanner.js"></script>
+
+</body>
+</html>

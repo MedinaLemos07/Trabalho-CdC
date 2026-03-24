@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Perfil — Recycle Agents</title>
+  <link rel="stylesheet" href="CSS/style.css" />
+  <link rel="stylesheet" href="CSS/perfil.css" />
+</head>
+<body>
+
+  <div class="perfil-wrapper">
+
+    <!-- Header -->
+    <header class="perfil-header">
+      <a href="home.html" class="back-btn">←</a>
+      <div class="perfil-header-info">
+        <h2>Meu Perfil</h2>
+        <p>Suas estatísticas</p>
+      </div>
+    </header>
+
+    <!-- Hero -->
+    <div class="perfil-hero">
+      <div class="perfil-avatar">🧑</div>
+      <div class="perfil-nome" id="perfilNome">Agente</div>
+      <div class="perfil-email" id="perfilEmail">—</div>
+      <div class="perfil-nivel-badge">
+        ⚡ Nível <span id="perfilNivel">1</span> — <span id="perfilTitulo">Recruta</span>
+      </div>
+    </div>
+
+    <!-- XP Card -->
+    <div class="perfil-xp-card">
+      <div class="perfil-xp-top">
+        <div>
+          <div class="perfil-xp-numero" id="perfilXP">0</div>
+          <div class="perfil-xp-label">XP TOTAL</div>
+        </div>
+        <div class="perfil-xp-meta" id="perfilXPMeta">0 / 100 XP para o próximo nível</div>
+      </div>
+      <div class="perfil-xp-bar-info">
+        <span id="perfilXPProg">0 / 100 XP</span>
+        <span id="perfilXPPct">0%</span>
+      </div>
+      <div class="xp-bar">
+        <div class="xp-bar-fill" id="perfilXPBar" style="width: 0%"></div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="perfil-stats">
+      <div class="perfil-stat">
+        <span class="perfil-stat-icon">♻️</span>
+        <div class="perfil-stat-num" id="perfilItens">0</div>
+        <div class="perfil-stat-desc">Itens reciclados</div>
+      </div>
+      <div class="perfil-stat">
+        <span class="perfil-stat-icon">🎯</span>
+        <div class="perfil-stat-num" id="perfilMissoes">0</div>
+        <div class="perfil-stat-desc">Missões completas</div>
+      </div>
+      <div class="perfil-stat">
+        <span class="perfil-stat-icon">🔥</span>
+        <div class="perfil-stat-num" id="perfilStreak">0</div>
+        <div class="perfil-stat-desc">Dias seguidos</div>
+      </div>
+      <div class="perfil-stat">
+        <span class="perfil-stat-icon">🏆</span>
+        <div class="perfil-stat-num" id="perfilRanking">#—</div>
+        <div class="perfil-stat-desc">Posição ranking</div>
+      </div>
+    </div>
+
+    <!-- Logout -->
+    <div class="perfil-actions">
+      <button class="btn-logout" id="btnLogout">
+        🚪 Sair da conta
+      </button>
+    </div>
+
+  </div>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <a href="home.html" class="nav-item">
+      <span class="nav-icon">🏠</span>
+      <span class="nav-label">Início</span>
+    </a>
+    <a href="scanner.html" class="nav-item">
+      <span class="nav-icon">📷</span>
+      <span class="nav-label">Scanner</span>
+    </a>
+    <a href="missoes.html" class="nav-item">
+      <span class="nav-icon">⚔️</span>
+      <span class="nav-label">Missões</span>
+    </a>
+    <a href="ranking.html" class="nav-item">
+      <span class="nav-icon">🏆</span>
+      <span class="nav-label">Ranking</span>
+    </a>
+    <a href="perfil.html" class="nav-item active">
+      <span class="nav-icon">👤</span>
+      <span class="nav-label">Perfil</span>
+    </a>
+  </nav>
+
+  <script type="module" src="JS/perfil.js"></script>
+
+</body>
+</html>

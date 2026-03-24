@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cadastro — Recycle Agents</title>
+  <link rel="stylesheet" href="CSS/style.css" />
+  <link rel="stylesheet" href="CSS/login.css" />
+</head>
+<body>
+
+  <div class="auth-wrapper">
+    <div class="auth-box">
+
+      <!-- Logo -->
+      <div class="auth-logo">
+        <span class="logo-icon">♻️</span>
+        <h1>RECYCLE AGENTS</h1>
+        <p>Crie sua conta e comece a reciclar</p>
+      </div>
+
+      <!-- Card -->
+      <div class="auth-card">
+        <h2>Criar conta</h2>
+
+        <!-- Alerta -->
+        <div class="alert" id="alertMsg"></div>
+
+        <!-- Formulário de Cadastro -->
+        <div class="input-group">
+          <label for="nome">Nome de agente</label>
+          <input
+            type="text"
+            id="nome"
+            placeholder="Como quer ser chamado?"
+            autocomplete="name"
+          />
+        </div>
+
+        <div class="input-group">
+          <label for="email">E-mail</label>
+          <input
+            type="email"
+            id="email"
+            placeholder="seu@email.com"
+            autocomplete="email"
+          />
+        </div>
+
+        <div class="input-group">
+          <label for="senha">Senha</label>
+          <div class="input-with-icon">
+            <input
+              type="password"
+              id="senha"
+              placeholder="Mínimo 6 caracteres"
+              autocomplete="new-password"
+            />
+            <button class="toggle-password" id="toggleSenha" type="button" aria-label="Mostrar senha">
+              👁
+            </button>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label for="confirmarSenha">Confirmar senha</label>
+          <div class="input-with-icon">
+            <input
+              type="password"
+              id="confirmarSenha"
+              placeholder="Repita a senha"
+              autocomplete="new-password"
+            />
+            <button class="toggle-password" id="toggleConfirmar" type="button" aria-label="Mostrar senha">
+              👁
+            </button>
+          </div>
+        </div>
+
+        <button class="btn btn-primary btn-full mt-2" id="btnCadastro">
+          <span class="btn-text">Criar conta</span>
+          <span class="loader"></span>
+        </button>
+
+        <div class="auth-footer mt-2">
+          Já tem conta?
+          <a href="login.html">Fazer login</a>
+        </div>
+      </div>
+      <!-- /auth-card -->
+
+    </div>
+  </div>
+
+  <script type="module" src="JS/auth.js"></script>
+
+</body>
+</html>

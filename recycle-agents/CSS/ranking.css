@@ -1,0 +1,258 @@
+/* ============================================================
+   RECYCLE AGENTS — ranking.css
+   ============================================================ */
+
+.ranking-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 1;
+  padding-bottom: 80px;
+}
+
+/* ---------- Header ---------- */
+.ranking-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 20px 0;
+}
+
+.ranking-header-info h2 {
+  font-size: 1rem;
+  color: var(--text-primary);
+}
+
+.ranking-header-info p {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+/* ---------- Pódio Top 3 ---------- */
+.podio {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 12px;
+  margin: 24px 20px 0;
+}
+
+.podio-item {
+  flex: 1;
+  max-width: 110px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.podio-avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--bg-card);
+  border: 2px solid var(--green-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+}
+
+.podio-item.primeiro .podio-avatar {
+  width: 64px;
+  height: 64px;
+  border-color: #FFD700;
+  box-shadow: 0 0 20px rgba(255,215,0,0.3);
+  font-size: 1.6rem;
+}
+
+.podio-item.segundo .podio-avatar {
+  border-color: #C0C0C0;
+}
+
+.podio-item.terceiro .podio-avatar {
+  border-color: #CD7F32;
+}
+
+.podio-nome {
+  font-family: var(--font-display);
+  font-size: 0.65rem;
+  color: var(--text-primary);
+  letter-spacing: 0.05em;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
+.podio-xp {
+  font-family: var(--font-display);
+  font-size: 0.62rem;
+  color: var(--green-neon);
+}
+
+.podio-base {
+  width: 100%;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 900;
+}
+
+.podio-item.primeiro .podio-base {
+  height: 70px;
+  background: linear-gradient(180deg, rgba(255,215,0,0.2), rgba(255,215,0,0.05));
+  border: 1px solid rgba(255,215,0,0.3);
+  color: #FFD700;
+}
+
+.podio-item.segundo .podio-base {
+  height: 50px;
+  background: linear-gradient(180deg, rgba(192,192,192,0.15), rgba(192,192,192,0.03));
+  border: 1px solid rgba(192,192,192,0.2);
+  color: #C0C0C0;
+}
+
+.podio-item.terceiro .podio-base {
+  height: 36px;
+  background: linear-gradient(180deg, rgba(205,127,50,0.15), rgba(205,127,50,0.03));
+  border: 1px solid rgba(205,127,50,0.2);
+  color: #CD7F32;
+}
+
+/* ---------- Lista ranking ---------- */
+.ranking-lista {
+  margin: 20px 20px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ranking-item {
+  background: var(--bg-card);
+  border: 1px solid var(--green-border);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  transition: border-color var(--transition);
+}
+
+.ranking-item.voce {
+  border-color: var(--green-neon);
+  background: rgba(0,255,106,0.05);
+}
+
+.ranking-pos {
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  width: 24px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.ranking-item.voce .ranking-pos { color: var(--green-neon); }
+
+.ranking-avatar {
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+
+.ranking-info {
+  flex: 1;
+}
+
+.ranking-nome {
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  color: var(--text-primary);
+  letter-spacing: 0.05em;
+}
+
+.ranking-item.voce .ranking-nome {
+  color: var(--green-neon);
+}
+
+.ranking-voce-tag {
+  font-size: 0.62rem;
+  color: var(--green-neon);
+  background: rgba(0,255,106,0.1);
+  border-radius: 99px;
+  padding: 1px 6px;
+  margin-left: 6px;
+  font-family: var(--font-display);
+}
+
+.ranking-xp {
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  color: var(--green-neon);
+  flex-shrink: 0;
+}
+
+/* ---------- Bot tag ---------- */
+.bot-tag {
+  font-size: 0.58rem;
+  color: var(--text-muted);
+  background: var(--bg-secondary);
+  border-radius: 99px;
+  padding: 1px 6px;
+  margin-left: 4px;
+  font-family: var(--font-display);
+  letter-spacing: 0.05em;
+}
+
+/* ---------- Navbar ---------- */
+.navbar {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: var(--bg-glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid var(--green-border);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 10px 0 14px;
+  z-index: 100;
+}
+
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-decoration: none;
+  color: var(--text-muted);
+  transition: color var(--transition);
+  padding: 4px 12px;
+  position: relative;
+}
+.nav-item.active { color: var(--green-neon); }
+.nav-item:hover  { color: var(--green-neon); }
+.nav-item .nav-icon  { font-size: 1.3rem; }
+.nav-item .nav-label {
+  font-family: var(--font-display);
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.nav-item.active::before {
+  content: '';
+  position: absolute;
+  top: -10px; left: 50%;
+  transform: translateX(-50%);
+  width: 30px; height: 2px;
+  background: var(--green-neon);
+  border-radius: 99px;
+  box-shadow: 0 0 8px var(--green-neon);
+}

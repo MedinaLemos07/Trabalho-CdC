@@ -1,0 +1,141 @@
+ta parecendo as tela do matrix man
+
+```html profissional toma krl
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — Recycle Agents</title>
+  <link rel="stylesheet" href="CSS/style.css" />
+  <link rel="stylesheet" href="CSS/home.css" />
+</head>
+<body>
+
+  <div class="home-orb"></div>
+
+  <div class="home-wrapper">
+
+    <!-- ── Header ── -->
+    <header class="home-header">
+      <div class="header-greeting">
+        <span class="label">Bem-vindo de volta,</span>
+        <span class="nome" id="nomeUsuario">Agente</span>
+      </div>
+      <a href="perfil.html" class="header-avatar" title="Meu perfil">👤</a>
+    </header>
+
+    <!-- ── XP Card ── -->
+    <div class="xp-card">
+      <div class="xp-top">
+        <div class="xp-value">
+          <span class="number" id="xpAtual">0</span>
+          <span class="unit">XP TOTAL</span>
+        </div>
+        <div class="xp-level">
+          <span class="level-badge">
+            ⚡ Nível <span id="nivelAtual">1</span>
+          </span>
+        </div>
+      </div>
+      <div class="xp-bar-info">
+        <span id="xpProgresso">0 / 100 XP</span>
+        <span id="xpPct">0%</span>
+      </div>
+      <div class="xp-bar">
+        <div class="xp-bar-fill" id="xpBarFill" style="width: 0%"></div>
+      </div>
+    </div>
+
+    <!-- ── Stats ── -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <span class="stat-icon">♻️</span>
+        <div class="stat-num" id="totalItens">0</div>
+        <div class="stat-desc">Itens reciclados</div>
+      </div>
+      <div class="stat-card">
+        <span class="stat-icon">🎯</span>
+        <div class="stat-num" id="missoesCompletas">0</div>
+        <div class="stat-desc">Missões completas</div>
+      </div>
+    </div>
+
+    <!-- ── Botão Scanner ── -->
+    <div class="scanner-btn-wrap">
+      <a href="scanner.html" class="scanner-btn">
+        <span class="btn-icon">📷</span>
+        Escanear Item
+      </a>
+    </div>
+
+    <!-- ── Missões do Dia ── -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-title">⚔️ Missões do dia</span>
+        <a href="missoes.html" class="section-link">Ver todas →</a>
+      </div>
+
+      <div class="missao-item" id="missao1">
+        <span class="missao-icon">📦</span>
+        <div class="missao-info">
+          <div class="missao-nome">Reciclar 3 itens hoje</div>
+          <div class="missao-progress-bar">
+            <div class="missao-progress-fill" id="missao1Fill" style="width: 0%"></div>
+          </div>
+        </div>
+        <span class="missao-xp">+30 XP</span>
+      </div>
+
+      <div class="missao-item" id="missao2">
+        <span class="missao-icon">♻️</span>
+        <div class="missao-info">
+          <div class="missao-nome">Reciclar um item de plástico</div>
+          <div class="missao-progress-bar">
+            <div class="missao-progress-fill" id="missao2Fill" style="width: 0%"></div>
+          </div>
+        </div>
+        <span class="missao-xp">+10 XP</span>
+      </div>
+
+    </div>
+
+    <!-- ── Dica do Dia ── -->
+    <div class="dica-card">
+      <span class="dica-icon">💡</span>
+      <div class="dica-content">
+        <div class="dica-label">Dica do dia</div>
+        <p id="dicaTexto">Carregando dica...</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── Navbar ── -->
+  <nav class="navbar">
+    <a href="home.html" class="nav-item active">
+      <span class="nav-icon">🏠</span>
+      <span class="nav-label">Início</span>
+    </a>
+    <a href="scanner.html" class="nav-item">
+      <span class="nav-icon">📷</span>
+      <span class="nav-label">Scanner</span>
+    </a>
+    <a href="missoes.html" class="nav-item">
+      <span class="nav-icon">⚔️</span>
+      <span class="nav-label">Missões</span>
+    </a>
+    <a href="ranking.html" class="nav-item">
+      <span class="nav-icon">🏆</span>
+      <span class="nav-label">Ranking</span>
+    </a>
+    <a href="perfil.html" class="nav-item">
+      <span class="nav-icon">👤</span>
+      <span class="nav-label">Perfil</span>
+    </a>
+  </nav>
+
+  <script type="module" src="JS/app.js"></script>
+
+</body>
+</html>

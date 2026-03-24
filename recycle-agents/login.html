@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login — Recycle Agents</title>
+  <link rel="stylesheet" href="CSS/style.css" />
+  <link rel="stylesheet" href="CSS/login.css" />
+</head>
+<body>
+
+  <div class="auth-wrapper">
+    <div class="auth-box">
+
+      <!-- Logo -->
+      <div class="auth-logo">
+        <span class="logo-icon">♻️</span>
+        <h1>RECYCLE AGENTS</h1>
+        <p>Sua missão começa aqui</p>
+      </div>
+
+      <!-- Card -->
+      <div class="auth-card">
+        <h2>Acessar conta</h2>
+
+        <!-- Alerta de erro/sucesso -->
+        <div class="alert alert-error" id="alertMsg"></div>
+
+        <!-- Formulário de Login -->
+        <div class="input-group">
+          <label for="email">E-mail</label>
+          <input
+            type="email"
+            id="email"
+            placeholder="seu@email.com"
+            autocomplete="email"
+          />
+        </div>
+
+        <div class="input-group">
+          <label for="senha">Senha</label>
+          <div class="input-with-icon">
+            <input
+              type="password"
+              id="senha"
+              placeholder="••••••••"
+              autocomplete="current-password"
+            />
+            <button class="toggle-password" id="toggleSenha" type="button" aria-label="Mostrar senha">
+              👁
+            </button>
+          </div>
+        </div>
+
+        <button class="btn btn-primary btn-full mt-2" id="btnLogin">
+          <span class="btn-text">Entrar</span>
+          <span class="loader"></span>
+        </button>
+
+        <div class="auth-footer mt-2">
+          Não tem conta?
+          <a href="cadastro.html">Criar conta</a>
+        </div>
+      </div>
+      <!-- /auth-card -->
+
+    </div>
+  </div>
+
+  <script type="module" src="JS/auth.js"></script>
+
+</body>
+</html>

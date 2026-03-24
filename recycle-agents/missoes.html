@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Missões — Recycle Agents</title>
+  <link rel="stylesheet" href="CSS/style.css" />
+  <link rel="stylesheet" href="CSS/missoes.css" />
+</head>
+<body>
+
+  <div class="missoes-wrapper">
+
+    <!-- Header -->
+    <header class="missoes-header">
+      <a href="home.html" class="back-btn">←</a>
+      <div class="missoes-header-info">
+        <h2>Missões</h2>
+        <p>Complete e ganhe XP</p>
+      </div>
+    </header>
+
+    <!-- Tabs -->
+    <div class="missoes-tabs">
+      <button class="missao-tab active" id="tabDiaria" onclick="trocarTab('diaria')">
+        ⚔️ Diárias
+      </button>
+      <button class="missao-tab" id="tabSemanal" onclick="trocarTab('semanal')">
+        📅 Semanais
+      </button>
+    </div>
+
+    <!-- Lista Diárias -->
+    <div class="missoes-lista" id="listaDiaria">
+
+      <div class="missao-card" id="md1">
+        <span class="missao-card-icon">📦</span>
+        <div class="missao-card-body">
+          <div class="missao-card-nome">Reciclar 3 itens</div>
+          <div class="missao-card-desc">Escaneie 3 itens diferentes hoje</div>
+          <div class="xp-bar" style="margin-bottom:8px">
+            <div class="xp-bar-fill" id="md1Bar" style="width:0%"></div>
+          </div>
+          <div class="missao-card-footer">
+            <span class="missao-card-progresso" id="md1Prog">0 / 3</span>
+            <span class="missao-card-xp">+30 XP</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="missao-card" id="md2">
+        <span class="missao-card-icon">🧴</span>
+        <div class="missao-card-body">
+          <div class="missao-card-nome">Reciclar 1 plástico</div>
+          <div class="missao-card-desc">Escaneie qualquer item de plástico</div>
+          <div class="xp-bar" style="margin-bottom:8px">
+            <div class="xp-bar-fill" id="md2Bar" style="width:0%"></div>
+          </div>
+          <div class="missao-card-footer">
+            <span class="missao-card-progresso" id="md2Prog">0 / 1</span>
+            <span class="missao-card-xp">+10 XP</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="missao-card" id="md3">
+        <span class="missao-card-icon">🥫</span>
+        <div class="missao-card-body">
+          <div class="missao-card-nome">Reciclar 1 metal</div>
+          <div class="missao-card-desc">Escaneie qualquer item de metal</div>
+          <div class="xp-bar" style="margin-bottom:8px">
+            <div class="xp-bar-fill" id="md3Bar" style="width:0%"></div>
+          </div>
+          <div class="missao-card-footer">
+            <span class="missao-card-progresso" id="md3Prog">0 / 1</span>
+            <span class="missao-card-xp">+20 XP</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Lista Semanais -->
+    <div class="missoes-lista" id="listaSemanal" style="display:none">
+
+      <div class="missao-card" id="ms1">
+        <span class="missao-card-icon">🏆</span>
+        <div class="missao-card-body">
+          <div class="missao-card-nome">Reciclar 10 itens</div>
+          <div class="missao-card-desc">Acumule 10 reciclagens nessa semana</div>
+          <div class="xp-bar" style="margin-bottom:8px">
+            <div class="xp-bar-fill" id="ms1Bar" style="width:0%"></div>
+          </div>
+          <div class="missao-card-footer">
+            <span class="missao-card-progresso" id="ms1Prog">0 / 10</span>
+            <span class="missao-card-xp">+100 XP</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="missao-card" id="ms2">
+        <span class="missao-card-icon">🌍</span>
+        <div class="missao-card-body">
+          <div class="missao-card-nome">Reciclar todos os tipos</div>
+          <div class="missao-card-desc">Recicle papel, plástico, vidro e metal</div>
+          <div class="xp-bar" style="margin-bottom:8px">
+            <div class="xp-bar-fill" id="ms2Bar" style="width:0%"></div>
+          </div>
+          <div class="missao-card-footer">
+            <span class="missao-card-progresso" id="ms2Prog">0 / 4 tipos</span>
+            <span class="missao-card-xp">+150 XP</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="missao-card" id="ms3">
+        <span class="missao-card-icon">🔥</span>
+        <div class="missao-card-body">
+          <div class="missao-card-nome">Sequência de 3 dias</div>
+          <div class="missao-card-desc">Recicle pelo menos 1 item por 3 dias seguidos</div>
+          <div class="xp-bar" style="margin-bottom:8px">
+            <div class="xp-bar-fill" id="ms3Bar" style="width:0%"></div>
+          </div>
+          <div class="missao-card-footer">
+            <span class="missao-card-progresso" id="ms3Prog">0 / 3 dias</span>
+            <span class="missao-card-xp">+200 XP</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <a href="home.html" class="nav-item">
+      <span class="nav-icon">🏠</span>
+      <span class="nav-label">Início</span>
+    </a>
+    <a href="scanner.html" class="nav-item">
+      <span class="nav-icon">📷</span>
+      <span class="nav-label">Scanner</span>
+    </a>
+    <a href="missoes.html" class="nav-item active">
+      <span class="nav-icon">⚔️</span>
+      <span class="nav-label">Missões</span>
+    </a>
+    <a href="ranking.html" class="nav-item">
+      <span class="nav-icon">🏆</span>
+      <span class="nav-label">Ranking</span>
+    </a>
+    <a href="perfil.html" class="nav-item">
+      <span class="nav-icon">👤</span>
+      <span class="nav-label">Perfil</span>
+    </a>
+  </nav>
+
+  <script type="module" src="JS/missoes.js"></script>
+
+</body>
+</html>

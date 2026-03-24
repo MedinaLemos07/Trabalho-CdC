@@ -1,0 +1,410 @@
+
+/* ============================================================
+   RECYCLE AGENTS — home.css
+   Dashboard principal
+   ============================================================ */
+
+/* ---------- Layout geral ---------- */
+.home-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 1;
+  padding-bottom: 80px;
+}
+
+/* ---------- Header ---------- */
+.home-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 20px 0;
+}
+
+.header-greeting {
+  display: flex;
+  flex-direction: column;
+}
+
+.header-greeting .label {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  font-family: var(--font-display);
+}
+
+.header-greeting .nome {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--green-neon);
+  text-shadow: 0 0 12px rgba(0,255,106,0.3);
+}
+
+.header-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--bg-card);
+  border: 2px solid var(--green-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  cursor: pointer;
+  transition: border-color var(--transition);
+  text-decoration: none;
+}
+.header-avatar:hover { border-color: var(--green-neon); }
+
+/* ---------- XP Card ---------- */
+.xp-card {
+  margin: 20px 20px 0;
+  background: var(--bg-card);
+  border: 1px solid var(--green-border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.xp-card::after {
+  content: '';
+  position: absolute;
+  top: -40px; right: -40px;
+  width: 120px; height: 120px;
+  background: radial-gradient(circle, rgba(0,255,106,0.08), transparent 70%);
+  pointer-events: none;
+}
+
+.xp-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 14px;
+}
+
+.xp-value {
+  display: flex;
+  flex-direction: column;
+}
+
+.xp-value .number {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 900;
+  color: var(--green-neon);
+  line-height: 1;
+  text-shadow: 0 0 20px rgba(0,255,106,0.4);
+}
+
+.xp-value .unit {
+  font-family: var(--font-display);
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  letter-spacing: 0.15em;
+  margin-top: 2px;
+}
+
+.xp-level {
+  text-align: right;
+}
+
+.xp-level .level-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(0,255,106,0.1);
+  border: 1px solid var(--green-border);
+  border-radius: 99px;
+  padding: 6px 14px;
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  color: var(--green-neon);
+  letter-spacing: 0.1em;
+}
+
+.xp-bar-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+  font-family: var(--font-display);
+  letter-spacing: 0.05em;
+}
+
+/* ---------- Stats Row ---------- */
+.stats-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 12px 20px 0;
+}
+
+.stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--green-border);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--green-neon), transparent);
+  opacity: 0.4;
+}
+
+.stat-card .stat-icon {
+  font-size: 1.6rem;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.stat-card .stat-num {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 900;
+  color: var(--green-neon);
+  line-height: 1;
+}
+
+.stat-card .stat-desc {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-top: 4px;
+}
+
+/* ---------- Scanner Button ---------- */
+.scanner-btn-wrap {
+  margin: 20px 20px 0;
+}
+
+.scanner-btn {
+  width: 100%;
+  padding: 18px;
+  background: var(--green-neon);
+  color: var(--bg-primary);
+  border: none;
+  border-radius: var(--radius-md);
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all var(--transition);
+  box-shadow: 0 0 30px rgba(0,255,106,0.3);
+  text-decoration: none;
+}
+
+.scanner-btn:hover {
+  background: var(--green-mid);
+  box-shadow: 0 0 50px rgba(0,255,106,0.5);
+  transform: translateY(-2px);
+  color: var(--bg-primary);
+}
+
+.scanner-btn .btn-icon {
+  font-size: 1.4rem;
+}
+
+/* ---------- Seção de Missões ---------- */
+.section {
+  margin: 20px 20px 0;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  letter-spacing: 0.15em;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}
+
+.section-link {
+  font-family: var(--font-display);
+  font-size: 0.68rem;
+  color: var(--green-neon);
+  letter-spacing: 0.1em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+/* ---------- Missão Item ---------- */
+.missao-item {
+  background: var(--bg-card);
+  border: 1px solid var(--green-border);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.missao-item.completa {
+  opacity: 0.5;
+  border-color: rgba(0,255,106,0.1);
+}
+
+.missao-icon {
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+
+.missao-info {
+  flex: 1;
+}
+
+.missao-nome {
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  color: var(--text-primary);
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.missao-progress-bar {
+  height: 4px;
+  background: var(--bg-secondary);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.missao-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--green-dark), var(--green-neon));
+  border-radius: 99px;
+  transition: width 1s ease;
+}
+
+.missao-xp {
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  color: var(--green-neon);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ---------- Dica educativa ---------- */
+.dica-card {
+  margin: 20px 20px 0;
+  background: linear-gradient(135deg, rgba(0,102,40,0.2), rgba(0,255,106,0.05));
+  border: 1px solid rgba(0,255,106,0.2);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.dica-icon {
+  font-size: 1.4rem;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.dica-content .dica-label {
+  font-family: var(--font-display);
+  font-size: 0.65rem;
+  color: var(--green-neon);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.dica-content p {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+/* ---------- Navbar inferior ---------- */
+.navbar {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: var(--bg-glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid var(--green-border);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 10px 0 14px;
+  z-index: 100;
+}
+
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-decoration: none;
+  color: var(--text-muted);
+  transition: color var(--transition);
+  padding: 4px 12px;
+  position: relative;
+}
+
+.nav-item.active { color: var(--green-neon); }
+.nav-item:hover  { color: var(--green-neon); }
+
+.nav-item .nav-icon  { font-size: 1.3rem; }
+
+.nav-item .nav-label {
+  font-family: var(--font-display);
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.nav-item.active::before {
+  content: '';
+  position: absolute;
+  top: -10px; left: 50%;
+  transform: translateX(-50%);
+  width: 30px; height: 2px;
+  background: var(--green-neon);
+  border-radius: 99px;
+  box-shadow: 0 0 8px var(--green-neon);
+}
+
+/* ---------- Orb de fundo ---------- */
+.home-orb {
+  position: fixed;
+  top: -150px; right: -150px;
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(0,255,106,0.05), transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ---------- Animações de entrada ---------- */
+.home-header      { animation: fadeIn 0.4s 0.1s ease both; }
+.xp-card          { animation: fadeIn 0.4s 0.2s ease both; }
+.stats-row        { animation: fadeIn 0.4s 0.3s ease both; }
+.scanner-btn-wrap { animation: fadeIn 0.4s 0.4s ease both; }
+.section          { animation: fadeIn 0.4s 0.5s ease both; }
+.dica-card        { animation: fadeIn 0.4s 0.6s ease both; }
