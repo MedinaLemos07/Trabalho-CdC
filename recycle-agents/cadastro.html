@@ -19,14 +19,13 @@
         <p>Crie sua conta e comece a reciclar</p>
       </div>
 
-      <!-- Card -->
-      <div class="auth-card">
+      <!-- Card do formulário -->
+      <div class="auth-card" id="authCard">
         <h2>Criar conta</h2>
 
         <!-- Alerta -->
         <div class="alert" id="alertMsg"></div>
 
-        <!-- Formulário de Cadastro -->
         <div class="input-group">
           <label for="nome">Nome de agente</label>
           <input
@@ -87,7 +86,23 @@
           <a href="login.html">Fazer login</a>
         </div>
       </div>
-      <!-- /auth-card -->
+
+      <!-- Card de verificação de email -->
+      <div class="verify-card" id="verifyCard">
+        <div class="verify-icon">📧</div>
+        <h3 class="verify-title">Verifique seu e-mail!</h3>
+        <p class="verify-msg">
+          Enviamos um link de confirmação para<br>
+          <strong id="verifyEmail"></strong>
+        </p>
+        <div class="verify-tip">
+          <span>⚠️</span>
+          <p>Não encontrou? Verifique sua caixa de <strong>spam</strong> ou <strong>lixo eletrônico</strong>!</p>
+        </div>
+        <a href="login.html" class="btn btn-primary btn-full mt-2">
+          Ir para o Login
+        </a>
+      </div>
 
     </div>
   </div>

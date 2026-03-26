@@ -1,17 +1,15 @@
 // ============================================================
 //  RECYCLE AGENTS — scanner.js
 //  Leitura de código de barras com QuaggaJS + Firebase
-//  lembrando que se quebrar o JS é pq eu to literalmente aprendendo e fazendo ao msm tempo
 // ============================================================
 
 import { auth, db } from "../FIREBASE/firebase-config.js";
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
 import {
   doc, getDoc, updateDoc, increment, setDoc
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
 // ─── Materiais e XP ──────────────────────────────────────────
-// o material é sorteado pelo codigo pra evitar do usuario ficar testando ate achar o certo e ganhar ponto a mais
 const MATERIAIS = [
   { nome: "Papel",    xp: 5,  icon: "📄", tipo: "papel"    },
   { nome: "Plástico", xp: 10, icon: "🧴", tipo: "plastico" },
@@ -22,14 +20,14 @@ const MATERIAIS = [
 let usuarioAtual = null;
 let scanAtivo    = true;
 
-// ─── Auth meia hora pra fazer isso funcionar pq esqueço de fechar a chave─────────────────────────────────────────────────────
+// ─── Auth ─────────────────────────────────────────────────────
 onAuthStateChanged(auth, (user) => {
   if (!user) { window.location.href = "login.html"; return; }
   usuarioAtual = user;
   iniciarScanner();
 });
 
-// ─── Iniciar câmera com QuaggaJS agrupado nas 3 raizes  ─────────────────────────────
+// ─── Iniciar câmera com QuaggaJS ─────────────────────────────
 function iniciarScanner() {
   const status = document.getElementById("cameraStatus");
 
@@ -37,7 +35,8 @@ function iniciarScanner() {
     inputStream: {
       name: "Live",
       type: "LiveStream",
-      target: document.getElementById("scanner-video"),
+      // ✅ CORRIGIDO: aponta para o wrapper, não para o video diretamente
+      target: document.getElementById("viewfinder-wrap") || document.querySelector(".viewfinder-wrap"),
       constraints: {
         facingMode: "environment",
         width:  { ideal: 1280 },
@@ -80,13 +79,12 @@ async function onCodigoDetectado(result) {
   await processarCodigo(codigo);
 }
 
-// ─── Processar código e salvar no Firebase ───────────────────
+// ─── Processar código ────────────────────────────────────────
 async function processarCodigo(codigo) {
-  const hoje     = new Date().toISOString().split("T")[0]; // "2026-03-23"
-  const chaveDoc = `${usuarioAtual.uid}_${codigo}_${hoje}`;
+  const hoje      = new Date().toISOString().split("T")[0];
+  const chaveDoc  = `${usuarioAtual.uid}_${codigo}_${hoje}`;
   const limiteRef = doc(db, "scans", chaveDoc);
 
-  // Verificar limite de 2 scans por dia por código pra nao lotar o db de tanto scanear
   const limiteSnap = await getDoc(limiteRef);
   const scanCount  = limiteSnap.exists() ? (limiteSnap.data().count || 0) : 0;
 
@@ -96,19 +94,18 @@ async function processarCodigo(codigo) {
     return;
   }
 
-  // Sortear material de forma determinada pelo código
   const material = MATERIAIS[codigo.charCodeAt(codigo.length - 1) % MATERIAIS.length];
 
-  // Atualizar contador de scans
   await setDoc(limiteRef, { count: scanCount + 1 }, { merge: true });
 
-  // Atualizar dados do usuário
   const userRef = doc(db, "usuarios", usuarioAtual.uid);
   await updateDoc(userRef, {
     xp:              increment(material.xp),
     itensReciclados: increment(1),
     itensDia:        increment(1),
-    [`${material.tipo}Dia`]: increment(1),
+    itensSemana:     increment(1),
+    [`${material.tipo}Dia`]:    increment(1),
+    [`${material.tipo}Semana`]: increment(1),
   });
 
   mostrarResultado(material);
@@ -133,6 +130,3 @@ function reiniciarScanner() {
 
 document.getElementById("btnEscanearNovamente")
   .addEventListener("click", reiniciarScanner);
-
-    //backend é dificil mas ta indo, to aprendendo e fazendo ao msm tempo, se tiver algum bagui errado me avisa que eu tento arrumar rpzd, TENTO
-    

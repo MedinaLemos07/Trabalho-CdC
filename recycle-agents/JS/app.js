@@ -1,13 +1,11 @@
-
-javascript
 // ============================================================
 //  RECYCLE AGENTS — app.js
 //  Lógica do Dashboard (home.html)
 // ============================================================
 
 import { auth, db } from "../FIREBASE/firebase-config.js";
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { doc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+import { doc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
 // ─── Redirecionar se não estiver logado ──────────────────────
 onAuthStateChanged(auth, (user) => {
@@ -15,7 +13,7 @@ onAuthStateChanged(auth, (user) => {
     window.location.href = "login.html";
     return;
   }
-  iniciarDashboard(usr);
+  iniciarDashboard(user);
 });
 
 // ─── Dicas educativas ────────────────────────────────────────
@@ -30,11 +28,9 @@ const DICAS = [
   "Pilhas e baterias devem ser descartadas em pontos específicos — nunca no lixo comum.",
 ];
 
-// ─── Calcular nível a partir do XP ───────────────────────────
+// ─── Calcular nível ───────────────────────────────────────────
 function calcularNivel(xp) {
-  let nivel = 1;
-  let xpNecessario = 100;
-  let xpAcumulado = 0;
+  let nivel = 1, xpNecessario = 100, xpAcumulado = 0;
 
   while (xp >= xpAcumulado + xpNecessario) {
     xpAcumulado += xpNecessario;
@@ -43,27 +39,26 @@ function calcularNivel(xp) {
   }
 
   const xpNoNivel   = xp - xpAcumulado;
-  const xpProximo   = xpNecessario;
-  const porcentagem = Math.floor((xpNoNivel / xpProximo) * 100);
+  const porcentagem = Math.floor((xpNoNivel / xpNecessario) * 100);
 
-  return { nivel, xpNoNivel, xpProximo, porcentagem };
+  return { nivel, xpNoNivel, xpProximo: xpNecessario, porcentagem };
 }
 
 // ─── Atualizar UI do XP ──────────────────────────────────────
 function atualizarXP(xp) {
   const { nivel, xpNoNivel, xpProximo, porcentagem } = calcularNivel(xp);
 
-  document.getElementById("xpAtual").textContent      = xp.toLocaleString("pt-BR");
-  document.getElementById("nivelAtual").textContent   = nivel;
-  document.getElementById("xpProgresso").textContent  = `${xpNoNivel} / ${xpProximo} XP`;
-  document.getElementById("xpPct").textContent        = `${porcentagem}%`;
+  document.getElementById("xpAtual").textContent     = xp.toLocaleString("pt-BR");
+  document.getElementById("nivelAtual").textContent  = nivel;
+  document.getElementById("xpProgresso").textContent = `${xpNoNivel} / ${xpProximo} XP`;
+  document.getElementById("xpPct").textContent       = `${porcentagem}%`;
 
   setTimeout(() => {
     document.getElementById("xpBarFill").style.width = `${porcentagem}%`;
   }, 300);
 }
 
-// ─── Atualizar missões ───────────────────────────────────────
+// ─── Atualizar missões no dashboard ──────────────────────────
 function atualizarMissoes(dados) {
   const itensDia    = dados.itensDia    || 0;
   const plasticoDia = dados.plasticoDia || 0;
@@ -83,8 +78,7 @@ function iniciarDashboard(user) {
   document.getElementById("nomeUsuario").textContent = nome.split(" ")[0];
 
   const diaDoAno = Math.floor(Date.now() / 86400000);
-  const dica = DICAS[diaDoAno % DICAS.length];
-  document.getElementById("dicaTexto").textContent = dica;
+  document.getElementById("dicaTexto").textContent = DICAS[diaDoAno % DICAS.length];
 
   const ref = doc(db, "usuarios", user.uid);
   onSnapshot(ref, (snap) => {

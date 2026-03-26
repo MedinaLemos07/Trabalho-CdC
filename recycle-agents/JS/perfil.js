@@ -4,16 +4,16 @@
 // ============================================================
 
 import { auth, db } from "../FIREBASE/firebase-config.js";
-import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
 import {
   doc, onSnapshot, collection, query, orderBy, getDocs
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
 // ─── Títulos por nível ───────────────────────────────────────
 const TITULOS = [
-  'Recruta', 'Agente', 'Reciclador', 'Guardião',
-  'Especialista', 'Veterano', 'Elite', 'Mestre',
-  'Campeão', 'Lenda'
+  "Recruta", "Agente", "Reciclador", "Guardião",
+  "Especialista", "Veterano", "Elite", "Mestre",
+  "Campeão", "Lenda"
 ];
 
 // ─── Auth ─────────────────────────────────────────────────────
@@ -22,16 +22,19 @@ onAuthStateChanged(auth, (user) => {
   carregarPerfil(user);
 });
 
-// ─── Calcular nível ──────────────────────────────────────────
+// ─── Calcular nível ───────────────────────────────────────────
 function calcularNivel(xp) {
   let nivel = 1, xpNecessario = 100, xpAcumulado = 0;
+
   while (xp >= xpAcumulado + xpNecessario) {
     xpAcumulado += xpNecessario;
     nivel++;
     xpNecessario = nivel * 100;
   }
+
   const xpNoNivel   = xp - xpAcumulado;
   const porcentagem = Math.floor((xpNoNivel / xpNecessario) * 100);
+
   return { nivel, xpNoNivel, xpProximo: xpNecessario, porcentagem };
 }
 
@@ -64,15 +67,15 @@ async function carregarPerfil(user) {
     const { nivel, xpNoNivel, xpProximo, porcentagem } = calcularNivel(xp);
     const titulo = TITULOS[Math.min(nivel - 1, TITULOS.length - 1)];
 
-    document.getElementById("perfilXP").textContent       = xp.toLocaleString("pt-BR");
-    document.getElementById("perfilNivel").textContent    = nivel;
-    document.getElementById("perfilTitulo").textContent   = titulo;
-    document.getElementById("perfilXPProg").textContent   = `${xpNoNivel} / ${xpProximo} XP`;
-    document.getElementById("perfilXPPct").textContent    = `${porcentagem}%`;
-    document.getElementById("perfilXPMeta").textContent   = `${xpProximo - xpNoNivel} XP para o próximo nível`;
-    document.getElementById("perfilItens").textContent    = d.itensReciclados  || 0;
-    document.getElementById("perfilMissoes").textContent  = d.missoesCompletas || 0;
-    document.getElementById("perfilStreak").textContent   = d.streak           || 0;
+    document.getElementById("perfilXP").textContent      = xp.toLocaleString("pt-BR");
+    document.getElementById("perfilNivel").textContent   = nivel;
+    document.getElementById("perfilTitulo").textContent  = titulo;
+    document.getElementById("perfilXPProg").textContent  = `${xpNoNivel} / ${xpProximo} XP`;
+    document.getElementById("perfilXPPct").textContent   = `${porcentagem}%`;
+    document.getElementById("perfilXPMeta").textContent  = `${xpProximo - xpNoNivel} XP para o próximo nível`;
+    document.getElementById("perfilItens").textContent   = d.itensReciclados  || 0;
+    document.getElementById("perfilMissoes").textContent = d.missoesCompletas || 0;
+    document.getElementById("perfilStreak").textContent  = d.streak           || 0;
 
     setTimeout(() => {
       document.getElementById("perfilXPBar").style.width = `${porcentagem}%`;

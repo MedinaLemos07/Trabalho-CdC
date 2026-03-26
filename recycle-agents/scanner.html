@@ -21,11 +21,13 @@
     </header>
 
     <!-- Viewfinder -->
-    <div class="viewfinder-wrap">
+    <div class="viewfinder-wrap" id="viewfinder-wrap">
       <video id="scanner-video" autoplay playsinline muted></video>
       <div class="viewfinder-overlay">
         <div class="scan-area">
           <div class="scan-line"></div>
+          <div class="corner-tl"></div>
+          <div class="corner-tr"></div>
           <div class="corner-br"></div>
           <div class="corner-bl"></div>
         </div>
@@ -108,7 +110,7 @@
     </a>
   </nav>
 
-  <script src="LIBS/quagga.min.js"></script>
+  <script src="../LIBS/quagga.min.js"></script>
   <script type="module" src="JS/scanner.js"></script>
 
 </body>

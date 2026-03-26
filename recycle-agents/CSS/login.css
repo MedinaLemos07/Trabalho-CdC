@@ -190,5 +190,99 @@
 }
 
 .btn.loading .btn-text { display: none; }
-.btn .loader { display: none; }
-.btn.loading .loader { display: inline-block; }
+.btn .loader           { display: none; }
+.btn.loading .loader   { display: inline-block; }
+
+/* ---------- Verify Card ---------- */
+.verify-card {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--green-border);
+  border-radius: var(--radius-lg);
+  padding: 36px 32px;
+  box-shadow: var(--shadow-card), 0 0 60px rgba(0,255,106,0.05);
+  position: relative;
+  overflow: hidden;
+  animation: slideUp 0.5s ease both;
+}
+
+.verify-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--green-neon), transparent);
+}
+
+.verify-card.show {
+  display: flex;
+}
+
+.verify-icon {
+  font-size: 3.5rem;
+  animation: float 3s ease-in-out infinite;
+}
+
+.verify-title {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  color: var(--green-neon);
+  text-shadow: 0 0 20px rgba(0,255,106,0.4);
+  margin: 0;
+  letter-spacing: 0.08em;
+}
+
+.verify-msg {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.verify-msg strong {
+  color: var(--green-neon);
+}
+
+.verify-tip {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: rgba(255, 200, 0, 0.06);
+  border: 1px solid rgba(255, 200, 0, 0.2);
+  border-radius: 10px;
+  padding: 14px 16px;
+  text-align: left;
+  width: 100%;
+}
+
+.verify-tip span {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.verify-tip p {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.verify-tip strong {
+  color: #ffc800;
+}
+
+/* ---------- Animações ---------- */
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-8px); }
+}
