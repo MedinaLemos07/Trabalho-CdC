@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tutorial — Recycle Agents</title>
+  <link rel="stylesheet" href="CSS/style.css" />
+  <link rel="stylesheet" href="CSS/tutorial.css" />
+</head>
+<body>
+
+  <div class="tutorial-orb"></div>
+
+  <div class="tutorial-wrapper">
+
+    <!-- Header -->
+    <div class="tutorial-header">
+      <span class="logo-icon">♻️</span>
+      <h1>BRIEFING DO AGENTE</h1>
+      <p>Complete cada missão para liberar o próximo passo</p>
+    </div>
+
+    <!-- Progresso -->
+    <div class="tutorial-progress" id="tutorialProgress"></div>
+
+    <!-- Cards -->
+    <div class="tutorial-cards">
+
+      <!-- Card 1 -->
+      <div class="tutorial-card ativo" id="card1">
+        <span class="card-numero">01 / 06</span>
+        <span class="card-icone">🌍</span>
+        <div class="card-titulo">Bem-vindo, Agente</div>
+        <div class="card-desc">
+          O planeta precisa de você. No Recycle Agents, cada item reciclado conta — 
+          você ganha XP, sobe de nível e compete no ranking global de agentes ambientais.
+          Sua missão começa agora.
+        </div>
+        <div class="card-acao">
+          <span class="card-acao-icone">👆</span>
+          <span class="card-acao-texto">Toque em "IR LÁ" para ver seu Dashboard</span>
+        </div>
+        <a href="home.html" class="btn-ir-la" id="btn1">
+          🏠 IR LÁ — Dashboard
+        </a>
+        <div class="card-completo-badge">✅ Missão concluída</div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="tutorial-card" id="card2">
+        <span class="card-numero">02 / 06</span>
+        <span class="card-icone">📷</span>
+        <div class="card-titulo">O Scanner</div>
+        <div class="card-desc">
+          Seu principal equipamento. Aponte a câmera para o código de barras de qualquer 
+          embalagem e o sistema identifica o material automaticamente. 
+          Cada scan vale XP — mas cada código tem limite de 2 usos por dia.
+        </div>
+        <div class="card-acao">
+          <span class="card-acao-icone">📷</span>
+          <span class="card-acao-texto">Visite a tela do Scanner</span>
+        </div>
+        <a href="scanner.html" class="btn-ir-la" id="btn2">
+          📷 IR LÁ — Scanner
+        </a>
+        <div class="card-completo-badge">✅ Missão concluída</div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="tutorial-card" id="card3">
+        <span class="card-numero">03 / 06</span>
+        <span class="card-icone">⚡</span>
+        <div class="card-titulo">Sistema de XP e Níveis</div>
+        <div class="card-desc">
+          Cada material reciclado gera XP: Papel +5, Plástico +10, Vidro +15 e Metal +20. 
+          Acumule XP para subir de nível e ganhar títulos — de Recruta até Lenda. 
+          Quanto mais raro o material, mais valioso o ponto.
+        </div>
+        <div class="card-acao">
+          <span class="card-acao-icone">👤</span>
+          <span class="card-acao-texto">Visite seu Perfil e confira seu nível atual</span>
+        </div>
+        <a href="perfil.html" class="btn-ir-la" id="btn3">
+          👤 IR LÁ — Perfil
+        </a>
+        <div class="card-completo-badge">✅ Missão concluída</div>
+      </div>
+
+      <!-- Card 4 -->
+      <div class="tutorial-card" id="card4">
+        <span class="card-numero">04 / 06</span>
+        <span class="card-icone">⚔️</span>
+        <div class="card-titulo">Missões Diárias e Semanais</div>
+        <div class="card-desc">
+          Todo dia surgem novas missões para te desafiar — reciclar certos materiais, 
+          bater metas de quantidade e manter sequências. Complete para ganhar XP bônus 
+          e não deixar o streak cair.
+        </div>
+        <div class="card-acao">
+          <span class="card-acao-icone">⚔️</span>
+          <span class="card-acao-texto">Visite a tela de Missões</span>
+        </div>
+        <a href="missoes.html" class="btn-ir-la" id="btn4">
+          ⚔️ IR LÁ — Missões
+        </a>
+        <div class="card-completo-badge">✅ Missão concluída</div>
+      </div>
+
+      <!-- Card 5 -->
+      <div class="tutorial-card" id="card5">
+        <span class="card-numero">05 / 06</span>
+        <span class="card-icone">🏆</span>
+        <div class="card-titulo">Ranking Global</div>
+        <div class="card-desc">
+          Você não está sozinho. Outros agentes competem pelo topo do ranking — 
+          alguns são bots treinados, outros são rivais reais. 
+          Acumule XP, suba no ranking e prove que é o melhor agente ambiental.
+        </div>
+        <div class="card-acao">
+          <span class="card-acao-icone">🏆</span>
+          <span class="card-acao-texto">Visite o Ranking e veja sua posição</span>
+        </div>
+        <a href="ranking.html" class="btn-ir-la" id="btn5">
+          🏆 IR LÁ — Ranking
+        </a>
+        <div class="card-completo-badge">✅ Missão concluída</div>
+      </div>
+
+      <!-- Card 6 -->
+      <div class="tutorial-card" id="card6">
+        <span class="card-numero">06 / 06</span>
+        <span class="card-icone">🚀</span>
+        <div class="card-titulo">Briefing Concluído</div>
+        <div class="card-desc">
+          Você está pronto, Agente. O planeta conta com cada scan seu. 
+          Recicle, complete missões, suba no ranking e mostre que sustentabilidade 
+          pode ser competitiva. Boa sorte — o mundo precisa de você.
+        </div>
+        <div class="card-acao">
+          <span class="card-acao-icone">🎯</span>
+          <span class="card-acao-texto">Inicie sua primeira missão real</span>
+        </div>
+        <a href="home.html" class="btn-ir-la" id="btn6">
+          🏠 COMEÇAR AGORA
+        </a>
+        <div class="card-completo-badge">✅ Missão concluída</div>
+      </div>
+
+    </div>
+
+    <!-- Botão finalizar -->
+    <div class="tutorial-finalizar" id="tutorialFinalizar">
+      <a href="home.html" class="btn btn-primary btn-full">
+        ✅ Briefing completo — Ir para o jogo
+      </a>
+    </div>
+
+  </div>
+
+  <script type="module" src="JS/tutorial.js"></script>
+
+</body>
+</html>

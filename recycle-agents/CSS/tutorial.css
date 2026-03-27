@@ -1,0 +1,246 @@
+/* ============================================================
+   RECYCLE AGENTS — tutorial.css
+   ============================================================ */
+
+.tutorial-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 1;
+  padding: 24px 20px 40px;
+}
+
+/* ---------- Header ---------- */
+.tutorial-header {
+  text-align: center;
+  margin-bottom: 28px;
+  animation: fadeIn 0.5s ease both;
+}
+
+.tutorial-header .logo-icon {
+  font-size: 2.5rem;
+  display: block;
+  margin-bottom: 10px;
+  filter: drop-shadow(0 0 12px rgba(0,255,106,0.5));
+  animation: float 4s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-10px); }
+}
+
+.tutorial-header h1 {
+  font-size: 1.3rem;
+  color: var(--green-neon);
+  text-shadow: 0 0 16px rgba(0,255,106,0.3);
+  margin-bottom: 6px;
+}
+
+.tutorial-header p {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* ---------- Progresso ---------- */
+.tutorial-progress {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 28px;
+  animation: fadeIn 0.5s 0.1s ease both;
+}
+
+.progress-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--bg-card);
+  border: 1px solid var(--green-border);
+  transition: all 0.3s ease;
+}
+
+.progress-dot.ativo {
+  background: var(--green-neon);
+  box-shadow: 0 0 8px var(--green-neon);
+  width: 24px;
+  border-radius: 99px;
+}
+
+.progress-dot.completo {
+  background: var(--green-dark);
+  border-color: var(--green-mid);
+}
+
+/* ---------- Cards ---------- */
+.tutorial-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.tutorial-card {
+  background: var(--bg-card);
+  border: 1px solid var(--green-border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+  opacity: 0.35;
+  filter: grayscale(0.5);
+  transition: all 0.4s ease;
+  pointer-events: none;
+}
+
+.tutorial-card.ativo {
+  opacity: 1;
+  filter: none;
+  pointer-events: all;
+  border-color: var(--green-neon);
+  box-shadow: 0 0 24px rgba(0,255,106,0.15);
+}
+
+.tutorial-card.completo {
+  opacity: 0.6;
+  filter: none;
+  pointer-events: none;
+  border-color: var(--green-border);
+}
+
+.tutorial-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--green-neon), transparent);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.tutorial-card.ativo::before { opacity: 1; }
+
+/* Número do card */
+.card-numero {
+  position: absolute;
+  top: 16px; right: 16px;
+  font-family: var(--font-display);
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+}
+
+.tutorial-card.ativo .card-numero { color: var(--green-neon); }
+.tutorial-card.completo .card-numero { color: var(--green-mid); }
+
+/* Ícone */
+.card-icone {
+  font-size: 2rem;
+  margin-bottom: 12px;
+  display: block;
+}
+
+/* Título */
+.card-titulo {
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: 0.06em;
+  margin-bottom: 8px;
+}
+
+/* Descrição */
+.card-desc {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 18px;
+}
+
+/* Ação */
+.card-acao {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(0,255,106,0.06);
+  border: 1px solid rgba(0,255,106,0.15);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  margin-bottom: 16px;
+}
+
+.card-acao-icone { font-size: 1.1rem; flex-shrink: 0; }
+
+.card-acao-texto {
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  color: var(--green-neon);
+  letter-spacing: 0.05em;
+}
+
+/* Botão ir lá */
+.btn-ir-la {
+  width: 100%;
+  padding: 12px;
+  background: var(--green-neon);
+  color: var(--bg-primary);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all var(--transition);
+  text-decoration: none;
+}
+
+.btn-ir-la:hover {
+  background: var(--green-mid);
+  transform: translateY(-1px);
+  color: var(--bg-primary);
+}
+
+/* Badge completo */
+.card-completo-badge {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px;
+  background: rgba(0,255,106,0.08);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  color: var(--green-neon);
+  letter-spacing: 0.08em;
+}
+
+.tutorial-card.completo .card-completo-badge { display: flex; }
+.tutorial-card.completo .btn-ir-la           { display: none; }
+.tutorial-card.completo .card-acao           { opacity: 0.5; }
+
+/* ---------- Botão final ---------- */
+.tutorial-finalizar {
+  margin-top: 24px;
+  display: none;
+  animation: fadeIn 0.5s ease both;
+}
+
+.tutorial-finalizar.show { display: block; }
+
+/* ---------- Orb ---------- */
+.tutorial-orb {
+  position: fixed;
+  top: -100px; right: -100px;
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(0,255,106,0.06), transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}

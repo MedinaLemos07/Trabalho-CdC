@@ -18,6 +18,7 @@ import {
   doc,
   setDoc,
   serverTimestamp,
+  getDoc,
 } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
 // ─────────────────────────────────────────────────────────────
@@ -147,10 +148,10 @@ if (isCadastro) {
         vidroSemana:      0,
         metalDia:         0,
         metalSemana:      0,
+        tutorialCompleto: false,
         criadoEm:         serverTimestamp(),
       });
 
-      // ✅ Esconde o formulário e mostra o card animado
       document.getElementById("authCard").style.display  = "none";
       document.getElementById("verifyEmail").textContent = email;
       document.getElementById("verifyCard").classList.add("show");
@@ -195,7 +196,12 @@ if (isLogin) {
         return;
       }
 
-      window.location.href = "home.html";
+      // Verifica se é o primeiro login
+      const snap = await getDoc(doc(db, "usuarios", user.uid));
+      const destino = snap.exists() && snap.data().tutorialCompleto
+        ? "home.html"
+        : "tutorial.html";
+      window.location.href = destino;
 
     } catch (err) {
       console.error(err);

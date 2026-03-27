@@ -88,3 +88,28 @@ document.getElementById("btnLogout").addEventListener("click", async () => {
   await signOut(auth);
   window.location.href = "index.html";
 });
+
+// ─── FAQ ─────────────────────────────────────────────────────
+const overlay   = document.getElementById("faqOverlay");
+const btnAjuda  = document.getElementById("btnAjuda");
+const btnFechar = document.getElementById("faqFechar");
+
+btnAjuda.addEventListener("click", () => {
+  overlay.classList.add("show");
+});
+
+btnFechar.addEventListener("click", () => {
+  overlay.classList.remove("show");
+});
+
+overlay.addEventListener("click", (e) => {
+  if (e.target === overlay) overlay.classList.remove("show");
+});
+
+document.querySelectorAll(".faq-card").forEach(card => {
+  card.querySelector(".faq-pergunta").addEventListener("click", () => {
+    const estaAberto = card.classList.contains("aberto");
+    document.querySelectorAll(".faq-card").forEach(c => c.classList.remove("aberto"));
+    if (!estaAberto) card.classList.add("aberto");
+  });
+});

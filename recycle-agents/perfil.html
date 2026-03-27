@@ -11,14 +11,122 @@
 
   <div class="perfil-wrapper">
 
-    <!-- Header -->
     <header class="perfil-header">
-      <a href="home.html" class="back-btn">←</a>
-      <div class="perfil-header-info">
-        <h2>Meu Perfil</h2>
-        <p>Suas estatísticas</p>
+  <a href="home.html" class="back-btn">←</a>
+  <div class="perfil-header-info">
+    <h2>Meu Perfil</h2>
+    <p>Suas estatísticas</p>
+  </div>
+</header>
+
+<button class="btn-ajuda" id="btnAjuda">AJUDA</button>
+
+<!-- FAQ Overlay -->
+<div class="faq-overlay" id="faqOverlay">
+  <div class="faq-container">
+    <div class="faq-header">
+      <span class="faq-titulo">⚡ DÚVIDAS FREQUENTES</span>
+      <button class="faq-fechar" id="faqFechar">✕ FECHAR</button>
+    </div>
+
+    <div class="faq-card" data-faq="1">
+      <button class="faq-pergunta">
+        <span class="faq-pergunta-texto">Como ganho XP no Recycle Agents?</span>
+        <i class="faq-icone">+</i>
+      </button>
+      <div class="faq-resposta">
+        <div class="faq-resposta-inner">
+          <p>Você ganha XP escaneando códigos de barras de embalagens recicláveis. Cada material vale um valor diferente: Papel +5 XP, Plástico +10 XP, Vidro +15 XP e Metal +20 XP. Missões concluídas também concedem XP bônus.</p>
+        </div>
       </div>
-    </header>
+    </div>
+
+    <div class="faq-card" data-faq="2">
+      <button class="faq-pergunta">
+        <span class="faq-pergunta-texto">Posso escanear o mesmo item várias vezes?</span>
+        <i class="faq-icone">+</i>
+      </button>
+      <div class="faq-resposta">
+        <div class="faq-resposta-inner">
+          <p>Cada código de barras pode ser escaneado no máximo 2 vezes por dia. Após isso, o sistema bloqueia novos scans daquele código até o dia seguinte. Isso garante que o jogo seja justo para todos os agentes.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-card" data-faq="3">
+      <button class="faq-pergunta">
+        <span class="faq-pergunta-texto">Como funcionam os níveis e títulos?</span>
+        <i class="faq-icone">+</i>
+      </button>
+      <div class="faq-resposta">
+        <div class="faq-resposta-inner">
+          <p>Cada nível exige mais XP que o anterior. Você começa como Recruta e pode chegar até Lenda. Conforme sobe de nível, seu título evolui automaticamente — acompanhe o progresso pela barra de XP no seu perfil.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-card" data-faq="4">
+      <button class="faq-pergunta">
+        <span class="faq-pergunta-texto">O que são missões diárias e semanais?</span>
+        <i class="faq-icone">+</i>
+      </button>
+      <div class="faq-resposta">
+        <div class="faq-resposta-inner">
+          <p>Missões diárias resetam todo dia à meia-noite e oferecem objetivos rápidos como reciclar 3 itens ou um material específico. Missões semanais têm metas maiores e recompensam mais XP. Complete ambas para maximizar seu progresso.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-card" data-faq="5">
+      <button class="faq-pergunta">
+        <span class="faq-pergunta-texto">Os bots do ranking são reais?</span>
+        <i class="faq-icone">+</i>
+      </button>
+      <div class="faq-resposta">
+        <div class="faq-resposta-inner">
+          <p>Parte dos competidores no ranking são agentes simulados para tornar o jogo mais dinâmico enquanto a base de usuários cresce. Conforme mais agentes reais entram, os bots vão sendo substituídos. Usuários reais são identificados pelo sistema.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-card" data-faq="6">
+      <button class="faq-pergunta">
+        <span class="faq-pergunta-texto">Por que o scanner não funciona abrindo o arquivo direto?</span>
+        <i class="faq-icone">+</i>
+      </button>
+      <div class="faq-resposta">
+        <div class="faq-resposta-inner">
+          <p>O navegador bloqueia o acesso à câmera em páginas abertas como arquivo local (file://). Para usar o scanner, o projeto precisa rodar em um servidor local. Use o comando python -m http.server 5500 no terminal e acesse via http://localhost:5500.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-card" data-faq="7">
+      <button class="faq-pergunta">
+        <span class="faq-pergunta-texto">Como manter meu streak ativo?</span>
+        <i class="faq-icone">+</i>
+      </button>
+      <div class="faq-resposta">
+        <div class="faq-resposta-inner">
+          <p>O streak conta quantos dias seguidos você reciclou pelo menos um item. Para não perder sua sequência, faça pelo menos um scan por dia. Se passar um dia sem reciclar, o contador zera e você começa do zero.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-card" data-faq="8">
+      <button class="faq-pergunta">
+        <span class="faq-pergunta-texto">Meus dados ficam salvos se eu sair da conta?</span>
+        <i class="faq-icone">+</i>
+      </button>
+      <div class="faq-resposta">
+        <div class="faq-resposta-inner">
+          <p>Sim! Todo o seu progresso — XP, itens reciclados, missões e ranking — fica salvo no Firebase. Ao fazer login novamente em qualquer dispositivo, seus dados estarão intactos exatamente como você deixou.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
 
     <!-- Hero -->
     <div class="perfil-hero">
