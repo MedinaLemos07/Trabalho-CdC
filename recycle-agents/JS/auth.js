@@ -28,15 +28,23 @@ const isLogin    = !!document.getElementById("btnLogin");
 const isCadastro = !!document.getElementById("btnCadastro");
 
 // ─────────────────────────────────────────────────────────────
+// FLAGS DE CONTROLE
+// ─────────────────────────────────────────────────────────────
+let cadastrandoAgora = false;
+let loginFalhando    = false;
+
+// ─────────────────────────────────────────────────────────────
 // PROTEÇÃO GLOBAL DO SISTEMA
 // ─────────────────────────────────────────────────────────────
 onAuthStateChanged(auth, async (user) => {
+  if (cadastrandoAgora) return;
+  if (loginFalhando)    return;
+
   if (user) {
     await user.reload();
 
     if (!user.emailVerified) {
-      if (!isCadastro) {
-        alert("Confirme seu email antes de acessar.");
+      if (!isCadastro && !isLogin) {
         await signOut(auth);
         window.location.href = "login.html";
       }
@@ -128,6 +136,7 @@ if (isCadastro) {
     if (senha !== confirmar) return showAlert("Senhas não coincidem.");
 
     setLoading(btnCadastro, true);
+    cadastrandoAgora = true;
 
     try {
       const { user } = await createUserWithEmailAndPassword(auth, email, senha);
@@ -152,16 +161,17 @@ if (isCadastro) {
         criadoEm:         serverTimestamp(),
       });
 
+      await signOut(auth);
+
       document.getElementById("authCard").style.display  = "none";
       document.getElementById("verifyEmail").textContent = email;
       document.getElementById("verifyCard").classList.add("show");
-
-      await signOut(auth);
 
     } catch (err) {
       console.error(err);
       showAlert(traduzirErro(err.code));
     } finally {
+      cadastrandoAgora = false;
       setLoading(btnCadastro, false);
     }
   });
@@ -190,13 +200,14 @@ if (isLogin) {
       const { user } = await signInWithEmailAndPassword(auth, email, senha);
 
       if (!user.emailVerified) {
+        loginFalhando = true;
         showAlert("Confirme seu email antes de entrar.");
         await signOut(auth);
+        loginFalhando = false;
         setLoading(btnLogin, false);
         return;
       }
 
-      // Verifica se é o primeiro login
       const snap = await getDoc(doc(db, "usuarios", user.uid));
       const destino = snap.exists() && snap.data().tutorialCompleto
         ? "home.html"
