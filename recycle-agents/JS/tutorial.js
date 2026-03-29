@@ -1,135 +1,310 @@
 // ============================================================
 //  RECYCLE AGENTS — tutorial.js
-//  Tutorial guiado — libera card por card
+//  Tour Guiado com Spotlight na home.html
 // ============================================================
 
 import { auth, db } from "../FIREBASE/firebase-config.js";
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { doc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+import { doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
-const TOTAL_CARDS = 6;
-let cardAtual = 1;
-let uid = null;
+// ─────────────────────────────────────────────────────────────
+// Definição dos passos do tour
+// ─────────────────────────────────────────────────────────────
+const PASSOS = [
+  {
+    alvo: ".xp-card",
+    posicao: "bottom",
+    icone: "⚡",
+    titulo: "XP e Nível",
+    desc: "Aqui você acompanha seu XP total e nível atual. Cada item reciclado soma pontos — Papel +5, Plástico +10, Vidro +15 e Metal +20 XP."
+  },
+  {
+    alvo: ".stats-row",
+    posicao: "bottom",
+    icone: "📊",
+    titulo: "Suas Estatísticas",
+    desc: "Veja quantos itens você já reciclou e quantas missões completou. Esses números crescem a cada scan realizado."
+  },
+  {
+    alvo: ".scanner-btn-wrap",
+    posicao: "top",
+    icone: "📷",
+    titulo: "Scanner de Itens",
+    desc: "Seu principal equipamento! Aponte a câmera para o código de barras de qualquer embalagem. O sistema identifica o material e concede XP automaticamente."
+  },
+  {
+    alvo: ".section",
+    posicao: "top",
+    icone: "⚔️",
+    titulo: "Missões do Dia",
+    desc: "Todo dia surgem novos desafios. Complete-os para ganhar XP bônus e manter sua sequência ativa. Não deixe o streak cair!"
+  },
+  {
+    alvo: ".navbar",
+    posicao: "top",
+    icone: "🧭",
+    titulo: "Navegação",
+    desc: "Use a barra inferior para navegar: Scanner para reciclar, Missões para seus desafios, Ranking para competir e Perfil para ver sua evolução."
+  },
+];
 
-// ─── Auth ─────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────
+// Estado do tour
+// ─────────────────────────────────────────────────────────────
+let stepAtual    = 0;
+let usuarioUID   = null;
+let elementoAtual = null;
+
+// ─────────────────────────────────────────────────────────────
+// VERIFICAÇÃO DE AUTENTICAÇÃO E TUTORIAL
+// Só mostra o tour se o usuário estiver logado
+// e tutorialCompleto === false
+// ─────────────────────────────────────────────────────────────
 onAuthStateChanged(auth, async (user) => {
-  if (!user) { window.location.href = "login.html"; return; }
-  uid = user.uid;
+  if (!user) {
+    // Não está logado — manda para o login
+    window.location.href = "login.html";
+    return;
+  }
 
-  // Se já fez o tutorial, vai direto pro home
-  const snap = await getDoc(doc(db, "usuarios", uid));
-  if (snap.exists() && snap.data().tutorialCompleto) {
+  usuarioUID = user.uid;
+
+  // Verifica no Firestore se o tutorial já foi feito
+  const snap = await getDoc(doc(db, "usuarios", user.uid));
+  if (snap.exists() && snap.data().tutorialCompleto === true) {
+    // Tutorial já foi concluído — manda direto para home
     window.location.href = "home.html";
     return;
   }
 
-  iniciarTutorial();
+  // Preenche nome na tela
+  const nome = user.displayName || "Agente";
+  const elNome = document.getElementById("nomeUsuario");
+  if (elNome) elNome.textContent = nome.split(" ")[0];
+
+  // Tudo certo — inicializa o tour
+  criarElementosTour();
+  document.getElementById("tourBtnComecar").addEventListener("click", iniciarTour);
+  document.getElementById("tourBtnSkipAll").addEventListener("click", pularTour);
+  document.getElementById("tourBtnProximo").addEventListener("click", avancarPasso);
+  document.getElementById("tourBtnPular").addEventListener("click", pularTour);
 });
 
-// ─── Iniciar ─────────────────────────────────────────────────
-function iniciarTutorial() {
-  renderizarDots();
-  ativarCard(1);
-  configurarBotoes();
-}
+// ─────────────────────────────────────────────────────────────
+// Cria os elementos do tour no DOM
+// ─────────────────────────────────────────────────────────────
+function criarElementosTour() {
+  // Tela de boas-vindas
+  const welcome = document.createElement("div");
+  welcome.className = "tour-welcome";
+  welcome.id = "tourWelcome";
+  welcome.innerHTML = `
+    <div class="tour-welcome-icon">♻️</div>
+    <h1>BEM-VINDO, AGENTE</h1>
+    <p>Antes de começar sua missão, deixa eu te mostrar como tudo funciona aqui no Recycle Agents.</p>
+    <div class="tour-welcome-btns">
+      <button class="tour-btn-comecar" id="tourBtnComecar">⚡ Iniciar Tour</button>
+      <button class="tour-btn-skip-all" id="tourBtnSkipAll">Pular tutorial</button>
+    </div>
+  `;
+  document.body.appendChild(welcome);
 
-// ─── Dots de progresso ───────────────────────────────────────
-function renderizarDots() {
-  const container = document.getElementById("tutorialProgress");
-  container.innerHTML = "";
-  for (let i = 1; i <= TOTAL_CARDS; i++) {
-    const dot = document.createElement("div");
-    dot.className = "progress-dot";
-    dot.id = `dot${i}`;
-    container.appendChild(dot);
-  }
-  atualizarDots();
-}
+  // Spotlight
+  const spotlight = document.createElement("div");
+  spotlight.className = "tour-spotlight";
+  spotlight.id = "tourSpotlight";
+  document.body.appendChild(spotlight);
 
-function atualizarDots() {
-  for (let i = 1; i <= TOTAL_CARDS; i++) {
-    const dot = document.getElementById(`dot${i}`);
-    dot.className = "progress-dot";
-    if (i < cardAtual)  dot.classList.add("completo");
-    if (i === cardAtual) dot.classList.add("ativo");
-  }
-}
+  // Balão de dica
+  const balao = document.createElement("div");
+  balao.className = "tour-balao";
+  balao.id = "tourBalao";
+  balao.innerHTML = `
+    <div class="tour-step-num" id="tourStepNum">PASSO 1 / ${PASSOS.length}</div>
+    <span class="tour-icone" id="tourIcone"></span>
+    <div class="tour-titulo" id="tourTitulo"></div>
+    <p class="tour-desc" id="tourDesc"></p>
+    <div class="tour-progress-wrap">
+      <div class="tour-progress-bar">
+        <div class="tour-progress-fill" id="tourProgressFill" style="width: 0%"></div>
+      </div>
+      <span class="tour-progress-label" id="tourProgressLabel">0%</span>
+    </div>
+    <div class="tour-btns">
+      <button class="tour-btn-pular" id="tourBtnPular">Pular</button>
+      <button class="tour-btn-proximo" id="tourBtnProximo">Próximo →</button>
+    </div>
+  `;
+  document.body.appendChild(balao);
 
-// ─── Ativar card ─────────────────────────────────────────────
-function ativarCard(num) {
-  cardAtual = num;
-  for (let i = 1; i <= TOTAL_CARDS; i++) {
-    const card = document.getElementById(`card${i}`);
-    card.classList.remove("ativo", "completo");
-    if (i < num)  card.classList.add("completo");
-    if (i === num) card.classList.add("ativo");
-  }
-  atualizarDots();
+  // Tela final
+  const fim = document.createElement("div");
+  fim.className = "tour-fim";
+  fim.id = "tourFim";
+  fim.innerHTML = `
+    <div class="tour-fim-icon">🚀</div>
+    <h2>BRIEFING CONCLUÍDO</h2>
+    <p>Você está pronto, Agente. O planeta conta com cada scan seu. Boa sorte!</p>
+    <button class="tour-fim-btn" id="tourBtnFim">🏠 Começar agora</button>
+  `;
+  document.body.appendChild(fim);
 
-  // Scroll suave até o card ativo
+  // Botão da tela final vai para home após salvar
   setTimeout(() => {
-    document.getElementById(`card${num}`)
-      .scrollIntoView({ behavior: "smooth", block: "center" });
+    document.getElementById("tourBtnFim")?.addEventListener("click", () => {
+      window.location.href = "home.html";
+    });
   }, 100);
 }
 
-// ─── Configurar botões ───────────────────────────────────────
-function configurarBotoes() {
-  for (let i = 1; i <= TOTAL_CARDS; i++) {
-    const btn = document.getElementById(`btn${i}`);
-    if (!btn) continue;
+// ─────────────────────────────────────────────────────────────
+// Posiciona o spotlight no elemento alvo
+// ─────────────────────────────────────────────────────────────
+function posicionarSpotlight(el) {
+  const rect = el.getBoundingClientRect();
+  const pad  = 8;
+  const rx   = (rect.width  / 2) + pad;
+  const ry   = (rect.height / 2) + pad;
+  const cx   = rect.left + rect.width  / 2;
+  const cy   = rect.top  + rect.height / 2;
 
-    btn.addEventListener("click", (e) => {
-      // Salva qual card completou no localStorage
-      localStorage.setItem("tutorialCard", i);
+  const spotlight = document.getElementById("tourSpotlight");
+  const mask = `radial-gradient(ellipse ${rx}px ${ry}px at ${cx}px ${cy}px, transparent 100%, black 100%)`;
+  spotlight.style.webkitMaskImage = mask;
+  spotlight.style.maskImage       = mask;
+}
 
-      // Se for o último card, marcar tutorial completo
-      if (i === TOTAL_CARDS) {
-        e.preventDefault();
-        concluirTutorial();
-        return;
-      }
+// ─────────────────────────────────────────────────────────────
+// Posiciona o balão perto do elemento
+// ─────────────────────────────────────────────────────────────
+function posicionarBalao(el, posicao) {
+  const balao  = document.getElementById("tourBalao");
+  const rect   = el.getBoundingClientRect();
+  const bW     = balao.offsetWidth  || 320;
+  const bH     = balao.offsetHeight || 240;
+  const margin = 16;
 
-      // Nos outros cards, deixa navegar normalmente
-      // A página destino vai detectar e voltar pro tutorial
-    });
+  let top, left;
+
+  if (posicao === "bottom") {
+    top  = rect.bottom + margin;
+    left = rect.left + rect.width / 2 - bW / 2;
+  } else {
+    top  = rect.top - bH - margin;
+    left = rect.left + rect.width / 2 - bW / 2;
+  }
+
+  left = Math.max(margin, Math.min(left, window.innerWidth  - bW - margin));
+  top  = Math.max(margin, Math.min(top,  window.innerHeight - bH - margin));
+
+  balao.style.top  = `${top}px`;
+  balao.style.left = `${left}px`;
+  balao.setAttribute("data-arrow", posicao === "bottom" ? "top" : "bottom");
+}
+
+// ─────────────────────────────────────────────────────────────
+// Mostra um passo do tour
+// ─────────────────────────────────────────────────────────────
+function mostrarPasso(index) {
+  const passo = PASSOS[index];
+  const el    = document.querySelector(passo.alvo);
+  if (!el) { avancarPasso(); return; }
+
+  if (elementoAtual) elementoAtual.classList.remove("tour-highlight");
+
+  el.scrollIntoView({ behavior: "smooth", block: "center" });
+
+  setTimeout(() => {
+    elementoAtual = el;
+    el.classList.add("tour-highlight");
+    posicionarSpotlight(el);
+
+    document.getElementById("tourStepNum").textContent  = `PASSO ${index + 1} / ${PASSOS.length}`;
+    document.getElementById("tourIcone").textContent    = passo.icone;
+    document.getElementById("tourTitulo").textContent   = passo.titulo;
+    document.getElementById("tourDesc").textContent     = passo.desc;
+
+    const pct = Math.round(((index + 1) / PASSOS.length) * 100);
+    document.getElementById("tourProgressFill").style.width = `${pct}%`;
+    document.getElementById("tourProgressLabel").textContent = `${pct}%`;
+
+    const btnProximo = document.getElementById("tourBtnProximo");
+    btnProximo.textContent = index === PASSOS.length - 1 ? "Concluir ✅" : "Próximo →";
+
+    const balao = document.getElementById("tourBalao");
+    balao.classList.remove("visivel");
+
+    setTimeout(() => {
+      posicionarBalao(el, passo.posicao);
+      balao.classList.add("visivel");
+    }, 100);
+
+    document.getElementById("tourSpotlight").style.opacity = "1";
+
+  }, 300);
+}
+
+// ─────────────────────────────────────────────────────────────
+// Avança para o próximo passo
+// ─────────────────────────────────────────────────────────────
+function avancarPasso() {
+  stepAtual++;
+  if (stepAtual < PASSOS.length) {
+    mostrarPasso(stepAtual);
+  } else {
+    finalizarTour();
   }
 }
 
-// ─── Verificar retorno de outra tela ─────────────────────────
-// Chamado quando o usuário volta pro tutorial após visitar uma tela
-const cardPendente = localStorage.getItem("tutorialCard");
-if (cardPendente) {
-  const numCompleto = parseInt(cardPendente);
-  localStorage.removeItem("tutorialCard");
+// ─────────────────────────────────────────────────────────────
+// Finaliza o tour e salva no Firestore
+// ─────────────────────────────────────────────────────────────
+async function finalizarTour() {
+  if (elementoAtual) elementoAtual.classList.remove("tour-highlight");
+  document.getElementById("tourSpotlight").style.opacity = "0";
+  document.getElementById("tourBalao").classList.remove("visivel");
 
-  // Espera o DOM carregar e avança pro próximo
-  window.addEventListener("DOMContentLoaded", () => {
-    // Marca os anteriores como completos e ativa o próximo
-    const proximo = numCompleto + 1;
-    if (proximo <= TOTAL_CARDS) {
-      // onAuthStateChanged vai chamar iniciarTutorial
-      // então guardamos qual card ativar
-      window._tutorialProximo = proximo;
+  if (usuarioUID) {
+    try {
+      await updateDoc(doc(db, "usuarios", usuarioUID), { tutorialCompleto: true });
+    } catch (e) {
+      console.error("Erro ao salvar tutorial:", e);
     }
-  });
-}
-
-// ─── Iniciar com card certo ──────────────────────────────────
-function iniciarTutorial() {
-  renderizarDots();
-  const inicio = window._tutorialProximo || 1;
-  ativarCard(inicio);
-  configurarBotoes();
-  window._tutorialProximo = null;
-}
-
-// ─── Concluir tutorial ───────────────────────────────────────
-async function concluirTutorial() {
-  if (uid) {
-    await updateDoc(doc(db, "usuarios", uid), {
-      tutorialCompleto: true
-    });
   }
+
+  setTimeout(() => {
+    document.getElementById("tourFim").classList.add("ativo");
+  }, 400);
+}
+
+// ─────────────────────────────────────────────────────────────
+// Pula o tour e salva no Firestore
+// ─────────────────────────────────────────────────────────────
+async function pularTour() {
+  if (elementoAtual) elementoAtual.classList.remove("tour-highlight");
+  document.getElementById("tourSpotlight")?.style && (document.getElementById("tourSpotlight").style.opacity = "0");
+  document.getElementById("tourBalao")?.classList.remove("visivel");
+
+  if (usuarioUID) {
+    try {
+      await updateDoc(doc(db, "usuarios", usuarioUID), { tutorialCompleto: true });
+    } catch (e) {
+      console.error("Erro ao salvar tutorial:", e);
+    }
+  }
+
   window.location.href = "home.html";
+}
+
+// ─────────────────────────────────────────────────────────────
+// Inicia o tour (fecha a tela de boas-vindas)
+// ─────────────────────────────────────────────────────────────
+function iniciarTour() {
+  const welcome = document.getElementById("tourWelcome");
+  welcome.style.opacity    = "0";
+  welcome.style.transition = "opacity 0.4s ease";
+  setTimeout(() => {
+    welcome.style.display = "none";
+    mostrarPasso(0);
+  }, 400);
 }

@@ -5,158 +5,132 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tutorial — Recycle Agents</title>
   <link rel="stylesheet" href="CSS/style.css" />
+  <link rel="stylesheet" href="CSS/home.css" />
   <link rel="stylesheet" href="CSS/tutorial.css" />
 </head>
 <body>
 
-  <div class="tutorial-orb"></div>
+  <div class="home-orb"></div>
 
-  <div class="tutorial-wrapper">
+  <div class="home-wrapper">
 
     <!-- Header -->
-    <div class="tutorial-header">
-      <span class="logo-icon">♻️</span>
-      <h1>BRIEFING DO AGENTE</h1>
-      <p>Complete cada missão para liberar o próximo passo</p>
+    <header class="home-header">
+      <div class="header-greeting">
+        <span class="label">Bem-vindo de volta,</span>
+        <span class="nome" id="nomeUsuario">Agente</span>
+      </div>
+      <a href="perfil.html" class="header-avatar" title="Meu perfil">👤</a>
+    </header>
+
+    <!-- XP Card -->
+    <div class="xp-card">
+      <div class="xp-top">
+        <div class="xp-value">
+          <span class="number" id="xpAtual">0</span>
+          <span class="unit">XP TOTAL</span>
+        </div>
+        <div class="xp-level">
+          <span class="level-badge">
+            ⚡ Nível <span id="nivelAtual">1</span>
+          </span>
+        </div>
+      </div>
+      <div class="xp-bar-info">
+        <span id="xpProgresso">0 / 100 XP</span>
+        <span id="xpPct">0%</span>
+      </div>
+      <div class="xp-bar">
+        <div class="xp-bar-fill" id="xpBarFill" style="width: 0%"></div>
+      </div>
     </div>
 
-    <!-- Progresso -->
-    <div class="tutorial-progress" id="tutorialProgress"></div>
-
-    <!-- Cards -->
-    <div class="tutorial-cards">
-
-      <!-- Card 1 -->
-      <div class="tutorial-card ativo" id="card1">
-        <span class="card-numero">01 / 06</span>
-        <span class="card-icone">🌍</span>
-        <div class="card-titulo">Bem-vindo, Agente</div>
-        <div class="card-desc">
-          O planeta precisa de você. No Recycle Agents, cada item reciclado conta — 
-          você ganha XP, sobe de nível e compete no ranking global de agentes ambientais.
-          Sua missão começa agora.
-        </div>
-        <div class="card-acao">
-          <span class="card-acao-icone">👆</span>
-          <span class="card-acao-texto">Toque em "IR LÁ" para ver seu Dashboard</span>
-        </div>
-        <a href="home.html" class="btn-ir-la" id="btn1">
-          🏠 IR LÁ — Dashboard
-        </a>
-        <div class="card-completo-badge">✅ Missão concluída</div>
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <span class="stat-icon">♻️</span>
+        <div class="stat-num" id="totalItens">0</div>
+        <div class="stat-desc">Itens reciclados</div>
       </div>
-
-      <!-- Card 2 -->
-      <div class="tutorial-card" id="card2">
-        <span class="card-numero">02 / 06</span>
-        <span class="card-icone">📷</span>
-        <div class="card-titulo">O Scanner</div>
-        <div class="card-desc">
-          Seu principal equipamento. Aponte a câmera para o código de barras de qualquer 
-          embalagem e o sistema identifica o material automaticamente. 
-          Cada scan vale XP — mas cada código tem limite de 2 usos por dia.
-        </div>
-        <div class="card-acao">
-          <span class="card-acao-icone">📷</span>
-          <span class="card-acao-texto">Visite a tela do Scanner</span>
-        </div>
-        <a href="scanner.html" class="btn-ir-la" id="btn2">
-          📷 IR LÁ — Scanner
-        </a>
-        <div class="card-completo-badge">✅ Missão concluída</div>
+      <div class="stat-card">
+        <span class="stat-icon">🎯</span>
+        <div class="stat-num" id="missoesCompletas">0</div>
+        <div class="stat-desc">Missões completas</div>
       </div>
-
-      <!-- Card 3 -->
-      <div class="tutorial-card" id="card3">
-        <span class="card-numero">03 / 06</span>
-        <span class="card-icone">⚡</span>
-        <div class="card-titulo">Sistema de XP e Níveis</div>
-        <div class="card-desc">
-          Cada material reciclado gera XP: Papel +5, Plástico +10, Vidro +15 e Metal +20. 
-          Acumule XP para subir de nível e ganhar títulos — de Recruta até Lenda. 
-          Quanto mais raro o material, mais valioso o ponto.
-        </div>
-        <div class="card-acao">
-          <span class="card-acao-icone">👤</span>
-          <span class="card-acao-texto">Visite seu Perfil e confira seu nível atual</span>
-        </div>
-        <a href="perfil.html" class="btn-ir-la" id="btn3">
-          👤 IR LÁ — Perfil
-        </a>
-        <div class="card-completo-badge">✅ Missão concluída</div>
-      </div>
-
-      <!-- Card 4 -->
-      <div class="tutorial-card" id="card4">
-        <span class="card-numero">04 / 06</span>
-        <span class="card-icone">⚔️</span>
-        <div class="card-titulo">Missões Diárias e Semanais</div>
-        <div class="card-desc">
-          Todo dia surgem novas missões para te desafiar — reciclar certos materiais, 
-          bater metas de quantidade e manter sequências. Complete para ganhar XP bônus 
-          e não deixar o streak cair.
-        </div>
-        <div class="card-acao">
-          <span class="card-acao-icone">⚔️</span>
-          <span class="card-acao-texto">Visite a tela de Missões</span>
-        </div>
-        <a href="missoes.html" class="btn-ir-la" id="btn4">
-          ⚔️ IR LÁ — Missões
-        </a>
-        <div class="card-completo-badge">✅ Missão concluída</div>
-      </div>
-
-      <!-- Card 5 -->
-      <div class="tutorial-card" id="card5">
-        <span class="card-numero">05 / 06</span>
-        <span class="card-icone">🏆</span>
-        <div class="card-titulo">Ranking Global</div>
-        <div class="card-desc">
-          Você não está sozinho. Outros agentes competem pelo topo do ranking — 
-          alguns são bots treinados, outros são rivais reais. 
-          Acumule XP, suba no ranking e prove que é o melhor agente ambiental.
-        </div>
-        <div class="card-acao">
-          <span class="card-acao-icone">🏆</span>
-          <span class="card-acao-texto">Visite o Ranking e veja sua posição</span>
-        </div>
-        <a href="ranking.html" class="btn-ir-la" id="btn5">
-          🏆 IR LÁ — Ranking
-        </a>
-        <div class="card-completo-badge">✅ Missão concluída</div>
-      </div>
-
-      <!-- Card 6 -->
-      <div class="tutorial-card" id="card6">
-        <span class="card-numero">06 / 06</span>
-        <span class="card-icone">🚀</span>
-        <div class="card-titulo">Briefing Concluído</div>
-        <div class="card-desc">
-          Você está pronto, Agente. O planeta conta com cada scan seu. 
-          Recicle, complete missões, suba no ranking e mostre que sustentabilidade 
-          pode ser competitiva. Boa sorte — o mundo precisa de você.
-        </div>
-        <div class="card-acao">
-          <span class="card-acao-icone">🎯</span>
-          <span class="card-acao-texto">Inicie sua primeira missão real</span>
-        </div>
-        <a href="home.html" class="btn-ir-la" id="btn6">
-          🏠 COMEÇAR AGORA
-        </a>
-        <div class="card-completo-badge">✅ Missão concluída</div>
-      </div>
-
     </div>
 
-    <!-- Botão finalizar -->
-    <div class="tutorial-finalizar" id="tutorialFinalizar">
-      <a href="home.html" class="btn btn-primary btn-full">
-        ✅ Briefing completo — Ir para o jogo
+    <!-- Botão Scanner -->
+    <div class="scanner-btn-wrap">
+      <a href="scanner.html" class="scanner-btn">
+        <span class="btn-icon">📷</span>
+        Escanear Item
       </a>
+    </div>
+
+    <!-- Missões do Dia -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-title">⚔️ Missões do dia</span>
+        <a href="missoes.html" class="section-link">Ver todas →</a>
+      </div>
+      <div class="missao-item" id="missao1">
+        <span class="missao-icon">📦</span>
+        <div class="missao-info">
+          <div class="missao-nome">Reciclar 3 itens hoje</div>
+          <div class="missao-progress-bar">
+            <div class="missao-progress-fill" id="missao1Fill" style="width: 0%"></div>
+          </div>
+        </div>
+        <span class="missao-xp">+30 XP</span>
+      </div>
+      <div class="missao-item" id="missao2">
+        <span class="missao-icon">♻️</span>
+        <div class="missao-info">
+          <div class="missao-nome">Reciclar um item de plástico</div>
+          <div class="missao-progress-bar">
+            <div class="missao-progress-fill" id="missao2Fill" style="width: 0%"></div>
+          </div>
+        </div>
+        <span class="missao-xp">+10 XP</span>
+      </div>
+    </div>
+
+    <!-- Dica do Dia -->
+    <div class="dica-card">
+      <span class="dica-icon">💡</span>
+      <div class="dica-content">
+        <div class="dica-label">Dica do dia</div>
+        <p id="dicaTexto">Carregando dica...</p>
+      </div>
     </div>
 
   </div>
 
+  <!-- Navbar -->
+  <nav class="navbar">
+    <a href="home.html" class="nav-item active">
+      <span class="nav-icon">🏠</span>
+      <span class="nav-label">Início</span>
+    </a>
+    <a href="scanner.html" class="nav-item">
+      <span class="nav-icon">📷</span>
+      <span class="nav-label">Scanner</span>
+    </a>
+    <a href="missoes.html" class="nav-item">
+      <span class="nav-icon">⚔️</span>
+      <span class="nav-label">Missões</span>
+    </a>
+    <a href="ranking.html" class="nav-item">
+      <span class="nav-icon">🏆</span>
+      <span class="nav-label">Ranking</span>
+    </a>
+    <a href="perfil.html" class="nav-item">
+      <span class="nav-icon">👤</span>
+      <span class="nav-label">Perfil</span>
+    </a>
+  </nav>
+
+  <script type="module" src="JS/app.js"></script>
   <script type="module" src="JS/tutorial.js"></script>
 
 </body>
