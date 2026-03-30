@@ -51,43 +51,36 @@ const PASSOS = [
 // ─────────────────────────────────────────────────────────────
 // Estado do tour
 // ─────────────────────────────────────────────────────────────
-let stepAtual    = 0;
-let usuarioUID   = null;
+let stepAtual     = 0;
+let usuarioUID    = null;
 let elementoAtual = null;
 
 // ─────────────────────────────────────────────────────────────
 // VERIFICAÇÃO DE AUTENTICAÇÃO E TUTORIAL
-// Só mostra o tour se o usuário estiver logado
-// e tutorialCompleto === false
 // ─────────────────────────────────────────────────────────────
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
-    // Não está logado — manda para o login
     window.location.href = "login.html";
     return;
   }
 
   usuarioUID = user.uid;
 
-  // Verifica no Firestore se o tutorial já foi feito
   const snap = await getDoc(doc(db, "usuarios", user.uid));
+
+  // ✅ CORRIGIDO: redireciona para home se tutorial já foi feito
   if (snap.exists() && snap.data().tutorialCompleto === true) {
-    // Tutorial já foi concluído — manda direto para home
     window.location.href = "home.html";
     return;
   }
 
   // Preenche nome na tela
-  const nome = user.displayName || "Agente";
+  const nome  = user.displayName || "Agente";
   const elNome = document.getElementById("nomeUsuario");
   if (elNome) elNome.textContent = nome.split(" ")[0];
 
-  // Tudo certo — inicializa o tour
+  // Cria os elementos e já registra os listeners dentro da função
   criarElementosTour();
-  document.getElementById("tourBtnComecar").addEventListener("click", iniciarTour);
-  document.getElementById("tourBtnSkipAll").addEventListener("click", pularTour);
-  document.getElementById("tourBtnProximo").addEventListener("click", avancarPasso);
-  document.getElementById("tourBtnPular").addEventListener("click", pularTour);
 });
 
 // ─────────────────────────────────────────────────────────────
@@ -149,12 +142,14 @@ function criarElementosTour() {
   `;
   document.body.appendChild(fim);
 
-  // Botão da tela final vai para home após salvar
-  setTimeout(() => {
-    document.getElementById("tourBtnFim")?.addEventListener("click", () => {
-      window.location.href = "home.html";
-    });
-  }, 100);
+  // ✅ CORRIGIDO: listeners registrados APÓS elementos existirem no DOM
+  document.getElementById("tourBtnComecar").addEventListener("click", iniciarTour);
+  document.getElementById("tourBtnSkipAll").addEventListener("click", pularTour);
+  document.getElementById("tourBtnProximo").addEventListener("click", avancarPasso);
+  document.getElementById("tourBtnPular").addEventListener("click", pularTour);
+  document.getElementById("tourBtnFim").addEventListener("click", () => {
+    window.location.href = "home.html";
+  });
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -219,14 +214,14 @@ function mostrarPasso(index) {
     el.classList.add("tour-highlight");
     posicionarSpotlight(el);
 
-    document.getElementById("tourStepNum").textContent  = `PASSO ${index + 1} / ${PASSOS.length}`;
-    document.getElementById("tourIcone").textContent    = passo.icone;
-    document.getElementById("tourTitulo").textContent   = passo.titulo;
-    document.getElementById("tourDesc").textContent     = passo.desc;
+    document.getElementById("tourStepNum").textContent   = `PASSO ${index + 1} / ${PASSOS.length}`;
+    document.getElementById("tourIcone").textContent     = passo.icone;
+    document.getElementById("tourTitulo").textContent    = passo.titulo;
+    document.getElementById("tourDesc").textContent      = passo.desc;
 
     const pct = Math.round(((index + 1) / PASSOS.length) * 100);
-    document.getElementById("tourProgressFill").style.width = `${pct}%`;
-    document.getElementById("tourProgressLabel").textContent = `${pct}%`;
+    document.getElementById("tourProgressFill").style.width  = `${pct}%`;
+    document.getElementById("tourProgressLabel").textContent  = `${pct}%`;
 
     const btnProximo = document.getElementById("tourBtnProximo");
     btnProximo.textContent = index === PASSOS.length - 1 ? "Concluir ✅" : "Próximo →";
@@ -282,8 +277,12 @@ async function finalizarTour() {
 // ─────────────────────────────────────────────────────────────
 async function pularTour() {
   if (elementoAtual) elementoAtual.classList.remove("tour-highlight");
-  document.getElementById("tourSpotlight")?.style && (document.getElementById("tourSpotlight").style.opacity = "0");
-  document.getElementById("tourBalao")?.classList.remove("visivel");
+  const sp = document.getElementById("tourSpotlight");
+  if (sp) sp.style.opacity = "0";
+  const bl = document.getElementById("tourBalao");
+  if (bl) bl.classList.remove("visivel");
+  const welcome = document.getElementById("tourWelcome");
+  if (welcome) welcome.style.display = "none";
 
   if (usuarioUID) {
     try {
