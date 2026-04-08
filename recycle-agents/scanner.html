@@ -6,6 +6,7 @@
   <title>Scanner — Recycle Agents</title>
   <link rel="stylesheet" href="CSS/style.css" />
   <link rel="stylesheet" href="CSS/scanner.css" />
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 </head>
 <body>
 
@@ -13,7 +14,7 @@
 
     <!-- Header -->
     <header class="scanner-header">
-      <a href="home.html" class="back-btn">←</a>
+      <a href="home.html" class="back-btn"><i data-lucide="arrow-left"></i></a>
       <div class="scanner-header-info">
         <h2>Scanner de Itens</h2>
         <p>Aponte para o código de barras</p>
@@ -42,12 +43,13 @@
 
     <!-- Aviso de limite -->
     <div class="limite-aviso" id="limiteAviso">
-      ⚠️ Você já escaneou este item 2 vezes hoje. Tente outro!
+      <i data-lucide="triangle-alert" style="width:16px;height:16px;vertical-align:middle"></i>
+      Você já escaneou este item 2 vezes hoje. Tente outro!
     </div>
 
     <!-- Resultado -->
     <div class="resultado-card" id="resultadoCard">
-      <span class="resultado-icon" id="resultadoIcon">♻️</span>
+      <span class="resultado-icon" id="resultadoIcon"><i data-lucide="recycle"></i></span>
       <div class="resultado-material" id="resultadoMaterial">—</div>
       <div class="resultado-xp">+<span id="resultadoXP">0</span> XP adicionados!</div>
       <button class="btn btn-primary btn-full" id="btnEscanearNovamente">
@@ -58,26 +60,29 @@
     <!-- Materiais referência -->
     <div class="materiais-section">
       <div class="section-header">
-        <span class="section-title">📋 Pontuação por material</span>
+        <span class="section-title">
+          <i data-lucide="list" style="width:14px;height:14px;vertical-align:middle"></i>
+          Pontuação por material
+        </span>
       </div>
       <div class="materiais-grid">
         <div class="material-chip">
-          <span class="chip-icon">📄</span>
+          <span class="chip-icon"><i data-lucide="file-text"></i></span>
           <div class="chip-nome">Papel</div>
           <div class="chip-xp">+5 XP</div>
         </div>
         <div class="material-chip">
-          <span class="chip-icon">🧴</span>
+          <span class="chip-icon"><i data-lucide="bottle-water"></i></span>
           <div class="chip-nome">Plástico</div>
           <div class="chip-xp">+10 XP</div>
         </div>
         <div class="material-chip">
-          <span class="chip-icon">🍶</span>
+          <span class="chip-icon"><i data-lucide="wine"></i></span>
           <div class="chip-nome">Vidro</div>
           <div class="chip-xp">+15 XP</div>
         </div>
         <div class="material-chip">
-          <span class="chip-icon">🥫</span>
+          <span class="chip-icon"><i data-lucide="cylinder"></i></span>
           <div class="chip-nome">Metal</div>
           <div class="chip-xp">+20 XP</div>
         </div>
@@ -89,29 +94,29 @@
   <!-- Navbar -->
   <nav class="navbar">
     <a href="home.html" class="nav-item">
-      <span class="nav-icon">🏠</span>
+      <span class="nav-icon"><i data-lucide="house"></i></span>
       <span class="nav-label">Início</span>
     </a>
     <a href="scanner.html" class="nav-item active">
-      <span class="nav-icon">📷</span>
+      <span class="nav-icon"><i data-lucide="scan-line"></i></span>
       <span class="nav-label">Scanner</span>
     </a>
     <a href="missoes.html" class="nav-item">
-      <span class="nav-icon">⚔️</span>
+      <span class="nav-icon"><i data-lucide="sword"></i></span>
       <span class="nav-label">Missões</span>
     </a>
     <a href="ranking.html" class="nav-item">
-      <span class="nav-icon">🏆</span>
+      <span class="nav-icon"><i data-lucide="trophy"></i></span>
       <span class="nav-label">Ranking</span>
     </a>
     <a href="perfil.html" class="nav-item">
-      <span class="nav-icon">👤</span>
+      <span class="nav-icon"><i data-lucide="circle-user"></i></span>
       <span class="nav-label">Perfil</span>
     </a>
   </nav>
 
   <script src="../LIBS/quagga.min.js"></script>
   <script type="module" src="JS/scanner.js"></script>
-
+  <script>lucide.createIcons();</script>
 </body>
 </html>

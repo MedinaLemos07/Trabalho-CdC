@@ -6,6 +6,7 @@
   <title>Dashboard — Recycle Agents</title>
   <link rel="stylesheet" href="CSS/style.css" />
   <link rel="stylesheet" href="CSS/home.css" />
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 </head>
 <body>
 
@@ -19,7 +20,9 @@
         <span class="label">Bem-vindo de volta,</span>
         <span class="nome" id="nomeUsuario">Agente</span>
       </div>
-      <a href="perfil.html" class="header-avatar" title="Meu perfil">👤</a>
+      <a href="perfil.html" class="header-avatar" title="Meu perfil">
+        <i data-lucide="user-circle"></i>
+      </a>
     </header>
 
     <!-- XP Card -->
@@ -31,7 +34,8 @@
         </div>
         <div class="xp-level">
           <span class="level-badge">
-            ⚡ Nível <span id="nivelAtual">1</span>
+            <i data-lucide="zap" style="width:14px;height:14px"></i>
+            Nível <span id="nivelAtual">1</span>
           </span>
         </div>
       </div>
@@ -47,12 +51,12 @@
     <!-- Stats -->
     <div class="stats-row">
       <div class="stat-card">
-        <span class="stat-icon">♻️</span>
+        <span class="stat-icon"><i data-lucide="recycle"></i></span>
         <div class="stat-num" id="totalItens">0</div>
         <div class="stat-desc">Itens reciclados</div>
       </div>
       <div class="stat-card">
-        <span class="stat-icon">🎯</span>
+        <span class="stat-icon"><i data-lucide="target"></i></span>
         <div class="stat-num" id="missoesCompletas">0</div>
         <div class="stat-desc">Missões completas</div>
       </div>
@@ -61,7 +65,7 @@
     <!-- Botão Scanner -->
     <div class="scanner-btn-wrap">
       <a href="scanner.html" class="scanner-btn">
-        <span class="btn-icon">📷</span>
+        <span class="btn-icon"><i data-lucide="scan-line"></i></span>
         Escanear Item
       </a>
     </div>
@@ -69,12 +73,15 @@
     <!-- Missões do Dia -->
     <div class="section">
       <div class="section-header">
-        <span class="section-title">⚔️ Missões do dia</span>
+        <span class="section-title">
+          <i data-lucide="sword" style="width:14px;height:14px;vertical-align:middle"></i>
+          Missões do dia
+        </span>
         <a href="missoes.html" class="section-link">Ver todas →</a>
       </div>
 
       <div class="missao-item" id="missao1">
-        <span class="missao-icon">📦</span>
+        <span class="missao-icon"><i data-lucide="package"></i></span>
         <div class="missao-info">
           <div class="missao-nome">Reciclar 3 itens hoje</div>
           <div class="missao-progress-bar">
@@ -85,7 +92,7 @@
       </div>
 
       <div class="missao-item" id="missao2">
-        <span class="missao-icon">♻️</span>
+        <span class="missao-icon"><i data-lucide="recycle"></i></span>
         <div class="missao-info">
           <div class="missao-nome">Reciclar um item de plástico</div>
           <div class="missao-progress-bar">
@@ -94,12 +101,11 @@
         </div>
         <span class="missao-xp">+10 XP</span>
       </div>
-
     </div>
 
     <!-- Dica do Dia -->
     <div class="dica-card">
-      <span class="dica-icon">💡</span>
+      <span class="dica-icon"><i data-lucide="lightbulb"></i></span>
       <div class="dica-content">
         <div class="dica-label">Dica do dia</div>
         <p id="dicaTexto">Carregando dica...</p>
@@ -111,28 +117,28 @@
   <!-- Navbar -->
   <nav class="navbar">
     <a href="home.html" class="nav-item active">
-      <span class="nav-icon">🏠</span>
+      <span class="nav-icon"><i data-lucide="house"></i></span>
       <span class="nav-label">Início</span>
     </a>
     <a href="scanner.html" class="nav-item">
-      <span class="nav-icon">📷</span>
+      <span class="nav-icon"><i data-lucide="scan-line"></i></span>
       <span class="nav-label">Scanner</span>
     </a>
     <a href="missoes.html" class="nav-item">
-      <span class="nav-icon">⚔️</span>
+      <span class="nav-icon"><i data-lucide="sword"></i></span>
       <span class="nav-label">Missões</span>
     </a>
     <a href="ranking.html" class="nav-item">
-      <span class="nav-icon">🏆</span>
+      <span class="nav-icon"><i data-lucide="trophy"></i></span>
       <span class="nav-label">Ranking</span>
     </a>
     <a href="perfil.html" class="nav-item">
-      <span class="nav-icon">👤</span>
+      <span class="nav-icon"><i data-lucide="circle-user"></i></span>
       <span class="nav-label">Perfil</span>
     </a>
   </nav>
 
   <script type="module" src="JS/app.js"></script>
-
+  <script>lucide.createIcons();</script>
 </body>
 </html>
