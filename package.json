@@ -1,4 +1,7 @@
 {
+  "name": "recycle-agents",
+  "version": "1.0.0",
+  "description": "Aplicativo gamificado de incentivo à reciclagem",
   "dependencies": {
     "firebase": "^12.11.0"
   }

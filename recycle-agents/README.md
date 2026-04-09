@@ -1,34 +1,57 @@
-# ♻️ Recycle Agents
+# Recycle Agents
 
-Aplicação web gamificada para incentivo à reciclagem.
+Projeto acadêmico desenvolvido para a disciplina de Computação e Cidadania.
 
-## 🚀 Como rodar
+## Sobre
 
-1. Configure o Firebase em `FIREBASE/firebase-config.js`
-2. Abra `index.html` em um servidor local (ex: Live Server no VSCode)
+Aplicativo web gamificado de incentivo à reciclagem. O usuário escaneia o código de barras de embalagens recicláveis, ganha XP por material reciclado, completa missões diárias e semanais, e compete no ranking global.
 
-> ⚠️ Não abra os arquivos diretamente como `file://` — o Firebase exige um servidor HTTP.
+## Funcionalidades
 
-## 🛠️ Tecnologias
+- Autenticação com e-mail e verificação de conta
+- Scanner de código de barras via câmera (QuaggaJS)
+- Sistema de XP e níveis progressivos
+- Missões diárias e semanais
+- Ranking global com bots dinâmicos
+- Tutorial interativo com spotlight
+- Dicas educativas sobre reciclagem
 
-- HTML5 + CSS3 + JavaScript (ES Modules)
-- Firebase Authentication + Firestore
-- QuaggaJS (scanner de código de barras)
-- SweetAlert2 (alertas visuais)
+## Pontuação por material
 
-## 📁 Estrutura
+| Material | XP |
+|----------|----|
+| Papel    | +5  |
+| Plástico | +10 |
+| Vidro    | +15 |
+| Metal    | +20 |
+
+## Tecnologias
+
+- HTML, CSS e JavaScript (ES Modules)
+- Firebase Authentication
+- Firebase Firestore
+- QuaggaJS (leitura de código de barras)
+- SweetAlert2 (disponível para uso futuro)
+- Lucide Icons
+
+## Estrutura de pastas
 
 ```
-├── index.html        # Tela inicial (splash)
-├── login.html        # Login
-├── cadastro.html     # Cadastro
-├── home.html         # Dashboard (em desenvolvimento)
-├── scanner.html      # Scanner (em desenvolvimento)
-├── missoes.html      # Missões (em desenvolvimento)
-├── ranking.html      # Ranking (em desenvolvimento)
-├── perfil.html       # Perfil (em desenvolvimento)
-├── CSS/              # Estilos
-├── JS/               # Scripts
-├── FIREBASE/         # Configuração Firebase
-└── LIBS/             # Bibliotecas locais
+├── ASSETS/
+├── LIBS/
+│   ├── quagga.min.js
+│   └── sweetalert2.js
+├── recycle-agents/
+│   ├── CSS/
+│   ├── FIREBASE/
+│   ├── JS/
+│   └── *.html
+└── index.html
 ```
+
+## Integrantes
+
+- Luan Medina
+- Enthony Silva
+- Luiz Manoel
+- Julia Keller
