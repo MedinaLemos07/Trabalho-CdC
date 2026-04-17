@@ -1,0 +1,213 @@
+/* ============================================================
+   RECYCLE AGENTS — icon-styles.css
+   Glow neon + hover effects para ícones Lucide
+   ============================================================ */
+
+/* ---------- Base dos ícones ---------- */
+.lucide {
+  display: inline-block;
+  vertical-align: middle;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
+}
+
+/* ---------- Navbar ---------- */
+.nav-item .lucide {
+  width: 22px;
+  height: 22px;
+  opacity: 0.5;
+}
+
+.nav-item:hover .lucide,
+.nav-item.active .lucide {
+  opacity: 1;
+  filter: drop-shadow(0 0 6px var(--green-neon));
+}
+
+.nav-item.active .lucide {
+  stroke: var(--green-neon);
+  filter: drop-shadow(0 0 8px rgba(0, 255, 106, 0.8));
+}
+
+/* ---------- Botão Scanner (hero) ---------- */
+.scanner-btn .lucide {
+  width: 22px;
+  height: 22px;
+  stroke: var(--bg-primary);
+  stroke-width: 2;
+}
+
+/* ---------- Ícones de stat card ---------- */
+.stat-icon .lucide {
+  width: 26px;
+  height: 26px;
+  stroke: var(--green-neon);
+  opacity: 0.8;
+  filter: drop-shadow(0 0 4px rgba(0, 255, 106, 0.4));
+}
+
+/* ---------- Back button ---------- */
+.back-btn .lucide {
+  width: 20px;
+  height: 20px;
+  stroke: var(--text-primary);
+  transition: stroke 0.2s ease, filter 0.2s ease;
+}
+
+.back-btn:hover .lucide {
+  stroke: var(--green-neon);
+  filter: drop-shadow(0 0 6px rgba(0, 255, 106, 0.6));
+}
+
+/* ---------- Ícone de missão ---------- */
+.missao-icon .lucide,
+.missao-card-icon .lucide {
+  width: 22px;
+  height: 22px;
+  stroke: var(--green-neon);
+  opacity: 0.9;
+  filter: drop-shadow(0 0 3px rgba(0, 255, 106, 0.3));
+}
+
+/* ---------- Dica do dia ---------- */
+.dica-icon .lucide {
+  width: 20px;
+  height: 20px;
+  stroke: var(--green-neon);
+  filter: drop-shadow(0 0 5px rgba(0, 255, 106, 0.5));
+}
+
+/* ---------- XP level badge ---------- */
+.level-badge .lucide {
+  width: 13px;
+  height: 13px;
+  stroke: var(--green-neon);
+}
+
+/* ---------- Seção header ---------- */
+.section-title .lucide {
+  width: 13px;
+  height: 13px;
+  stroke: var(--text-secondary);
+  vertical-align: middle;
+}
+
+/* ---------- Perfil avatar ---------- */
+.perfil-avatar .lucide {
+  width: 48px;
+  height: 48px;
+  stroke: var(--green-neon);
+  filter: drop-shadow(0 0 8px rgba(0, 255, 106, 0.4));
+}
+
+/* ---------- Header avatar ---------- */
+.header-avatar .lucide {
+  width: 22px;
+  height: 22px;
+  stroke: var(--text-secondary);
+  transition: stroke 0.2s ease;
+}
+
+.header-avatar:hover .lucide {
+  stroke: var(--green-neon);
+}
+
+/* ---------- Perfil stats ---------- */
+.perfil-stat-icon .lucide {
+  width: 24px;
+  height: 24px;
+  stroke: var(--green-neon);
+  opacity: 0.85;
+  filter: drop-shadow(0 0 4px rgba(0, 255, 106, 0.35));
+}
+
+/* ---------- Nivel badge no perfil ---------- */
+.perfil-nivel-badge .lucide {
+  width: 13px;
+  height: 13px;
+  stroke: var(--green-neon);
+}
+
+/* ---------- Logout ---------- */
+.btn-logout .lucide {
+  width: 15px;
+  height: 15px;
+  stroke: #ff6b6b;
+}
+
+/* ---------- Material chip (scanner) ---------- */
+.chip-icon .lucide {
+  width: 28px;
+  height: 28px;
+  stroke: var(--green-neon);
+  opacity: 0.9;
+  filter: drop-shadow(0 0 4px rgba(0, 255, 106, 0.3));
+}
+
+/* ---------- FAQ ---------- */
+.faq-titulo .lucide {
+  width: 13px;
+  height: 13px;
+  stroke: var(--green-neon);
+}
+
+.faq-fechar .lucide {
+  width: 13px;
+  height: 13px;
+  stroke: var(--text-muted);
+}
+
+.faq-icone .lucide {
+  width: 15px;
+  height: 15px;
+  stroke: var(--green-neon);
+  transition: transform 0.3s ease;
+}
+
+.faq-card.aberto .faq-icone .lucide {
+  transform: rotate(45deg);
+}
+
+/* ---------- Limite aviso (scanner) ---------- */
+.limite-aviso .lucide {
+  width: 15px;
+  height: 15px;
+  stroke: #ffcc44;
+  vertical-align: middle;
+}
+
+/* ---------- Ranking header ---------- */
+.reset-timer .lucide {
+  width: 13px;
+  height: 13px;
+  stroke: var(--text-muted);
+  vertical-align: middle;
+}
+
+/* ---------- Loading ---------- */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+.lucide-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* ---------- Animação de entrada nos nav ícones ---------- */
+@keyframes icon-pulse {
+  0%, 100% { filter: drop-shadow(0 0 4px rgba(0,255,106,0.4)); }
+  50%       { filter: drop-shadow(0 0 10px rgba(0,255,106,0.9)); }
+}
+
+.nav-item.active .lucide {
+  animation: icon-pulse 3s ease-in-out infinite;
+}
+
+/* Remove aumento no ícone ativo do Ranking */
+.nav-item.active .lucide {
+  transform: scale(1) !important;
+}

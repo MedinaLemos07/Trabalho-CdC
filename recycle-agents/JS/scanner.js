@@ -19,24 +19,29 @@ const MATERIAIS = [
 
 let usuarioAtual = null;
 let scanAtivo    = true;
+let quaggaRodando = false;
 
-// ─── Auth ─────────────────────────────────────────────────────
+// ─── Auth ──────────────────────────────────────────────────────
 onAuthStateChanged(auth, (user) => {
   if (!user) { window.location.href = "login.html"; return; }
   usuarioAtual = user;
   iniciarScanner();
 });
 
-// ─── Iniciar câmera com QuaggaJS ─────────────────────────────
+// ─── Iniciar câmera com QuaggaJS ──────────────────────────────
 function iniciarScanner() {
   const status = document.getElementById("cameraStatus");
+
+  if (quaggaRodando) {
+    Quagga.stop();
+    quaggaRodando = false;
+  }
 
   Quagga.init({
     inputStream: {
       name: "Live",
       type: "LiveStream",
-      // ✅ CORRIGIDO: aponta para o wrapper, não para o video diretamente
-      target: document.getElementById("viewfinder-wrap") || document.querySelector(".viewfinder-wrap"),
+      target: document.getElementById("viewfinder-wrap"),
       constraints: {
         facingMode: "environment",
         width:  { ideal: 1280 },
@@ -56,51 +61,57 @@ function iniciarScanner() {
   }, (err) => {
     if (err) {
       console.error("[Scanner]", err);
-      status.textContent = "❌ Câmera indisponível";
+      if (status) status.textContent = "❌ Câmera indisponível — use o Live Server";
       return;
     }
     Quagga.start();
-    status.textContent = "✅ Câmera ativa — escaneando...";
+    quaggaRodando = true;
+    if (status) status.textContent = "✅ Câmera ativa — escaneando...";
   });
 
   Quagga.onDetected(onCodigoDetectado);
 }
 
-// ─── Código detectado ────────────────────────────────────────
+// ─── Código detectado ─────────────────────────────────────────
 async function onCodigoDetectado(result) {
   if (!scanAtivo) return;
 
-  const codigo = result.codeResult.code;
-  if (!codigo) return;
+  const codigo = result?.codeResult?.code;
+  if (!codigo || codigo.length < 4) return;
 
   scanAtivo = false;
   Quagga.stop();
+  quaggaRodando = false;
 
   await processarCodigo(codigo);
 }
 
-// ─── Processar código ────────────────────────────────────────
+// ─── Processar código ─────────────────────────────────────────
 async function processarCodigo(codigo) {
-  const hoje      = new Date().toISOString().split("T")[0];
-  const chaveDoc  = `${usuarioAtual.uid}_${codigo}_${hoje}`;
+  const hoje     = new Date().toISOString().split("T")[0];
+  const chaveDoc = `${usuarioAtual.uid}_${codigo}_${hoje}`;
   const limiteRef = doc(db, "scans", chaveDoc);
 
   const limiteSnap = await getDoc(limiteRef);
   const scanCount  = limiteSnap.exists() ? (limiteSnap.data().count || 0) : 0;
 
   if (scanCount >= 2) {
-    document.getElementById("limiteAviso").classList.add("show");
+    const aviso = document.getElementById("limiteAviso");
+    if (aviso) aviso.classList.add("show");
     setTimeout(() => reiniciarScanner(), 3000);
     return;
   }
 
   const material = MATERIAIS[codigo.charCodeAt(codigo.length - 1) % MATERIAIS.length];
 
+  // Registrar scan
   await setDoc(limiteRef, { count: scanCount + 1 }, { merge: true });
 
+  // Atualizar dados do usuário
   const userRef = doc(db, "usuarios", usuarioAtual.uid);
   await updateDoc(userRef, {
     xp:              increment(material.xp),
+    xpSemana:        increment(material.xp),
     itensReciclados: increment(1),
     itensDia:        increment(1),
     itensSemana:     increment(1),
@@ -108,25 +119,61 @@ async function processarCodigo(codigo) {
     [`${material.tipo}Semana`]: increment(1),
   });
 
+  // Atualizar streak
+  await atualizarStreak(userRef);
+
   mostrarResultado(material);
 }
 
-// ─── Mostrar resultado ───────────────────────────────────────
-function mostrarResultado(material) {
-  document.getElementById("resultadoIcon").textContent     = material.icon;
-  document.getElementById("resultadoMaterial").textContent = material.nome;
-  document.getElementById("resultadoXP").textContent       = material.xp;
-  document.getElementById("resultadoCard").classList.add("show");
-  document.getElementById("cameraStatus").textContent      = `✅ ${material.nome} detectado!`;
+// ─── Atualizar streak ─────────────────────────────────────────
+async function atualizarStreak(userRef) {
+  const snap = await getDoc(userRef);
+  if (!snap.exists()) return;
+
+  const dados = snap.data();
+  const hoje  = new Date().toISOString().split("T")[0];
+  const ultimo = dados.ultimoScanDia || "";
+
+  if (ultimo === hoje) return; // já reciclou hoje
+
+  const ontem = new Date(Date.now() - 86400000).toISOString().split("T")[0];
+  const novoStreak = ultimo === ontem ? (dados.streak || 0) + 1 : 1;
+
+  await updateDoc(userRef, {
+    streak:        novoStreak,
+    ultimoScanDia: hoje,
+  });
 }
 
-// ─── Reiniciar scanner ───────────────────────────────────────
+// ─── Mostrar resultado ────────────────────────────────────────
+function mostrarResultado(material) {
+  const icon     = document.getElementById("resultadoIcon");
+  const matEl    = document.getElementById("resultadoMaterial");
+  const xpEl     = document.getElementById("resultadoXP");
+  const card     = document.getElementById("resultadoCard");
+  const statusEl = document.getElementById("cameraStatus");
+
+  if (icon)     icon.textContent     = material.icon;
+  if (matEl)    matEl.textContent    = material.nome;
+  if (xpEl)     xpEl.textContent     = material.xp;
+  if (card)     card.classList.add("show");
+  if (statusEl) statusEl.textContent = `✅ ${material.nome} detectado!`;
+}
+
+// ─── Reiniciar scanner ────────────────────────────────────────
 function reiniciarScanner() {
-  document.getElementById("resultadoCard").classList.remove("show");
-  document.getElementById("limiteAviso").classList.remove("show");
+  const card  = document.getElementById("resultadoCard");
+  const aviso = document.getElementById("limiteAviso");
+
+  if (card)  card.classList.remove("show");
+  if (aviso) aviso.classList.remove("show");
+
   scanAtivo = true;
   iniciarScanner();
 }
 
-document.getElementById("btnEscanearNovamente")
-  .addEventListener("click", reiniciarScanner);
+// Botão de escanear novamente
+const btnNovamente = document.getElementById("btnEscanearNovamente");
+if (btnNovamente) {
+  btnNovamente.addEventListener("click", reiniciarScanner);
+}

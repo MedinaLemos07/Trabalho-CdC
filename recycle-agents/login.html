@@ -6,6 +6,7 @@
   <title>Login — Recycle Agents</title>
   <link rel="stylesheet" href="CSS/style.css" />
   <link rel="stylesheet" href="CSS/login.css" />
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 </head>
 <body>
 
@@ -14,7 +15,9 @@
 
       <!-- Logo -->
       <div class="auth-logo">
-        <span class="logo-icon">♻️</span>
+        <span class="logo-icon">
+          <i data-lucide="recycle"></i>
+        </span>
         <h1>RECYCLE AGENTS</h1>
         <p>Sua missão começa aqui</p>
       </div>
@@ -47,7 +50,7 @@
               autocomplete="current-password"
             />
             <button class="toggle-password" id="toggleSenha" type="button" aria-label="Mostrar senha">
-              👁
+              <i data-lucide="eye" style="width:16px;height:16px"></i>
             </button>
           </div>
         </div>
@@ -62,12 +65,12 @@
           <a href="cadastro.html">Criar conta</a>
         </div>
       </div>
-      <!-- /auth-card -->
 
     </div>
   </div>
 
   <script type="module" src="JS/auth.js"></script>
+  <script>lucide.createIcons();</script>
 
 </body>
 </html>

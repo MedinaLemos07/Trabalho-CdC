@@ -39,19 +39,7 @@
   text-align: center;
 }
 
-.perfil-avatar {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  background: var(--bg-card);
-  border: 3px solid var(--green-neon);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 2.4rem;
-  margin-bottom: 14px;
-  box-shadow: 0 0 24px rgba(0,255,106,0.25);
-}
+
 
 .perfil-nome {
   font-family: var(--font-display);
@@ -370,4 +358,174 @@
   font-size: 0.83rem;
   color: var(--green-mid);
   line-height: 1.7;
+}
+
+/* Avatar no perfil */
+.perfil-avatar-wrap {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 14px;
+}
+
+.perfil-avatar {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  background: var(--bg-card);
+  border: 3px solid var(--green-neon);
+  overflow: hidden;
+  box-shadow: 0 0 24px rgba(0,255,106,0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar-img-perfil {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  transition: opacity 0.4s ease, transform 0.3s ease;
+}
+
+.btn-editar-avatar {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--green-neon);
+  border: 2px solid var(--bg-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition);
+  z-index: 2;
+}
+
+.btn-editar-avatar:hover {
+  background: var(--green-mid);
+  transform: scale(1.1);
+  box-shadow: 0 0 10px rgba(0,255,106,0.5);
+}
+
+.btn-editar-avatar .lucide {
+  stroke: var(--bg-primary);
+  width: 13px;
+  height: 13px;
+}
+
+/* ─── Sistema de Avatar ─────────────────────────────────────── */
+.perfil-avatar {
+  width: 90px;
+  height: 90px;
+  margin-bottom: 14px;
+}
+
+.avatar-wrapper {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: var(--bg-card);
+  border: 2.5px solid var(--green-neon);
+  box-shadow: 0 0 20px rgba(0,255,106,0.25);
+  position: relative;
+  overflow: visible;
+  cursor: pointer;
+  transition: box-shadow var(--transition);
+}
+
+.avatar-wrapper:hover {
+  box-shadow: 0 0 30px rgba(0,255,106,0.5);
+}
+
+.avatar-img {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  display: block;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  background: var(--bg-secondary);
+}
+
+.avatar-fallback {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  align-items: center;
+  justify-content: center;
+  color: var(--green-neon);
+}
+
+.avatar-edit-btn {
+  position: absolute;
+  bottom: 0;
+  right: -4px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--green-neon);
+  border: 2px solid var(--bg-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition);
+  z-index: 2;
+}
+
+.avatar-edit-btn:hover {
+  background: var(--green-mid);
+  transform: scale(1.15);
+}
+
+.avatar-edit-btn svg {
+  stroke: var(--bg-primary);
+}
+
+.avatar-loading .avatar-img {
+  filter: blur(2px);
+}
+
+@keyframes avatar-spin {
+  to { transform: rotate(360deg); }
+}
+
+.avatar-loading .avatar-edit-btn svg {
+  animation: avatar-spin 0.8s linear infinite;
+}
+
+/* ─── Avatar no ranking ────────────────────────────────────── */
+.r-avatar-img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--bg-secondary);
+  border: 1.5px solid var(--green-border);
+  flex-shrink: 0;
+  object-fit: cover;
+}
+
+.podio-avatar img,
+.podio-avatar .r-avatar-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* ─── Avatar no header (home) ─────────────────────────────── */
+.header-avatar-img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--green-border);
+  transition: border-color var(--transition);
+}
+
+.header-avatar:hover .header-avatar-img {
+  border-color: var(--green-neon);
 }

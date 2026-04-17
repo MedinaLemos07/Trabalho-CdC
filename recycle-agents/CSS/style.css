@@ -115,7 +115,8 @@ a:hover { color: var(--green-mid); }
   box-shadow: 0 0 20px rgba(0,255,106,0.3);
 }
 .btn-primary:hover {
-  background: var(--green-mid);
+  background: var(--green-neon);
+  color: #060a06;
   box-shadow: 0 0 30px rgba(0,255,106,0.5);
   transform: translateY(-1px);
 }

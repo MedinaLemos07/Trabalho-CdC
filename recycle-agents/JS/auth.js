@@ -78,7 +78,7 @@ function setLoading(btn, state) {
 }
 
 // ─────────────────────────────────────────────────────────────
-// MOSTRAR / ESCONDER SENHA
+// MOSTRAR / ESCONDER SENHA — compatível com Lucide Icons
 // ─────────────────────────────────────────────────────────────
 function setupToggle(toggleId, inputId) {
   const btn   = document.getElementById(toggleId);
@@ -87,8 +87,11 @@ function setupToggle(toggleId, inputId) {
 
   btn.addEventListener("click", () => {
     const mostrando = input.type === "text";
-    input.type      = mostrando ? "password" : "text";
-    btn.textContent = mostrando ? "👁" : "🙈";
+    input.type = mostrando ? "password" : "text";
+
+    const iconName = mostrando ? "eye" : "eye-off";
+    btn.innerHTML = `<i data-lucide="${iconName}" style="width:16px;height:16px"></i>`;
+    lucide.createIcons();
   });
 }
 
@@ -146,9 +149,12 @@ if (isCadastro) {
         nome,
         email,
         xp:               0,
+        xpSemana:         0,
+        liga:             "sucata",
         itensReciclados:  0,
         missoesCompletas: 0,
         streak:           0,
+        ultimoScanDia:    "",
         itensDia:         0,
         itensSemana:      0,
         plasticoDia:      0,

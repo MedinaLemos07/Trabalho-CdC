@@ -6,26 +6,20 @@
   <title>Dashboard — Recycle Agents</title>
   <link rel="stylesheet" href="CSS/style.css" />
   <link rel="stylesheet" href="CSS/home.css" />
-  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <link rel="stylesheet" href="CSS/icon-styles.css" />
 </head>
 <body>
-
   <div class="home-orb"></div>
-
   <div class="home-wrapper">
 
-    <!-- Header -->
     <header class="home-header">
       <div class="header-greeting">
         <span class="label">Bem-vindo de volta,</span>
         <span class="nome" id="nomeUsuario">Agente</span>
       </div>
-      <a href="perfil.html" class="header-avatar" title="Meu perfil">
-        <i data-lucide="user-circle"></i>
-      </a>
+      <a href="perfil.html" class="header-avatar" aria-label="Meu perfil"><svg class="lucide" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/></svg></a>
     </header>
 
-    <!-- XP Card -->
     <div class="xp-card">
       <div class="xp-top">
         <div class="xp-value">
@@ -33,79 +27,61 @@
           <span class="unit">XP TOTAL</span>
         </div>
         <div class="xp-level">
-          <span class="level-badge">
-            <i data-lucide="zap" style="width:14px;height:14px"></i>
-            Nível <span id="nivelAtual">1</span>
-          </span>
+          <span class="level-badge"><svg class="lucide" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Nível <span id="nivelAtual">1</span></span>
         </div>
       </div>
       <div class="xp-bar-info">
         <span id="xpProgresso">0 / 100 XP</span>
         <span id="xpPct">0%</span>
       </div>
-      <div class="xp-bar">
-        <div class="xp-bar-fill" id="xpBarFill" style="width: 0%"></div>
-      </div>
+      <div class="xp-bar"><div class="xp-bar-fill" id="xpBarFill" style="width:0%"></div></div>
     </div>
 
-    <!-- Stats -->
     <div class="stats-row">
       <div class="stat-card">
-        <span class="stat-icon"><i data-lucide="recycle"></i></span>
+        <span class="stat-icon"><svg class="lucide" xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M7 19H4.815a1.83 1.83 0 0 1-1.57-.881 1.785 1.785 0 0 1-.004-1.784L7.196 9.5"/><path d="M11 19h8.203a1.83 1.83 0 0 0 1.556-.89 1.784 1.784 0 0 0 0-1.775l-1.226-2.12"/><path d="m14 16-3 3 3 3"/><path d="M8.293 13.596 7.196 9.5 3.1 10.598"/><path d="m9.344 5.811 1.093-1.892A1.83 1.83 0 0 1 11.985 3a1.784 1.784 0 0 1 1.546.888l3.943 6.843"/><path d="m13.378 9.633 4.096 1.098 1.097-4.096"/></svg></span>
         <div class="stat-num" id="totalItens">0</div>
         <div class="stat-desc">Itens reciclados</div>
       </div>
       <div class="stat-card">
-        <span class="stat-icon"><i data-lucide="target"></i></span>
+        <span class="stat-icon"><svg class="lucide" xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></span>
         <div class="stat-num" id="missoesCompletas">0</div>
         <div class="stat-desc">Missões completas</div>
       </div>
     </div>
 
-    <!-- Botão Scanner -->
     <div class="scanner-btn-wrap">
       <a href="scanner.html" class="scanner-btn">
-        <span class="btn-icon"><i data-lucide="scan-line"></i></span>
+        <span class="btn-icon"><svg class="lucide" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><rect width="7" height="7" x="7" y="7" rx="1"/></svg></span>
         Escanear Item
       </a>
     </div>
 
-    <!-- Missões do Dia -->
     <div class="section">
       <div class="section-header">
-        <span class="section-title">
-          <i data-lucide="sword" style="width:14px;height:14px;vertical-align:middle"></i>
-          Missões do dia
-        </span>
+        <span class="section-title"><svg class="lucide" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5"/><line x1="13" x2="19" y1="19" y2="13"/><line x1="16" x2="20" y1="16" y2="20"/><line x1="19" x2="21" y1="21" y2="19"/></svg> Missões do dia</span>
         <a href="missoes.html" class="section-link">Ver todas →</a>
       </div>
-
       <div class="missao-item" id="missao1">
-        <span class="missao-icon"><i data-lucide="package"></i></span>
+        <span class="missao-icon"><svg class="lucide" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg></span>
         <div class="missao-info">
           <div class="missao-nome">Reciclar 3 itens hoje</div>
-          <div class="missao-progress-bar">
-            <div class="missao-progress-fill" id="missao1Fill" style="width: 0%"></div>
-          </div>
+          <div class="missao-progress-bar"><div class="missao-progress-fill" id="missao1Fill" style="width:0%"></div></div>
         </div>
         <span class="missao-xp">+30 XP</span>
       </div>
-
       <div class="missao-item" id="missao2">
-        <span class="missao-icon"><i data-lucide="recycle"></i></span>
+        <span class="missao-icon"><svg class="lucide" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M7 16.3c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19S7.29 6.75 7 5.3c-.29 1.45-1.14 2.84-2.29 3.76S3 11.1 3 12.25c0 2.22 1.8 4.05 4 4.05z"/><path d="M12.56 6.6A10.97 10.97 0 0 0 14 3.02c.5 2.5 2 4.9 4 6.5s3 3.5 3 5.5a6.98 6.98 0 0 1-11.91 4.97"/></svg></span>
         <div class="missao-info">
           <div class="missao-nome">Reciclar um item de plástico</div>
-          <div class="missao-progress-bar">
-            <div class="missao-progress-fill" id="missao2Fill" style="width: 0%"></div>
-          </div>
+          <div class="missao-progress-bar"><div class="missao-progress-fill" id="missao2Fill" style="width:0%"></div></div>
         </div>
         <span class="missao-xp">+10 XP</span>
       </div>
     </div>
 
-    <!-- Dica do Dia -->
     <div class="dica-card">
-      <span class="dica-icon"><i data-lucide="lightbulb"></i></span>
+      <span class="dica-icon"><svg class="lucide" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg></span>
       <div class="dica-content">
         <div class="dica-label">Dica do dia</div>
         <p id="dicaTexto">Carregando dica...</p>
@@ -114,32 +90,14 @@
 
   </div>
 
-  <!-- Navbar -->
   <nav class="navbar">
-    <a href="home.html" class="nav-item active">
-      <span class="nav-icon"><i data-lucide="house"></i></span>
-      <span class="nav-label">Início</span>
-    </a>
-    <a href="scanner.html" class="nav-item">
-      <span class="nav-icon"><i data-lucide="scan-line"></i></span>
-      <span class="nav-label">Scanner</span>
-    </a>
-    <a href="missoes.html" class="nav-item">
-      <span class="nav-icon"><i data-lucide="sword"></i></span>
-      <span class="nav-label">Missões</span>
-    </a>
-    <a href="ranking.html" class="nav-item">
-      <span class="nav-icon"><i data-lucide="trophy"></i></span>
-      <span class="nav-label">Ranking</span>
-    </a>
-    <a href="perfil.html" class="nav-item">
-      <span class="nav-icon"><i data-lucide="circle-user"></i></span>
-      <span class="nav-label">Perfil</span>
-    </a>
+    <a href="home.html" class="nav-item active"><span class="nav-icon"><svg class="lucide" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span><span class="nav-label">Início</span></a>
+    <a href="scanner.html" class="nav-item"><span class="nav-icon"><svg class="lucide" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><rect width="7" height="7" x="7" y="7" rx="1"/></svg></span><span class="nav-label">Scanner</span></a>
+    <a href="missoes.html" class="nav-item"><span class="nav-icon"><svg class="lucide" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5"/><line x1="13" x2="19" y1="19" y2="13"/><line x1="16" x2="20" y1="16" y2="20"/><line x1="19" x2="21" y1="21" y2="19"/></svg></span><span class="nav-label">Missões</span></a>
+    <a href="ranking.html" class="nav-item"><span class="nav-icon"><svg class="lucide" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg></span><span class="nav-label">Ranking</span></a>
+    <a href="perfil.html" class="nav-item"><span class="nav-icon"><svg class="lucide" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/></svg></span><span class="nav-label">Perfil</span></a>
   </nav>
 
-  <script src="../LIBS/sweetalert2.js"></script>
   <script type="module" src="JS/app.js"></script>
-  <script>lucide.createIcons();</script>
 </body>
 </html>
