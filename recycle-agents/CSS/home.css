@@ -357,3 +357,177 @@
 .scanner-btn-wrap { animation: fadeIn 0.4s 0.4s ease both; }
 .section          { animation: fadeIn 0.4s 0.5s ease both; }
 .dica-card        { animation: fadeIn 0.4s 0.6s ease both; }
+/* ─── Header actions ─────────────────────────────────────── */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ─── Botão notificações ─────────────────────────────────── */
+.header-notif-btn {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--bg-card);
+  border: 1px solid var(--green-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: all var(--transition);
+  flex-shrink: 0;
+}
+
+.header-notif-btn:hover {
+  border-color: var(--green-neon);
+  color: var(--green-neon);
+  box-shadow: 0 0 12px rgba(0,255,106,0.15);
+}
+
+/* ─── Badge contador ─────────────────────────────────────── */
+.notif-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 18px;
+  height: 18px;
+  background: #ff4444;
+  border: 2px solid var(--bg-primary);
+  border-radius: 99px;
+  font-family: var(--font-display);
+  font-size: 0.55rem;
+  font-weight: 700;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 3px;
+  pointer-events: none;
+}
+
+/* ─── Overlay do painel ──────────────────────────────────── */
+.notif-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
+  z-index: 150;
+  display: none;
+  align-items: flex-start;
+  justify-content: flex-end;
+  padding: 70px 16px 0;
+}
+
+/* ─── Painel ─────────────────────────────────────────────── */
+.notif-panel {
+  background: var(--bg-secondary);
+  border: 1px solid var(--green-border);
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 340px;
+  max-height: 70vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+  animation: slideDown 0.2s ease;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.notif-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--green-border);
+  flex-shrink: 0;
+}
+
+.notif-panel-titulo {
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: 0.06em;
+}
+
+.notif-marcar-lidas {
+  font-family: var(--font-display);
+  font-size: 0.62rem;
+  color: var(--green-neon);
+  background: none;
+  border: none;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  padding: 0;
+  transition: opacity var(--transition);
+}
+
+.notif-marcar-lidas:hover { opacity: 0.7; }
+
+/* ─── Lista de notificações ──────────────────────────────── */
+.notif-lista {
+  overflow-y: auto;
+  flex: 1;
+}
+
+.notif-vazia {
+  padding: 32px 20px;
+  text-align: center;
+  font-size: 0.84rem;
+  color: var(--text-muted);
+}
+
+/* ─── Item de notificação ────────────────────────────────── */
+.notif-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 18px;
+  border-bottom: 1px solid rgba(0,255,106,0.05);
+  transition: background var(--transition);
+  cursor: default;
+}
+
+.notif-item:last-child { border-bottom: none; }
+
+.notif-item.nao-lida {
+  background: rgba(0,255,106,0.03);
+  border-left: 2px solid var(--green-neon);
+}
+
+.notif-item.lida { opacity: 0.6; }
+
+.notif-item[data-tipo="rejeitado"].nao-lida {
+  background: rgba(255,59,59,0.04);
+  border-left-color: #ff6b6b;
+}
+
+.notif-item-icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 1px; }
+
+.notif-item-titulo {
+  font-family: var(--font-display);
+  font-size: 0.74rem;
+  color: var(--text-primary);
+  letter-spacing: 0.03em;
+  margin-bottom: 3px;
+}
+
+.notif-item-msg {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  margin-bottom: 4px;
+}
+
+.notif-item-data {
+  font-size: 0.66rem;
+  color: var(--text-muted);
+}

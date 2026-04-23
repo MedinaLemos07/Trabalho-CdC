@@ -1,21 +1,22 @@
 // ============================================================
-//  RECYCLE AGENTS — perfil.js (final)
-//  Avatar temático eco + picker visual
+//  RECYCLE AGENTS — perfil.js
+//  Avatar temático eco + picker visual + modal subida de nível
 // ============================================================
 
 import { auth, db } from "../FIREBASE/firebase-config.js";
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
 import {
-  doc, onSnapshot, updateDoc
+  doc, onSnapshot, updateDoc, getDoc
 } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 import { AVATARES, renderAvatarHtml, listarAvatares } from "./avatares.js";
+import { calcularNivel, TITULOS, avatarIdxPadrao } from "./utils.js";
 
-// ─── Títulos por nível ────────────────────────────────────────
-const TITULOS = ["Recruta","Agente","Reciclador","Guardião","Especialista","Veterano","Elite","Mestre","Campeão","Lenda"];
-
-let usuarioUID = "";
-let avatarAtual = 0;
-let avatarTemp  = 0;
+let usuarioUID          = "";
+let avatarAtual         = 0;
+let avatarTemp          = 0;
+let avatarJaRenderizado = false;
+let nivelAnterior       = null;
+let unsubscribePerfil   = null;
 
 // ─── Auth ─────────────────────────────────────────────────────
 onAuthStateChanged(auth, (user) => {
@@ -24,31 +25,47 @@ onAuthStateChanged(auth, (user) => {
   carregarPerfil(user);
 });
 
-// ─── Calcular nível ───────────────────────────────────────────
-function calcularNivel(xp) {
-  let nivel = 1, xpNecessario = 100, xpAcumulado = 0;
-  while (xp >= xpAcumulado + xpNecessario) {
-    xpAcumulado += xpNecessario;
-    nivel++;
-    xpNecessario = nivel * 100;
+// ─── Verificar admin via Firestore ────────────────────────────
+async function verificarAdmin(uid) {
+  try {
+    const snap = await getDoc(doc(db, "admins", uid));
+    return snap.exists();
+  } catch {
+    return false;
   }
-  const xpNoNivel   = xp - xpAcumulado;
-  const porcentagem = Math.floor((xpNoNivel / xpNecessario) * 100);
-  return { nivel, xpNoNivel, xpProximo: xpNecessario, porcentagem };
 }
 
-// ─── Buscar posição no ranking (usa xpSemana + liga, igual ao ranking.js) ────
+// ─── Mostrar botão admin se for admin ─────────────────────────
+async function configurarBotaoAdmin(uid) {
+  const isAdmin  = await verificarAdmin(uid);
+  const btnAdmin = document.getElementById("btnAdminPanel");
+  if (!btnAdmin) return;
+
+  if (isAdmin) {
+    btnAdmin.style.display = "flex";
+    btnAdmin.addEventListener("click", () => {
+      window.location.href = "admin.html";
+    });
+  } else {
+    btnAdmin.style.display = "none";
+  }
+}
+
+// ─── Buscar posição no ranking ────────────────────────────────
 async function buscarPosicaoRanking(uid) {
   try {
     const { buscarParticipantesDaLiga, obterLigaUsuario } = await import("./ligas.js");
-    const liga = await obterLigaUsuario(uid);
+    const liga          = await obterLigaUsuario(uid);
     const participantes = await buscarParticipantesDaLiga(liga);
-    const pos = participantes.findIndex(p => p.tipo === "usuario" && p.id === uid);
+    const pos           = participantes.findIndex(p => p.tipo === "usuario" && p.id === uid);
     return pos >= 0 ? `#${pos + 1}` : "#—";
-  } catch { return "#—"; }
+  } catch (e) {
+    console.error("[Perfil] Erro ao buscar posição no ranking:", e);
+    return "#—";
+  }
 }
 
-// ─── Renderizar avatar no perfil ─────────────────────────────
+// ─── Renderizar avatar no perfil ──────────────────────────────
 function renderizarAvatarPerfil(indice) {
   const el = document.getElementById("perfilAvatar");
   if (!el) return;
@@ -60,7 +77,6 @@ function renderizarAvatarPerfil(indice) {
       </button>
     </div>
   `;
-  // Listener adicionado apenas uma vez aqui, dentro do renderizar
   document.getElementById("btnAbrirPicker")?.addEventListener("click", abrirPicker);
 }
 
@@ -93,10 +109,7 @@ function abrirPicker() {
 
 // ─── Confirmar seleção de avatar ──────────────────────────────
 async function confirmarAvatar() {
-  if (avatarTemp === avatarAtual) {
-    fecharPicker();
-    return;
-  }
+  if (avatarTemp === avatarAtual) { fecharPicker(); return; }
 
   avatarAtual = avatarTemp;
 
@@ -106,13 +119,15 @@ async function confirmarAvatar() {
     setTimeout(() => avatarEl.classList.remove("swapping"), 500);
   }
 
+  avatarJaRenderizado = false;
   renderizarAvatarPerfil(avatarAtual);
+  avatarJaRenderizado = true;
   fecharPicker();
 
   try {
     await updateDoc(doc(db, "usuarios", usuarioUID), { avatarIdx: avatarAtual });
   } catch (e) {
-    console.warn("Erro ao salvar avatar:", e);
+    console.error("[Perfil] Erro ao salvar avatar:", e);
   }
 }
 
@@ -122,25 +137,41 @@ function fecharPicker() {
 
 // ─── Carregar perfil ──────────────────────────────────────────
 async function carregarPerfil(user) {
+  if (unsubscribePerfil) {
+    unsubscribePerfil();
+    unsubscribePerfil = null;
+  }
+
+  nivelAnterior       = null;
+  avatarJaRenderizado = false;
+
   document.getElementById("perfilNome").textContent  = user.displayName?.split(" ")[0] || "Agente";
   document.getElementById("perfilEmail").textContent = user.email || "—";
 
-  // Busca posição real do ranking (usa xpSemana + liga)
-  const pos = await buscarPosicaoRanking(user.uid);
-  document.getElementById("perfilRanking").textContent = pos;
+  buscarPosicaoRanking(user.uid).then(pos => {
+    document.getElementById("perfilRanking").textContent = pos;
+  });
+
+  configurarBotaoAdmin(user.uid);
 
   const ref = doc(db, "usuarios", user.uid);
-  onSnapshot(ref, (snap) => {
+
+  unsubscribePerfil = onSnapshot(ref, async (snap) => {
     if (!snap.exists()) return;
     const d = snap.data();
 
-    // Avatar — sem addEventListener extra aqui (renderizarAvatarPerfil já cuida disso)
-    avatarAtual = typeof d.avatarIdx === "number" ? d.avatarIdx : Math.abs(
-      user.uid.split("").reduce((h, c) => (h * 31 + c.charCodeAt(0)) & 0xffffffff, 0)
-    ) % AVATARES.length;
-    renderizarAvatarPerfil(avatarAtual);
+    // ── Avatar ────────────────────────────────────────────────
+    const novoIdx = typeof d.avatarIdx === "number"
+      ? d.avatarIdx
+      : avatarIdxPadrao(user.uid, AVATARES.length);
 
-    // XP
+    if (!avatarJaRenderizado || novoIdx !== avatarAtual) {
+      avatarAtual         = novoIdx;
+      avatarJaRenderizado = true;
+      renderizarAvatarPerfil(avatarAtual);
+    }
+
+    // ── XP e nível ────────────────────────────────────────────
     const xp = d.xp || 0;
     const { nivel, xpNoNivel, xpProximo, porcentagem } = calcularNivel(xp);
     const titulo = TITULOS[Math.min(nivel - 1, TITULOS.length - 1)];
@@ -158,11 +189,69 @@ async function carregarPerfil(user) {
     setTimeout(() => {
       document.getElementById("perfilXPBar").style.width = `${porcentagem}%`;
     }, 300);
+
+    // ── Detectar subida de nível ──────────────────────────────
+    if (nivelAnterior === null) {
+      nivelAnterior = nivel;
+    } else if (nivel > nivelAnterior) {
+      await exibirModalSubidaNivel(nivelAnterior, nivel, titulo, xp);
+      nivelAnterior = nivel;
+    } else {
+      nivelAnterior = nivel;
+    }
+  });
+}
+
+// ─── Modal de subida de nível ─────────────────────────────────
+async function exibirModalSubidaNivel(nivelAntigo, nivelNovo, titulo, xpTotal) {
+  const html = `
+    <div class="modal-resultado modal-subiu">
+      <div class="modal-res-ligas">
+        <div class="modal-res-liga">
+          <div class="modal-nivel-badge modal-nivel-antigo">
+            <span class="modal-nivel-num">${nivelAntigo}</span>
+          </div>
+          <span style="color:var(--text-muted);font-size:0.7rem;font-family:var(--font-display)">Nível anterior</span>
+        </div>
+        <div class="modal-res-seta">🚀</div>
+        <div class="modal-res-liga modal-res-liga-nova">
+          <div class="modal-nivel-badge modal-nivel-novo modal-res-escudo-glow">
+            <span class="modal-nivel-num">${nivelNovo}</span>
+          </div>
+          <span style="color:var(--green-neon);font-size:0.7rem;font-weight:700;font-family:var(--font-display)">Nível atual</span>
+        </div>
+      </div>
+      <div class="modal-res-stats">
+        <div class="modal-res-stat"><span>Novo título</span><strong>${titulo}</strong></div>
+        <div class="modal-res-stat"><span>XP total</span><strong>${xpTotal.toLocaleString("pt-BR")} XP</strong></div>
+      </div>
+      <p class="modal-res-msg modal-msg-subiu">
+        ⚡ Você subiu para o nível ${nivelNovo} e ganhou o título <strong>${titulo}</strong>!
+      </p>
+    </div>`;
+
+  await Swal.fire({
+    title: "Subiu de Nível!", html,
+    confirmButtonText: "Continuar",
+    customClass: {
+      popup:         "swal-ranking-popup",
+      title:         "swal-ranking-title",
+      confirmButton: "swal-ranking-btn",
+    },
+    background:        "#0a1a0f",
+    color:             "#e0ffe8",
+    showClass:  { popup: "animate__animated animate__fadeInDown animate__faster" },
+    hideClass:  { popup: "animate__animated animate__fadeOutUp animate__faster" },
+    allowOutsideClick: false,
   });
 }
 
 // ─── Logout ───────────────────────────────────────────────────
 document.getElementById("btnLogout")?.addEventListener("click", async () => {
+  if (unsubscribePerfil) {
+    unsubscribePerfil();
+    unsubscribePerfil = null;
+  }
   await signOut(auth);
   window.location.href = "login.html";
 });

@@ -214,7 +214,7 @@ export function renderAvatarHtml(seed, size = 40) {
   </div>`;
 }
 
-// ─── Lista de todos os avatares (para seleção) ────────────────
+// ─── Lista de todos os avatares (para seleção) ───────────────  
 export function listarAvatares() {
   return AVATARES;
 }

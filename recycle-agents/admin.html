@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin — Recycle Agents</title>
+  <link rel="stylesheet" href="CSS/style.css" />
+  <link rel="stylesheet" href="CSS/admin.css" />
+  <link rel="stylesheet" href="CSS/icon-styles.css" />
+</head>
+<body>
+  <div class="admin-wrapper page-enter">
+
+    <header class="admin-header">
+      <div class="admin-header-info">
+        <h2>Painel Admin</h2>
+        <p>Revisão de análises pendentes</p>
+      </div>
+      <button class="btn btn-outline btn-sair" id="btnSair">Sair</button>
+    </header>
+
+    <!-- Acesso negado -->
+    <div class="acesso-negado" id="acessoNegado" style="display:none">
+      <div class="acesso-negado-icon">🚫</div>
+      <h3>Acesso Negado</h3>
+      <p>Você não tem permissão para acessar esta página.</p>
+      <a href="home.html" class="btn btn-primary">Voltar ao início</a>
+    </div>
+
+    <!-- Conteúdo admin -->
+    <div id="adminConteudo" style="display:none">
+
+      <!-- Abas -->
+      <div class="admin-tabs">
+        <button class="tab-btn active" data-tab="produtos" id="tabProdutos">
+          🔍 Produtos
+          <span class="tab-count" id="countProdutos">0</span>
+        </button>
+        <button class="tab-btn" data-tab="manual" id="tabManual">
+          ♻️ Manuais
+          <span class="tab-count" id="countManual">0</span>
+        </button>
+      </div>
+
+      <!-- Loading -->
+      <div class="admin-loading" id="adminLoading">
+        <span class="loader"></span>
+        <span>Carregando análises...</span>
+      </div>
+
+      <!-- Lista produtos -->
+      <div class="admin-lista" id="listaProdutos" style="display:none">
+        <div class="lista-vazia" id="listaProdutosVazia" style="display:none">
+          <span>✅</span>
+          <p>Nenhum produto pendente.</p>
+        </div>
+        <div id="listaProdutosItens"></div>
+      </div>
+
+      <!-- Lista manual -->
+      <div class="admin-lista" id="listaManual" style="display:none">
+        <div class="lista-vazia" id="listaManualVazia" style="display:none">
+          <span>✅</span>
+          <p>Nenhuma reciclagem manual pendente.</p>
+        </div>
+        <div id="listaManualItens"></div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Modal de detalhes -->
+  <div class="modal-overlay" id="modalOverlay" style="display:none">
+    <div class="modal-card" id="modalCard">
+      <button class="modal-close" id="modalClose">✕</button>
+
+      <div class="modal-foto-wrap">
+        <img id="modalFoto" src="" alt="Foto do item" />
+      </div>
+
+      <div class="modal-info" id="modalInfo"></div>
+
+      <div class="modal-acoes">
+        <button class="btn btn-confirmar" id="btnConfirmar">
+          <span id="btnConfirmarTexto">✅ Confirmar</span>
+          <span class="loader" id="loaderConfirmar" style="display:none"></span>
+        </button>
+        <button class="btn btn-rejeitar" id="btnRejeitar">
+          <span id="btnRejeitarTexto">❌ Rejeitar</span>
+          <span class="loader" id="loaderRejeitar" style="display:none"></span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <script type="module" src="JS/admin.js"></script>
+</body>
+</html>

@@ -5,7 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Recycle Agents</title>
   <link rel="stylesheet" href="recycle-agents/CSS/style.css" />
-  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <!--
+    FIX: removida a tag de Lucide que estava aqui no <head>.
+    O script estava sendo carregado e executado duas vezes na mesma página —
+    uma vez aqui e uma vez no final do <body> — causando processamento
+    duplicado desnecessário. Mantida apenas a tag no final do <body>.
+  -->
   <style>
     .splash {
       min-height: 100vh;

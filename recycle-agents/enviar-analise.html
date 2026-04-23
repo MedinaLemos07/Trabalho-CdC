@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Enviar para Análise — Recycle Agents</title>
+  <link rel="stylesheet" href="CSS/style.css" />
+  <link rel="stylesheet" href="CSS/enviar-analise.css" />
+  <link rel="stylesheet" href="CSS/icon-styles.css" />
+</head>
+<body>
+  <div class="envio-wrapper page-enter">
+
+    <header class="envio-header">
+      <a href="scanner.html" class="back-btn" aria-label="Voltar">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+      </a>
+      <div class="envio-header-info">
+        <h2 id="paginaTitulo">Enviar para Análise</h2>
+        <p id="paginaSubtitulo">Ajude a melhorar o sistema</p>
+      </div>
+      <div class="tipo-badge" id="tipoBadge"></div>
+    </header>
+
+    <div class="envio-content">
+
+      <div class="alert" id="alertMsg"></div>
+
+      <!-- ══════════════════════════════════════
+           FORMULÁRIO PRODUTO (tipo=produto)
+      ══════════════════════════════════════ -->
+      <div id="formProduto" class="envio-form" style="display:none">
+
+        <!-- Seção: Identificação -->
+        <div class="envio-secao">
+          <div class="envio-secao-titulo">
+            <span class="envio-secao-num">01</span>
+            Identificação do produto
+          </div>
+
+          <div class="campo-codigo-detectado">
+            <div class="campo-codigo-label">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5v14"/><path d="M8 5v14"/><path d="M12 5v14"/><path d="M17 5v14"/><path d="M21 5v14"/></svg>
+              Código detectado pelo scanner
+            </div>
+            <input type="text" id="codigoBarras" class="input-codigo-detectado" readonly placeholder="Nenhum código detectado" />
+          </div>
+
+          <div class="campo-correcao">
+            <div class="correcao-header">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg>
+              Código incorreto? Corrija abaixo
+            </div>
+            <p class="correcao-hint">Caso o código não tenha sido lido corretamente, digite o código correto que está impresso na embalagem.</p>
+            <input type="text" id="codigoCorrecao" class="input-correcao" placeholder="Digite o código correto aqui" maxlength="20" inputmode="numeric" />
+          </div>
+
+          <div class="input-group mt-2">
+            <label>Nome do produto <span class="label-req">*</span></label>
+            <input type="text" id="nomeProduto" placeholder="Ex: Garrafa de água mineral 500ml" maxlength="100" />
+          </div>
+        </div>
+
+        <!-- Seção: Material -->
+        <div class="envio-secao">
+          <div class="envio-secao-titulo">
+            <span class="envio-secao-num">02</span>
+            Tipo de material
+          </div>
+
+          <div class="aviso-rejeicao">
+            <span class="aviso-rejeicao-icon">⚠️</span>
+            <div class="aviso-rejeicao-texto">
+              <strong>Atenção</strong>
+              Selecione o material correto da embalagem. Sugestões com material incorreto serão rejeitadas.
+            </div>
+          </div>
+
+          <div class="material-select" id="materialSelectProduto">
+            <button type="button" class="material-btn" data-tipo="papel">
+              <span class="material-btn-icon">📄</span>
+              <span class="material-btn-nome">Papel</span>
+              <span class="material-btn-xp">+5 XP</span>
+            </button>
+            <button type="button" class="material-btn" data-tipo="plastico">
+              <span class="material-btn-icon">🧴</span>
+              <span class="material-btn-nome">Plástico</span>
+              <span class="material-btn-xp">+10 XP</span>
+            </button>
+            <button type="button" class="material-btn" data-tipo="vidro">
+              <span class="material-btn-icon">🍶</span>
+              <span class="material-btn-nome">Vidro</span>
+              <span class="material-btn-xp">+15 XP</span>
+            </button>
+            <button type="button" class="material-btn" data-tipo="metal">
+              <span class="material-btn-icon">🥫</span>
+              <span class="material-btn-nome">Metal</span>
+              <span class="material-btn-xp">+20 XP</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Seção: Foto -->
+        <div class="envio-secao">
+          <div class="envio-secao-titulo">
+            <span class="envio-secao-num">03</span>
+            Foto do código de barras <span class="label-req">*</span>
+          </div>
+          <p class="envio-secao-desc">Tire uma foto nítida do código de barras da embalagem para validação.</p>
+
+          <div class="foto-upload" id="fotoUploadProduto">
+            <input type="file" id="fotoInputProduto" accept="image/*" capture="environment" />
+            <div class="foto-placeholder" id="fotoPlaceholderProduto">
+              <div class="foto-icon-wrap">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+              </div>
+              <span class="foto-placeholder-titulo">Tirar foto do código de barras</span>
+              <span class="foto-placeholder-hint">Toque para abrir a câmera · Máx. 800KB</span>
+            </div>
+            <img id="fotoPreviewProduto" class="foto-preview" style="display:none" alt="Preview" />
+            <div class="foto-troca">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>
+              Trocar foto
+            </div>
+          </div>
+        </div>
+
+        <!-- Seção: Observação -->
+        <div class="envio-secao">
+          <div class="envio-secao-titulo">
+            <span class="envio-secao-num">04</span>
+            Observação <span class="label-opcional">(opcional)</span>
+          </div>
+          <textarea id="observacaoProduto" placeholder="Alguma informação adicional sobre o produto..." maxlength="300" rows="3"></textarea>
+        </div>
+
+        <div class="btn-enviar-wrap">
+          <button class="btn btn-primary btn-full" id="btnEnviarProduto">
+            <span id="btnEnviarProdutoTexto">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+              Enviar para análise
+            </span>
+            <span class="loader" id="loaderProduto" style="display:none"></span>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- ══════════════════════════════════════
+           FORMULÁRIO MANUAL (tipo=manual)
+      ══════════════════════════════════════ -->
+      <div id="formManual" class="envio-form" style="display:none">
+
+        <!-- Seção: Material -->
+        <div class="envio-secao">
+          <div class="envio-secao-titulo">
+            <span class="envio-secao-num">01</span>
+            Tipo de material <span class="label-req">*</span>
+          </div>
+
+          <div class="aviso-rejeicao">
+            <span class="aviso-rejeicao-icon">⚠️</span>
+            <div class="aviso-rejeicao-texto">
+              <strong>Atenção</strong>
+              Selecione o material correto do item. Sugestões com material incorreto serão rejeitadas.
+            </div>
+          </div>
+
+          <div class="material-select" id="materialSelectManual">
+            <button type="button" class="material-btn" data-tipo="papel">
+              <span class="material-btn-icon">📄</span>
+              <span class="material-btn-nome">Papel</span>
+              <span class="material-btn-xp">+5 XP</span>
+            </button>
+            <button type="button" class="material-btn" data-tipo="plastico">
+              <span class="material-btn-icon">🧴</span>
+              <span class="material-btn-nome">Plástico</span>
+              <span class="material-btn-xp">+10 XP</span>
+            </button>
+            <button type="button" class="material-btn" data-tipo="vidro">
+              <span class="material-btn-icon">🍶</span>
+              <span class="material-btn-nome">Vidro</span>
+              <span class="material-btn-xp">+15 XP</span>
+            </button>
+            <button type="button" class="material-btn" data-tipo="metal">
+              <span class="material-btn-icon">🥫</span>
+              <span class="material-btn-nome">Metal</span>
+              <span class="material-btn-xp">+20 XP</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Seção: Foto -->
+        <div class="envio-secao">
+          <div class="envio-secao-titulo">
+            <span class="envio-secao-num">02</span>
+            Foto do material <span class="label-req">*</span>
+          </div>
+          <p class="envio-secao-desc">Tire uma foto clara do material que deseja reciclar.</p>
+
+          <div class="foto-upload" id="fotoUploadManual">
+            <input type="file" id="fotoInputManual" accept="image/*" capture="environment" />
+            <div class="foto-placeholder" id="fotoPlaceholderManual">
+              <div class="foto-icon-wrap">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+              </div>
+              <span class="foto-placeholder-titulo">Tirar foto do material</span>
+              <span class="foto-placeholder-hint">Toque para abrir a câmera · Máx. 800KB</span>
+            </div>
+            <img id="fotoPreviewManual" class="foto-preview" style="display:none" alt="Preview" />
+            <div class="foto-troca">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>
+              Trocar foto
+            </div>
+          </div>
+        </div>
+
+        <!-- Seção: Nome -->
+        <div class="envio-secao">
+          <div class="envio-secao-titulo">
+            <span class="envio-secao-num">03</span>
+            Nome do item <span class="label-opcional">(opcional)</span>
+          </div>
+          <input type="text" id="nomeManual" placeholder="Ex: Garrafa PET, Jornal, Lata de alumínio..." maxlength="100" />
+        </div>
+
+        <div class="btn-enviar-wrap">
+          <button class="btn btn-primary btn-full" id="btnEnviarManual">
+            <span id="btnEnviarManualTexto">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+              Enviar para análise
+            </span>
+            <span class="loader" id="loaderManual" style="display:none"></span>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Sucesso -->
+      <div class="sucesso-card" id="sucessoCard" style="display:none">
+        <div class="sucesso-particles">
+          <span>♻️</span><span>🌿</span><span>✅</span>
+        </div>
+        <div class="sucesso-icon">✅</div>
+        <h3>Enviado com sucesso!</h3>
+        <p>Sua contribuição foi recebida e será analisada em breve. Obrigado por ajudar a melhorar o sistema!</p>
+        <div class="sucesso-xp">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          +5 XP recebidos · Aguardando revisão
+        </div>
+        <button class="btn btn-primary btn-full" onclick="window.location.href='scanner.html'">
+          Voltar ao Scanner
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <script type="module" src="JS/enviar-analise.js"></script>
+</body>
+</html>

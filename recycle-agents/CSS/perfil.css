@@ -30,7 +30,7 @@
   margin-top: 2px;
 }
 
-/* ---------- Avatar / Hero ---------- */
+/* ---------- Hero ---------- */
 .perfil-hero {
   display: flex;
   flex-direction: column;
@@ -38,8 +38,6 @@
   padding: 28px 20px 20px;
   text-align: center;
 }
-
-
 
 .perfil-nome {
   font-family: var(--font-display);
@@ -156,7 +154,11 @@
   opacity: 0.3;
 }
 
-.perfil-stat-icon { font-size: 1.5rem; display: block; margin-bottom: 6px; }
+.perfil-stat-icon {
+  font-size: 1.5rem;
+  display: block;
+  margin-bottom: 6px;
+}
 
 .perfil-stat-num {
   font-family: var(--font-display);
@@ -174,7 +176,7 @@
   margin-top: 4px;
 }
 
-/* ---------- Logout ---------- */
+/* ---------- Actions ---------- */
 .perfil-actions {
   margin: 0 20px 20px;
 }
@@ -204,7 +206,7 @@
   border-color: #ff6b6b;
 }
 
-/* ---------- Animações ---------- */
+/* ---------- Animações de entrada ---------- */
 .perfil-hero     { animation: fadeIn 0.4s 0.1s ease both; }
 .perfil-xp-card  { animation: fadeIn 0.4s 0.2s ease both; }
 .perfil-stats    { animation: fadeIn 0.4s 0.3s ease both; }
@@ -216,23 +218,26 @@
   top: 20px;
   right: 20px;
   z-index: 99;
-  width: fit-content;
   background: var(--green-neon);
   border: none;
   border-radius: var(--radius-sm);
-  padding: 8px 16px;
+  padding: 8px 14px;
   font-family: var(--font-display);
-  font-size: 0.68rem;
+  font-size: 0.65rem;
   color: var(--bg-primary);
   letter-spacing: 0.1em;
   cursor: pointer;
   transition: all var(--transition);
   text-transform: uppercase;
   font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .btn-ajuda:hover {
   background: var(--green-mid);
+  box-shadow: 0 0 14px rgba(0,255,106,0.35);
 }
 
 /* ---------- FAQ Overlay ---------- */
@@ -255,9 +260,12 @@
   width: 100%;
   max-width: 500px;
   margin-top: 60px;
+  margin-bottom: 120px;
+  padding-bottom: 80px;
   animation: fadeIn 0.3s ease both;
 }
 
+/* ---------- Header do FAQ ---------- */
 .faq-header {
   display: flex;
   align-items: center;
@@ -266,20 +274,26 @@
 }
 
 .faq-titulo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-family: var(--font-display);
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   color: var(--green-neon);
   letter-spacing: 0.1em;
   text-shadow: 0 0 12px rgba(0,255,106,0.3);
 }
 
 .faq-fechar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   background: transparent;
   border: 1px solid var(--green-border);
   border-radius: var(--radius-sm);
-  padding: 4px 12px;
+  padding: 5px 12px;
   font-family: var(--font-display);
-  font-size: 0.65rem;
+  font-size: 0.62rem;
   color: var(--text-muted);
   cursor: pointer;
   letter-spacing: 0.1em;
@@ -291,31 +305,40 @@
   border-color: var(--green-neon);
 }
 
+/* ---------- Lista de cards ---------- */
+.faq-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
 /* ---------- Cards FAQ ---------- */
 .faq-card {
   background: var(--bg-primary);
   border: 1px solid var(--green-border);
   border-radius: var(--radius-md);
-  margin-bottom: 10px;
   overflow: hidden;
   transition: border-color var(--transition);
 }
 
-.faq-card.aberto {
-  border-color: var(--green-neon);
-}
+.faq-card.aberto { border-color: var(--green-neon); }
 
 .faq-pergunta {
   width: 100%;
   background: transparent;
   border: none;
-  padding: 16px;
+  padding: 14px 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   cursor: pointer;
   text-align: left;
-  gap: 12px;
+  gap: 10px;
+}
+
+.faq-pergunta-icon {
+  font-size: 1.1rem;
+  flex-shrink: 0;
 }
 
 .faq-pergunta-texto {
@@ -324,6 +347,7 @@
   color: var(--green-neon);
   letter-spacing: 0.04em;
   line-height: 1.4;
+  flex: 1;
 }
 
 .faq-icone {
@@ -332,139 +356,100 @@
   flex-shrink: 0;
   transition: transform var(--transition);
   font-style: normal;
+  display: flex;
+  align-items: center;
 }
 
-.faq-card.aberto .faq-icone {
-  transform: rotate(45deg);
-}
+.faq-card.aberto .faq-icone { transform: rotate(45deg); }
 
+/* ---------- Resposta ---------- */
 .faq-resposta {
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.faq-card.aberto .faq-resposta {
-  max-height: 300px;
-}
+.faq-card.aberto .faq-resposta { max-height: 500px; }
 
 .faq-resposta-inner {
-  padding: 0 16px 16px;
+  padding: 12px 16px 16px;
   border-top: 1px solid var(--green-border);
-  padding-top: 12px;
 }
 
 .faq-resposta-inner p {
   font-size: 0.83rem;
   color: var(--green-mid);
   line-height: 1.7;
+  margin-bottom: 10px;
 }
 
-/* Avatar no perfil */
+.faq-resposta-inner p:last-child { margin-bottom: 0; }
+
+.faq-resposta-inner strong {
+  color: var(--green-neon);
+  font-weight: 700;
+}
+
+/* ---------- Tabela interna ---------- */
+.faq-tabela {
+  background: rgba(0,255,106,0.04);
+  border: 1px solid var(--green-border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  margin: 10px 0;
+}
+
+.faq-tabela-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  font-size: 0.8rem;
+  color: var(--green-mid);
+  border-bottom: 1px solid var(--green-border);
+}
+
+.faq-tabela-row:last-child { border-bottom: none; }
+
+.faq-xp-badge {
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  color: var(--green-neon);
+  background: rgba(0,255,106,0.1);
+  border: 1px solid rgba(0,255,106,0.2);
+  border-radius: 99px;
+  padding: 2px 10px;
+}
+
+/* ============================================================
+   SISTEMA DE AVATAR DO PERFIL
+   ============================================================ */
+
 .perfil-avatar-wrap {
   position: relative;
   display: inline-block;
   margin-bottom: 14px;
 }
 
-.perfil-avatar {
+.perfil-avatar-wrap .eco-avatar {
   width: 88px;
   height: 88px;
-  border-radius: 50%;
-  background: var(--bg-card);
   border: 3px solid var(--green-neon);
-  overflow: hidden;
   box-shadow: 0 0 24px rgba(0,255,106,0.25);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
 
-.avatar-img-perfil {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 50%;
-  transition: opacity 0.4s ease, transform 0.3s ease;
-}
-
-.btn-editar-avatar {
-  position: absolute;
-  bottom: 2px;
-  right: 2px;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: var(--green-neon);
-  border: 2px solid var(--bg-primary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all var(--transition);
-  z-index: 2;
-}
-
-.btn-editar-avatar:hover {
-  background: var(--green-mid);
-  transform: scale(1.1);
-  box-shadow: 0 0 10px rgba(0,255,106,0.5);
-}
-
-.btn-editar-avatar .lucide {
-  stroke: var(--bg-primary);
-  width: 13px;
-  height: 13px;
-}
-
-/* ─── Sistema de Avatar ─────────────────────────────────────── */
-.perfil-avatar {
-  width: 90px;
-  height: 90px;
-  margin-bottom: 14px;
-}
-
-.avatar-wrapper {
-  width: 90px;
-  height: 90px;
-  border-radius: 50%;
-  background: var(--bg-card);
-  border: 2.5px solid var(--green-neon);
-  box-shadow: 0 0 20px rgba(0,255,106,0.25);
-  position: relative;
-  overflow: visible;
-  cursor: pointer;
-  transition: box-shadow var(--transition);
-}
-
-.avatar-wrapper:hover {
-  box-shadow: 0 0 30px rgba(0,255,106,0.5);
-}
-
-.avatar-img {
-  width: 90px;
-  height: 90px;
-  border-radius: 50%;
-  display: block;
-  transition: opacity 0.2s ease, transform 0.2s ease;
-  background: var(--bg-secondary);
-}
-
-.avatar-fallback {
-  width: 90px;
-  height: 90px;
-  border-radius: 50%;
-  align-items: center;
-  justify-content: center;
-  color: var(--green-neon);
+.perfil-avatar-wrap:hover .eco-avatar {
+  box-shadow: 0 0 36px rgba(0,255,106,0.5);
+  transform: scale(1.04);
 }
 
 .avatar-edit-btn {
   position: absolute;
-  bottom: 0;
-  right: -4px;
-  width: 28px;
-  height: 28px;
+  bottom: 2px;
+  right: 2px;
+  width: 26px;
+  height: 26px;
   border-radius: 50%;
   background: var(--green-neon);
   border: 2px solid var(--bg-primary);
@@ -474,49 +459,44 @@
   cursor: pointer;
   transition: all var(--transition);
   z-index: 2;
+  padding: 0;
 }
 
 .avatar-edit-btn:hover {
   background: var(--green-mid);
-  transform: scale(1.15);
+  transform: scale(1.15) rotate(15deg);
+  box-shadow: 0 0 10px rgba(0,255,106,0.5);
 }
 
 .avatar-edit-btn svg {
+  width: 12px;
+  height: 12px;
   stroke: var(--bg-primary);
+  fill: none;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
-.avatar-loading .avatar-img {
-  filter: blur(2px);
+@keyframes avatar-swap {
+  0%   { transform: scale(1) rotate(0deg);     opacity: 1; }
+  40%  { transform: scale(0.7) rotate(180deg); opacity: 0.3; }
+  100% { transform: scale(1) rotate(360deg);   opacity: 1; }
 }
 
-@keyframes avatar-spin {
-  to { transform: rotate(360deg); }
+.eco-avatar.swapping {
+  animation: avatar-swap 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.avatar-loading .avatar-edit-btn svg {
-  animation: avatar-spin 0.8s linear infinite;
-}
-
-/* ─── Avatar no ranking ────────────────────────────────────── */
 .r-avatar-img {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: var(--bg-secondary);
+  object-fit: cover;
   border: 1.5px solid var(--green-border);
   flex-shrink: 0;
-  object-fit: cover;
 }
 
-.podio-avatar img,
-.podio-avatar .r-avatar-img {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-/* ─── Avatar no header (home) ─────────────────────────────── */
 .header-avatar-img {
   width: 36px;
   height: 36px;
@@ -529,3 +509,78 @@
 .header-avatar:hover .header-avatar-img {
   border-color: var(--green-neon);
 }
+
+/* ============================================================
+   MODAL DE SUBIDA DE NÍVEL
+   ============================================================ */
+
+.modal-nivel-badge {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+}
+
+.modal-nivel-antigo {
+  background: rgba(255,255,255,0.05);
+  border: 2px solid rgba(255,255,255,0.15);
+}
+
+.modal-nivel-novo {
+  background: rgba(0,255,106,0.12);
+  border: 2px solid var(--green-neon);
+}
+
+.modal-nivel-num {
+  font-size: 1.4rem;
+  font-weight: 900;
+  color: var(--green-neon);
+  line-height: 1;
+}
+
+.modal-nivel-antigo .modal-nivel-num {
+  color: var(--text-muted);
+}
+
+/* ─── Botão Admin Panel ───────────────────────────────────── */
+.btn-admin-panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 14px;
+  background: rgba(0,255,106,0.06);
+  border: 1px solid var(--green-border);
+  border-radius: var(--radius-md);
+  color: var(--green-neon);
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: all var(--transition);
+  margin-bottom: 10px;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-admin-panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(0,255,106,0.08), transparent);
+  opacity: 0;
+  transition: opacity var(--transition);
+}
+
+.btn-admin-panel:hover {
+  border-color: var(--green-neon);
+  box-shadow: 0 0 20px rgba(0,255,106,0.2);
+  transform: translateY(-1px);
+}
+
+.btn-admin-panel:hover::before { opacity: 1; }

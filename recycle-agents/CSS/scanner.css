@@ -18,17 +18,8 @@
   gap: 12px;
   padding: 20px 20px 0;
 }
-
-.scanner-header-info h2 {
-  font-size: 1rem;
-  color: var(--text-primary);
-}
-
-.scanner-header-info p {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-  margin-top: 2px;
-}
+.scanner-header-info h2 { font-size: 1rem; color: var(--text-primary); }
+.scanner-header-info p  { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
 
 /* ---------- Viewfinder ---------- */
 .viewfinder-wrap {
@@ -47,7 +38,6 @@
   display: block;
 }
 
-/* Overlay com mira */
 .viewfinder-overlay {
   position: absolute;
   inset: 0;
@@ -63,7 +53,6 @@
   position: relative;
 }
 
-/* Cantos da mira */
 .scan-area::before,
 .scan-area::after,
 .scan-area .corner-br,
@@ -75,24 +64,11 @@
   border-color: var(--green-neon);
   border-style: solid;
 }
-.scan-area::before {
-  top: 0; left: 0;
-  border-width: 3px 0 0 3px;
-}
-.scan-area::after {
-  top: 0; right: 0;
-  border-width: 3px 3px 0 0;
-}
-.scan-area .corner-br {
-  bottom: 0; right: 0;
-  border-width: 0 3px 3px 0;
-}
-.scan-area .corner-bl {
-  bottom: 0; left: 0;
-  border-width: 0 0 3px 3px;
-}
+.scan-area::before { top: 0; left: 0;  border-width: 3px 0 0 3px; }
+.scan-area::after  { top: 0; right: 0; border-width: 3px 3px 0 0; }
+.scan-area .corner-br { bottom: 0; right: 0; border-width: 0 3px 3px 0; }
+.scan-area .corner-bl { bottom: 0; left: 0;  border-width: 0 0 3px 3px; }
 
-/* Linha de scan animada */
 .scan-line {
   position: absolute;
   left: 0; right: 0;
@@ -110,7 +86,6 @@
   100% { top: 100%; opacity: 1; }
 }
 
-/* Status da câmera */
 .camera-status {
   position: absolute;
   bottom: 12px;
@@ -131,53 +106,48 @@
 .scanner-instructions {
   text-align: center;
   padding: 0 20px;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
+}
+.scanner-instructions p { font-size: 0.88rem; color: var(--text-muted); }
+
+/* ---------- Botão ação scanner ---------- */
+.scanner-actions {
+  padding: 0 20px;
+  margin-bottom: 16px;
 }
 
-.scanner-instructions p {
-  font-size: 0.88rem;
-  color: var(--text-muted);
-}
-
-/* ---------- Resultado ---------- */
-.resultado-card {
-  margin: 0 20px 20px;
-  background: var(--bg-card);
-  border: 1px solid var(--green-border);
+/* ---------- Balão: produto não encontrado ---------- */
+.balao-nao-encontrado {
+  margin: 0 20px 16px;
+  background: rgba(255, 180, 0, 0.06);
+  border: 1px solid rgba(255, 180, 0, 0.3);
   border-radius: var(--radius-lg);
-  padding: 24px;
-  text-align: center;
+  padding: 20px;
   display: none;
-  animation: fadeIn 0.4s ease;
+  flex-direction: column;
+  gap: 12px;
+  animation: fadeIn 0.3s ease;
+}
+.balao-nao-encontrado.show { display: flex; }
+
+.balao-icon {
+  font-size: 2rem;
+  text-align: center;
 }
 
-.resultado-card.show { display: block; }
-
-.resultado-icon {
-  font-size: 3rem;
-  margin-bottom: 12px;
+.balao-texto strong {
   display: block;
-}
-
-.resultado-material {
-  font-family: var(--font-display);
-  font-size: 1.3rem;
-  font-weight: 900;
-  color: var(--green-neon);
-  text-shadow: 0 0 20px rgba(0,255,106,0.4);
-  margin-bottom: 4px;
-}
-
-.resultado-xp {
   font-family: var(--font-display);
   font-size: 0.85rem;
-  color: var(--text-secondary);
-  margin-bottom: 20px;
+  color: #ffcc44;
+  margin-bottom: 6px;
+  letter-spacing: 0.05em;
 }
 
-.resultado-xp span {
-  color: var(--green-neon);
-  font-size: 1.1rem;
+.balao-texto p {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
 }
 
 /* ---------- Limite diário ---------- */
@@ -191,13 +161,50 @@
   color: #ffcc44;
   text-align: center;
   display: none;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
 }
-.limite-aviso.show { display: block; }
+.limite-aviso.show { display: flex; }
+
+/* ---------- Resultado ---------- */
+.resultado-card {
+  margin: 0 20px 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--green-border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  text-align: center;
+  display: none;
+  animation: fadeIn 0.4s ease;
+}
+.resultado-card.show { display: block; }
+
+.resultado-icon     { font-size: 3rem; margin-bottom: 12px; display: block; }
+.resultado-material {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 900;
+  color: var(--green-neon);
+  text-shadow: 0 0 20px rgba(0,255,106,0.4);
+  margin-bottom: 4px;
+}
+.resultado-nome-produto {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  min-height: 1.2em;
+}
+.resultado-xp {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: 20px;
+}
+.resultado-xp span { color: var(--green-neon); font-size: 1.1rem; }
 
 /* ---------- Materiais referência ---------- */
-.materiais-section {
-  margin: 0 20px 20px;
-}
+.materiais-section { margin: 0 20px 20px; }
 
 .materiais-grid {
   display: grid;
@@ -213,7 +220,6 @@
   padding: 12px;
   text-align: center;
 }
-
 .material-chip .chip-icon { font-size: 1.4rem; display: block; margin-bottom: 4px; }
 .material-chip .chip-nome {
   font-family: var(--font-display);
@@ -226,4 +232,9 @@
   font-size: 0.65rem;
   color: var(--green-neon);
   margin-top: 2px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
 }

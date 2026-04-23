@@ -1,131 +1,164 @@
 /* ============================================================
-   RECYCLE AGENTS — tutorial.css
-   Tour Guiado com Spotlight
+   RECYCLE AGENTS — tutorial.css  v2.0
+   Tour Guiado Multi-Tela | Mobile-First | Cyber-Eco
    ============================================================ */
 
-/* ---------- Overlay escuro ---------- */
-.tour-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 9000;
-  pointer-events: none;
-  transition: opacity 0.4s ease;
-}
-
-.tour-overlay.ativo {
-  pointer-events: auto;
-}
-
-/* ---------- Spotlight via clip-path ---------- */
+/* ─── Spotlight (overlay com buraco real) ─────────────────── */
 .tour-spotlight {
   position: fixed;
   inset: 0;
   z-index: 9001;
   pointer-events: none;
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  background: rgba(6, 10, 6, 0.88);
-  -webkit-mask-image: radial-gradient(circle at 50% 50%, transparent 0px, black 0px);
-  mask-image: radial-gradient(circle at 50% 50%, transparent 0px, black 0px);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+
+  /* O buraco é definido via JS com custom properties */
+  background: rgba(6, 10, 6, 0.92);
+  -webkit-mask-image: radial-gradient(
+    ellipse var(--spot-rx, 0px) var(--spot-ry, 0px)
+    at var(--spot-cx, 50%) var(--spot-cy, 50%),
+    transparent 85%,
+    black 100%
+  );
+  mask-image: radial-gradient(
+    ellipse var(--spot-rx, 0px) var(--spot-ry, 0px)
+    at var(--spot-cx, 50%) var(--spot-cy, 50%),
+    transparent 85%,
+    black 100%
+  );
 }
 
-/* ---------- Balão de dica ---------- */
+.tour-spotlight.ativo {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ─── Balão de dica ──────────────────────────────────────── */
 .tour-balao {
   position: fixed;
   z-index: 9100;
-  width: min(320px, 90vw);
+  width: min(310px, calc(100vw - 32px));
   background: var(--bg-card);
   border: 1px solid var(--green-border);
   border-radius: var(--radius-lg);
-  padding: 24px;
-  box-shadow: 0 0 40px rgba(0,255,106,0.15), var(--shadow-card);
-  transition: all 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 20px;
+  box-shadow:
+    0 0 0 1px rgba(0, 255, 106, 0.08),
+    0 0 40px rgba(0, 255, 106, 0.12),
+    0 8px 40px rgba(0, 0, 0, 0.7);
+
+  /* Estado inicial — invisível e ligeiramente deslocado */
   opacity: 0;
-  transform: translateY(12px) scale(0.97);
+  transform: translateY(10px) scale(0.97);
+  transition:
+    opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    top 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
 }
 
+/* Linha neon no topo do balão */
 .tour-balao::before {
   content: '';
   position: absolute;
-  top: 0; left: 0; right: 0;
+  top: 0; left: 16px; right: 16px;
   height: 2px;
   background: linear-gradient(90deg, transparent, var(--green-neon), transparent);
-  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  border-radius: 99px;
+  opacity: 0.8;
 }
 
 .tour-balao.visivel {
   opacity: 1;
   transform: translateY(0) scale(1);
+  pointer-events: auto;
 }
 
-/* Setinha do balão */
+/* Setinhas direcionais */
 .tour-balao[data-arrow="top"]::after {
   content: '';
   position: absolute;
-  top: -8px;
-  left: 50%;
+  top: -7px;
+  left: var(--arrow-offset, 50%);
   transform: translateX(-50%);
-  border: 8px solid transparent;
-  border-bottom-color: var(--green-border);
-  border-top: none;
+  width: 12px; height: 7px;
+  background: var(--bg-card);
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+  border-top: 1px solid var(--green-border);
 }
 
 .tour-balao[data-arrow="bottom"]::after {
   content: '';
   position: absolute;
-  bottom: -8px;
-  left: 50%;
+  bottom: -7px;
+  left: var(--arrow-offset, 50%);
   transform: translateX(-50%);
-  border: 8px solid transparent;
-  border-top-color: var(--green-border);
-  border-bottom: none;
+  width: 12px; height: 7px;
+  background: var(--bg-card);
+  clip-path: polygon(0% 0%, 100% 0%, 50% 100%);
 }
 
-/* ---------- Conteúdo do balão ---------- */
-.tour-step-num {
-  font-family: var(--font-display);
-  font-size: 0.65rem;
-  letter-spacing: 0.15em;
-  color: var(--green-neon);
-  opacity: 0.7;
-  margin-bottom: 8px;
+/* ─── Conteúdo do balão ──────────────────────────────────── */
+.tour-balao-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
 }
 
 .tour-icone {
-  font-size: 2rem;
-  display: block;
-  margin-bottom: 10px;
-  filter: drop-shadow(0 0 8px rgba(0,255,106,0.4));
+  font-size: 1.6rem;
+  flex-shrink: 0;
+  filter: drop-shadow(0 0 6px rgba(0, 255, 106, 0.5));
+  line-height: 1;
 }
 
 .tour-titulo {
   font-family: var(--font-display);
-  font-size: 0.95rem;
+  font-size: 0.82rem;
   font-weight: 700;
   color: var(--green-neon);
   letter-spacing: 0.08em;
-  margin-bottom: 10px;
-  text-shadow: 0 0 16px rgba(0,255,106,0.3);
+  text-shadow: 0 0 12px rgba(0, 255, 106, 0.25);
+  line-height: 1.2;
+}
+
+.tour-step-num {
+  font-family: var(--font-display);
+  font-size: 0.58rem;
+  letter-spacing: 0.18em;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+  text-transform: uppercase;
 }
 
 .tour-desc {
-  font-size: 0.9rem;
+  font-size: 0.86rem;
   color: var(--text-secondary);
-  line-height: 1.6;
-  margin-bottom: 20px;
+  line-height: 1.65;
+  margin-bottom: 16px;
 }
 
-/* ---------- Barra de progresso ---------- */
+/* Destaque inline dentro da descrição */
+.tour-desc strong,
+.tour-desc b {
+  color: var(--green-neon);
+  font-weight: 600;
+}
+
+/* ─── Barra de progresso ─────────────────────────────────── */
 .tour-progress-wrap {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 }
 
 .tour-progress-bar {
   flex: 1;
   height: 3px;
-  background: var(--bg-secondary);
+  background: rgba(255, 255, 255, 0.06);
   border-radius: 99px;
   overflow: hidden;
 }
@@ -134,46 +167,49 @@
   height: 100%;
   background: linear-gradient(90deg, var(--green-dark), var(--green-neon));
   border-radius: 99px;
-  box-shadow: 0 0 8px var(--green-neon);
+  box-shadow: 0 0 6px rgba(0, 255, 106, 0.6);
   transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .tour-progress-label {
   font-family: var(--font-display);
-  font-size: 0.6rem;
+  font-size: 0.58rem;
   color: var(--text-muted);
   letter-spacing: 0.1em;
   white-space: nowrap;
+  min-width: 28px;
+  text-align: right;
 }
 
-/* ---------- Botões do balão ---------- */
+/* ─── Botões do balão ────────────────────────────────────── */
 .tour-btns {
   display: flex;
-  gap: 10px;
+  gap: 8px;
 }
 
 .tour-btn-pular {
-  flex: 1;
-  padding: 10px;
+  flex: 0 0 auto;
+  padding: 9px 14px;
   background: transparent;
-  border: 1px solid var(--green-border);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: var(--radius-sm);
   color: var(--text-muted);
   font-family: var(--font-display);
-  font-size: 0.65rem;
+  font-size: 0.6rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   cursor: pointer;
   transition: all var(--transition);
+  white-space: nowrap;
 }
 
 .tour-btn-pular:hover {
-  border-color: var(--green-neon);
+  border-color: rgba(255, 255, 255, 0.2);
   color: var(--text-secondary);
 }
 
 .tour-btn-proximo {
-  flex: 2;
+  flex: 1;
   padding: 10px 16px;
   background: var(--green-neon);
   border: none;
@@ -186,28 +222,49 @@
   text-transform: uppercase;
   cursor: pointer;
   transition: all var(--transition);
-  box-shadow: 0 0 16px rgba(0,255,106,0.3);
+  box-shadow: 0 0 16px rgba(0, 255, 106, 0.25);
+  position: relative;
+  overflow: hidden;
+}
+
+.tour-btn-proximo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
+  pointer-events: none;
 }
 
 .tour-btn-proximo:hover {
   background: var(--green-mid);
-  box-shadow: 0 0 24px rgba(0,255,106,0.5);
+  box-shadow: 0 0 28px rgba(0, 255, 106, 0.45);
   transform: translateY(-1px);
 }
 
-/* ---------- Elemento destacado ---------- */
+.tour-btn-proximo:active {
+  transform: translateY(0);
+}
+
+/* ─── Elemento destacado ─────────────────────────────────── */
 .tour-highlight {
   position: relative;
   z-index: 9050 !important;
   border-radius: var(--radius-md);
-  box-shadow: 0 0 0 3px var(--green-neon),
-              0 0 30px rgba(0,255,106,0.4),
-              0 0 60px rgba(0,255,106,0.15) !important;
-  transition: box-shadow 0.4s ease;
-  pointer-events: none;
+  outline: 2px solid var(--green-neon);
+  outline-offset: 4px;
+  box-shadow:
+    0 0 0 4px rgba(0, 255, 106, 0.08),
+    0 0 24px rgba(0, 255, 106, 0.35),
+    0 0 60px rgba(0, 255, 106, 0.12) !important;
+  animation: tour-pulse 2s ease-in-out infinite;
 }
 
-/* ---------- Tela de boas-vindas ---------- */
+@keyframes tour-pulse {
+  0%, 100% { box-shadow: 0 0 0 4px rgba(0,255,106,0.08), 0 0 24px rgba(0,255,106,0.35), 0 0 60px rgba(0,255,106,0.12); }
+  50%       { box-shadow: 0 0 0 6px rgba(0,255,106,0.12), 0 0 36px rgba(0,255,106,0.5),  0 0 80px rgba(0,255,106,0.18); }
+}
+
+/* ─── Tela de boas-vindas ────────────────────────────────── */
 .tour-welcome {
   position: fixed;
   inset: 0;
@@ -217,44 +274,123 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 32px;
+  padding: 32px 28px;
   text-align: center;
-  animation: fadeIn 0.5s ease forwards;
+  animation: tourFadeUp 0.5s ease forwards;
+}
+
+/* Grade cyber no fundo da welcome */
+.tour-welcome::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0,255,106,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,255,106,0.04) 1px, transparent 1px);
+  background-size: 32px 32px;
+  pointer-events: none;
+}
+
+/* Orbe de brilho */
+.tour-welcome::after {
+  content: '';
+  position: absolute;
+  top: -80px; left: 50%;
+  transform: translateX(-50%);
+  width: 320px; height: 320px;
+  background: radial-gradient(circle, rgba(0,255,106,0.07) 0%, transparent 65%);
+  pointer-events: none;
+}
+
+.tour-welcome-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(0,255,106,0.08);
+  border: 1px solid rgba(0,255,106,0.2);
+  border-radius: 99px;
+  padding: 5px 14px;
+  font-family: var(--font-display);
+  font-size: 0.6rem;
+  color: var(--green-neon);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  position: relative;
+  z-index: 1;
 }
 
 .tour-welcome-icon {
-  font-size: 4rem;
-  margin-bottom: 24px;
-  animation: pulse-glow 3s ease-in-out infinite;
+  font-size: 3.5rem;
+  margin-bottom: 20px;
+  animation: tourIconPulse 3s ease-in-out infinite;
   filter: drop-shadow(0 0 16px rgba(0,255,106,0.6));
+  position: relative;
+  z-index: 1;
 }
 
-@keyframes pulse-glow {
-  0%, 100% { filter: drop-shadow(0 0 12px rgba(0,255,106,0.4)); }
-  50%       { filter: drop-shadow(0 0 28px rgba(0,255,106,0.9)); }
+@keyframes tourIconPulse {
+  0%, 100% { filter: drop-shadow(0 0 12px rgba(0,255,106,0.4)); transform: scale(1); }
+  50%       { filter: drop-shadow(0 0 28px rgba(0,255,106,0.8)); transform: scale(1.05); }
 }
 
 .tour-welcome h1 {
-  font-size: clamp(1.4rem, 5vw, 2rem);
-  color: var(--green-neon);
-  text-shadow: 0 0 24px rgba(0,255,106,0.4);
-  margin-bottom: 12px;
+  font-size: clamp(1.3rem, 5vw, 1.8rem);
+  color: var(--text-primary);
+  margin-bottom: 6px;
+  position: relative;
+  z-index: 1;
 }
 
-.tour-welcome p {
-  font-size: 1rem;
+.tour-welcome h1 span {
+  color: var(--green-neon);
+  text-shadow: 0 0 20px rgba(0,255,106,0.4);
+}
+
+.tour-welcome-sub {
+  font-size: 0.92rem;
   color: var(--text-secondary);
-  max-width: 300px;
+  max-width: 280px;
   line-height: 1.7;
-  margin-bottom: 36px;
+  margin-bottom: 12px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Chips de telas que serão mostradas */
+.tour-welcome-chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 28px;
+  position: relative;
+  z-index: 1;
+}
+
+.tour-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  background: rgba(0,255,106,0.06);
+  border: 1px solid rgba(0,255,106,0.15);
+  border-radius: 99px;
+  font-family: var(--font-display);
+  font-size: 0.6rem;
+  color: var(--text-secondary);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .tour-welcome-btns {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
   width: 100%;
-  max-width: 300px;
+  max-width: 290px;
+  position: relative;
+  z-index: 1;
 }
 
 .tour-btn-comecar {
@@ -264,29 +400,47 @@
   border-radius: var(--radius-sm);
   color: var(--bg-primary);
   font-family: var(--font-display);
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   cursor: pointer;
-  box-shadow: 0 0 24px rgba(0,255,106,0.35);
+  box-shadow: 0 0 24px rgba(0,255,106,0.35), 0 4px 16px rgba(0,0,0,0.4);
   transition: all var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.tour-btn-comecar::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+  transform: skewX(-15deg);
+  animation: tourShine 3s ease-in-out infinite;
+}
+
+@keyframes tourShine {
+  0%   { left: -100%; }
+  50%, 100% { left: 150%; }
 }
 
 .tour-btn-comecar:hover {
   background: var(--green-mid);
-  box-shadow: 0 0 36px rgba(0,255,106,0.55);
+  box-shadow: 0 0 40px rgba(0,255,106,0.5), 0 4px 20px rgba(0,0,0,0.5);
   transform: translateY(-2px);
 }
 
 .tour-btn-skip-all {
-  padding: 12px;
+  padding: 11px;
   background: transparent;
-  border: 1px solid var(--green-border);
+  border: 1px solid rgba(255,255,255,0.07);
   border-radius: var(--radius-sm);
   color: var(--text-muted);
   font-family: var(--font-display);
-  font-size: 0.7rem;
+  font-size: 0.62rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   cursor: pointer;
@@ -294,11 +448,113 @@
 }
 
 .tour-btn-skip-all:hover {
-  border-color: var(--green-neon);
+  border-color: rgba(255,255,255,0.15);
   color: var(--text-secondary);
 }
 
-/* ---------- Tela final ---------- */
+/* ─── Indicador de página (qual tela está sendo exibida) ─── */
+.tour-page-indicator {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9200;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-card);
+  border: 1px solid var(--green-border);
+  border-radius: 99px;
+  padding: 6px 14px 6px 10px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  opacity: 0;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.tour-page-indicator.visivel {
+  opacity: 1;
+}
+
+.tour-page-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--green-neon);
+  box-shadow: 0 0 6px var(--green-neon);
+  flex-shrink: 0;
+  animation: blink 1.4s ease-in-out infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
+
+.tour-page-label {
+  font-family: var(--font-display);
+  font-size: 0.62rem;
+  color: var(--green-neon);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* ─── Tela de transição entre páginas ────────────────────── */
+.tour-transicao {
+  position: fixed;
+  inset: 0;
+  z-index: 9800;
+  background: var(--bg-primary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.tour-transicao.ativo {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.tour-transicao-icon {
+  font-size: 2rem;
+  animation: tourIconPulse 1.5s ease-in-out infinite;
+}
+
+.tour-transicao-texto {
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  color: var(--green-neon);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+/* Loading dots */
+.tour-dots {
+  display: flex;
+  gap: 6px;
+}
+
+.tour-dots span {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--green-neon);
+  opacity: 0.3;
+  animation: dotPulse 1.2s ease-in-out infinite;
+}
+.tour-dots span:nth-child(2) { animation-delay: 0.2s; }
+.tour-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes dotPulse {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50%       { opacity: 1;   transform: scale(1.3); }
+}
+
+/* ─── Tela final ─────────────────────────────────────────── */
 .tour-fim {
   position: fixed;
   inset: 0;
@@ -308,32 +564,80 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 32px;
+  padding: 32px 28px;
   text-align: center;
+  overflow: hidden;
 }
 
 .tour-fim.ativo {
   display: flex;
-  animation: fadeIn 0.5s ease forwards;
+  animation: tourFadeUp 0.5s ease forwards;
+}
+
+/* Partículas decorativas no fim */
+.tour-fim::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 20% 20%, rgba(0,255,106,0.06) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(0,255,106,0.04) 0%, transparent 40%);
+  pointer-events: none;
 }
 
 .tour-fim-icon {
-  font-size: 4rem;
-  margin-bottom: 20px;
+  font-size: 3.5rem;
+  margin-bottom: 16px;
+  position: relative;
+  z-index: 1;
+  animation: tourFimBounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  animation-delay: 0.2s;
+  opacity: 0;
+  transform: scale(0.5);
+}
+
+@keyframes tourFimBounce {
+  to { opacity: 1; transform: scale(1); }
+}
+
+.tour-fim-xp {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(0,255,106,0.1);
+  border: 1px solid rgba(0,255,106,0.25);
+  border-radius: 99px;
+  padding: 6px 16px;
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  color: var(--green-neon);
+  letter-spacing: 0.1em;
+  margin-bottom: 16px;
+  position: relative;
+  z-index: 1;
+  animation: tourFadeUp 0.4s ease 0.4s both;
 }
 
 .tour-fim h2 {
-  font-size: 1.5rem;
-  color: var(--green-neon);
-  text-shadow: 0 0 20px rgba(0,255,106,0.4);
-  margin-bottom: 12px;
+  font-size: clamp(1.2rem, 4vw, 1.6rem);
+  color: var(--text-primary);
+  margin-bottom: 8px;
+  position: relative;
+  z-index: 1;
+  animation: tourFadeUp 0.4s ease 0.5s both;
 }
+
+.tour-fim h2 span { color: var(--green-neon); }
 
 .tour-fim p {
   color: var(--text-secondary);
-  max-width: 280px;
+  font-size: 0.9rem;
+  max-width: 260px;
   line-height: 1.7;
-  margin-bottom: 32px;
+  margin-bottom: 28px;
+  position: relative;
+  z-index: 1;
+  animation: tourFadeUp 0.4s ease 0.6s both;
 }
 
 .tour-fim-btn {
@@ -343,7 +647,7 @@
   border-radius: var(--radius-sm);
   color: var(--bg-primary);
   font-family: var(--font-display);
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -352,14 +656,44 @@
   transition: all var(--transition);
   text-decoration: none;
   display: inline-block;
+  position: relative;
+  z-index: 1;
+  animation: tourFadeUp 0.4s ease 0.7s both;
 }
 
 .tour-fim-btn:hover {
   background: var(--green-mid);
+  box-shadow: 0 0 40px rgba(0,255,106,0.5);
   transform: translateY(-2px);
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(16px); }
+/* ─── Animação de entrada global ─────────────────────────── */
+@keyframes tourFadeUp {
+  from { opacity: 0; transform: translateY(14px); }
   to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Confetti partículas (animação de conclusão) ─────────── */
+.tour-confetti-wrap {
+  position: fixed;
+  inset: 0;
+  z-index: 9400;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.tour-confetti-particle {
+  position: absolute;
+  top: -10px;
+  width: 6px;
+  height: 6px;
+  border-radius: 1px;
+  background: var(--green-neon);
+  opacity: 0;
+  animation: confettiFall linear forwards;
+}
+
+@keyframes confettiFall {
+  0%   { opacity: 1; transform: translateY(0) rotate(0deg); }
+  100% { opacity: 0; transform: translateY(100vh) rotate(720deg); }
 }

@@ -6,6 +6,10 @@ import { auth, db } from "../FIREBASE/firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
 import { doc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 import { AVATARES, renderAvatarHtml } from "./avatares.js";
+// FIX: calcularNivel extraída para utils.js — eliminando a cópia duplicada
+// que existia identicamente em app.js, perfil.js e ranking.js.
+import { calcularNivel, avatarIdxPadrao } from "./utils.js";
+import { buscarNaoLidas, buscarTodas, marcarTodasComoLidas } from "./notificacoes.js";
 
 // ─── Redirecionar se não estiver logado ──────────────────────
 onAuthStateChanged(auth, (user) => {
@@ -40,19 +44,6 @@ const DICAS = [
   "O Brasil gera cerca de 80 milhões de toneladas de resíduos sólidos por ano.",
 ];
 
-// ─── Calcular nível ───────────────────────────────────────────
-function calcularNivel(xp) {
-  let nivel = 1, xpNecessario = 100, xpAcumulado = 0;
-  while (xp >= xpAcumulado + xpNecessario) {
-    xpAcumulado += xpNecessario;
-    nivel++;
-    xpNecessario = nivel * 100;
-  }
-  const xpNoNivel   = xp - xpAcumulado;
-  const porcentagem = Math.floor((xpNoNivel / xpNecessario) * 100);
-  return { nivel, xpNoNivel, xpProximo: xpNecessario, porcentagem };
-}
-
 // ─── Atualizar UI do XP ──────────────────────────────────────
 function atualizarXP(xp) {
   const { nivel, xpNoNivel, xpProximo, porcentagem } = calcularNivel(xp);
@@ -83,7 +74,6 @@ function atualizarMissoes(dados) {
 function renderizarAvatarHeader(avatarIdx) {
   const btn = document.querySelector(".header-avatar");
   if (!btn) return;
-  // Limpar ícone estático e inserir avatar
   btn.innerHTML = renderAvatarHtml(avatarIdx, 40);
 }
 
@@ -100,10 +90,10 @@ function iniciarDashboard(user) {
     if (!snap.exists()) return;
     const dados = snap.data();
 
-    // Avatar no header
+    // Usa avatarIdxPadrao de utils.js para manter consistência
     const avatarIdx = typeof dados.avatarIdx === "number"
       ? dados.avatarIdx
-      : Math.abs(user.uid.split("").reduce((h, c) => (h * 31 + c.charCodeAt(0)) & 0xffffffff, 0)) % AVATARES.length;
+      : avatarIdxPadrao(user.uid, AVATARES.length);
     renderizarAvatarHeader(avatarIdx);
 
     atualizarXP(dados.xp || 0);
@@ -111,4 +101,86 @@ function iniciarDashboard(user) {
     document.getElementById("missoesCompletas").textContent = dados.missoesCompletas || 0;
     atualizarMissoes(dados);
   });
+
+  // Inicia sistema de notificações
+  iniciarNotificacoes(user.uid);
+}
+
+// ─── Sistema de notificações ──────────────────────────────────
+async function iniciarNotificacoes(uid) {
+  const badge     = document.getElementById("notifBadge");
+  const btnNotif  = document.getElementById("btnNotificacoes");
+  const overlay   = document.getElementById("notifOverlay");
+  const lista     = document.getElementById("notifLista");
+  const btnMarcar = document.getElementById("btnMarcarLidas");
+
+  if (!btnNotif) return;
+
+  // Carregar contagem inicial
+  async function atualizarBadge() {
+    const naoLidas = await buscarNaoLidas(uid);
+    if (naoLidas.length > 0) {
+      badge.textContent   = naoLidas.length > 9 ? "9+" : naoLidas.length;
+      badge.style.display = "flex";
+    } else {
+      badge.style.display = "none";
+    }
+  }
+
+  // Renderizar lista de notificações
+  async function renderizarNotificacoes() {
+    const todas = await buscarTodas(uid);
+    if (todas.length === 0) {
+      lista.innerHTML = `<div class="notif-vazia">Nenhuma notificação ainda.</div>`;
+      return;
+    }
+
+    lista.innerHTML = todas.map(n => `
+      <div class="notif-item ${n.lida ? "lida" : "nao-lida"}" data-tipo="${n.tipo}">
+        <div class="notif-item-icon">
+          ${n.tipo === "aprovado" ? "✅" : "❌"}
+        </div>
+        <div class="notif-item-conteudo">
+          <div class="notif-item-titulo">${n.titulo}</div>
+          <div class="notif-item-msg">${n.mensagem}</div>
+          <div class="notif-item-data">${formatarDataNotif(n.timestamp)}</div>
+        </div>
+      </div>
+    `).join("");
+  }
+
+  // Abrir/fechar painel
+  btnNotif.addEventListener("click", async () => {
+    const aberto = overlay.style.display !== "none";
+    if (aberto) {
+      overlay.style.display = "none";
+    } else {
+      overlay.style.display = "flex";
+      await renderizarNotificacoes();
+    }
+  });
+
+  // Fechar ao clicar fora
+  overlay.addEventListener("click", (e) => {
+    if (e.target === overlay) overlay.style.display = "none";
+  });
+
+  // Marcar todas como lidas
+  btnMarcar?.addEventListener("click", async () => {
+    await marcarTodasComoLidas(uid);
+    await atualizarBadge();
+    await renderizarNotificacoes();
+  });
+
+  await atualizarBadge();
+}
+
+function formatarDataNotif(timestamp) {
+  if (!timestamp) return "";
+  const d   = new Date(timestamp);
+  const ago = Date.now() - timestamp;
+  if (ago < 60000)    return "agora";
+  if (ago < 3600000)  return `${Math.floor(ago / 60000)}min atrás`;
+  if (ago < 86400000) return `${Math.floor(ago / 3600000)}h atrás`;
+  return d.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" });
 }

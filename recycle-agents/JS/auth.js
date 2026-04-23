@@ -1,10 +1,9 @@
 // ============================================================
-//  RECYCLE AGENTS — auth.js
-//  Controle de login, cadastro e segurança do usuário
+//  RECYCLE AGENTS — auth.js v5
+//  atribuirDivisao considera bots já existentes na divisão
 // ============================================================
 
 import { auth, db } from "../FIREBASE/firebase-config.js";
-
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -13,36 +12,24 @@ import {
   sendEmailVerification,
   signOut,
 } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
-
 import {
-  doc,
-  setDoc,
-  serverTimestamp,
-  getDoc,
+  doc, setDoc, serverTimestamp, getDoc,
+  collection, getDocs, query, where, runTransaction
 } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
-// ─────────────────────────────────────────────────────────────
-// Detecta em qual página estamos
-// ─────────────────────────────────────────────────────────────
 const isLogin    = !!document.getElementById("btnLogin");
 const isCadastro = !!document.getElementById("btnCadastro");
 
-// ─────────────────────────────────────────────────────────────
-// FLAGS DE CONTROLE
-// ─────────────────────────────────────────────────────────────
 let cadastrandoAgora = false;
 let loginFalhando    = false;
 
-// ─────────────────────────────────────────────────────────────
-// PROTEÇÃO GLOBAL DO SISTEMA
-// ─────────────────────────────────────────────────────────────
+// ─── Proteção global ──────────────────────────────────────────
 onAuthStateChanged(auth, async (user) => {
   if (cadastrandoAgora) return;
   if (loginFalhando)    return;
 
   if (user) {
     await user.reload();
-
     if (!user.emailVerified) {
       if (!isCadastro && !isLogin) {
         await signOut(auth);
@@ -50,16 +37,13 @@ onAuthStateChanged(auth, async (user) => {
       }
       return;
     }
-
     if (isLogin || isCadastro) {
       window.location.href = "home.html";
     }
   }
 });
 
-// ─────────────────────────────────────────────────────────────
-// FUNÇÕES DE INTERFACE
-// ─────────────────────────────────────────────────────────────
+// ─── UI helpers ───────────────────────────────────────────────
 function showAlert(msg, type = "error") {
   const el = document.getElementById("alertMsg");
   if (!el) return;
@@ -77,18 +61,13 @@ function setLoading(btn, state) {
   btn.disabled = state;
 }
 
-// ─────────────────────────────────────────────────────────────
-// MOSTRAR / ESCONDER SENHA — compatível com Lucide Icons
-// ─────────────────────────────────────────────────────────────
 function setupToggle(toggleId, inputId) {
   const btn   = document.getElementById(toggleId);
   const input = document.getElementById(inputId);
   if (!btn || !input) return;
-
   btn.addEventListener("click", () => {
     const mostrando = input.type === "text";
     input.type = mostrando ? "password" : "text";
-
     const iconName = mostrando ? "eye" : "eye-off";
     btn.innerHTML = `<i data-lucide="${iconName}" style="width:16px;height:16px"></i>`;
     lucide.createIcons();
@@ -98,9 +77,6 @@ function setupToggle(toggleId, inputId) {
 setupToggle("toggleSenha",     "senha");
 setupToggle("toggleConfirmar", "confirmarSenha");
 
-// ─────────────────────────────────────────────────────────────
-// TRADUÇÃO DE ERROS DO FIREBASE
-// ─────────────────────────────────────────────────────────────
 function traduzirErro(code) {
   const erros = {
     "auth/invalid-email":          "E-mail inválido.",
@@ -115,9 +91,70 @@ function traduzirErro(code) {
   return erros[code] || "Erro inesperado.";
 }
 
-// ─────────────────────────────────────────────────────────────
-// CADASTRO
-// ─────────────────────────────────────────────────────────────
+// ─── Atribuir divisão ao novo usuário ─────────────────────────
+//
+// FIX v5: a versão anterior iniciava o contador em 0 sem
+// considerar que cada divisão já tem 7 bots por padrão.
+// Isso fazia com que usuário 1 e usuário 2 entrassem na mesma
+// divisão, já que o sistema achava que ainda tinha vaga.
+//
+// Solução: o limite de usuários reais por divisão é
+// MAX_USUARIOS_POR_DIVISAO (5). Bots são tratados separadamente
+// e nunca ocupam slot de usuário — a divisão pode ter
+// 5 usuários + 7 bots = 12 participantes totais no ranking.
+//
+// O controle em sistema/controle_semanal.divisoes[liga]
+// só conta USUÁRIOS REAIS, não bots.
+//
+async function atribuirDivisao(ligaId) {
+  const controleRef = doc(db, "sistema", "controle_semanal");
+  const MAX_USUARIOS_POR_DIVISAO = 5;
+
+  return await runTransaction(db, async (tx) => {
+    const controleSnap = await tx.get(controleRef);
+    const controleData = controleSnap.exists() ? (controleSnap.data() || {}) : {};
+    const divisoes     = controleData.divisoes  || {};
+    const infoDivisao  = divisoes[ligaId]        || { count: 0, ultima: "A" };
+
+    const letraAtual = (infoDivisao.ultima && typeof infoDivisao.ultima === "string")
+      ? infoDivisao.ultima
+      : "A";
+
+    if (infoDivisao.count < MAX_USUARIOS_POR_DIVISAO) {
+      // Divisão atual ainda tem vaga para usuário real
+      const divisaoId = `${ligaId}_${letraAtual}`;
+
+      tx.set(controleRef, {
+        divisoes: {
+          [ligaId]: {
+            count: infoDivisao.count + 1,
+            ultima: letraAtual,
+          }
+        }
+      }, { merge: true });
+
+      return divisaoId;
+
+    } else {
+      // Divisão cheia — abre próxima letra
+      const proximaLetra  = String.fromCharCode(letraAtual.charCodeAt(0) + 1);
+      const novaDivisaoId = `${ligaId}_${proximaLetra}`;
+
+      tx.set(controleRef, {
+        divisoes: {
+          [ligaId]: {
+            count: 1,
+            ultima: proximaLetra,
+          }
+        }
+      }, { merge: true });
+
+      return novaDivisaoId;
+    }
+  });
+}
+
+// ─── Cadastro ─────────────────────────────────────────────────
 if (isCadastro) {
   const btnCadastro    = document.getElementById("btnCadastro");
   const inputNome      = document.getElementById("nome");
@@ -145,12 +182,16 @@ if (isCadastro) {
       const { user } = await createUserWithEmailAndPassword(auth, email, senha);
       await sendEmailVerification(user);
       await updateProfile(user, { displayName: nome });
+
+      const divisaoId = await atribuirDivisao("sucata");
+
       await setDoc(doc(db, "usuarios", user.uid), {
         nome,
         email,
         xp:               0,
         xpSemana:         0,
         liga:             "sucata",
+        divisaoId,
         itensReciclados:  0,
         missoesCompletas: 0,
         streak:           0,
@@ -183,9 +224,7 @@ if (isCadastro) {
   });
 }
 
-// ─────────────────────────────────────────────────────────────
-// LOGIN
-// ─────────────────────────────────────────────────────────────
+// ─── Login ────────────────────────────────────────────────────
 if (isLogin) {
   const btnLogin   = document.getElementById("btnLogin");
   const inputEmail = document.getElementById("email");
@@ -214,7 +253,7 @@ if (isLogin) {
         return;
       }
 
-      const snap = await getDoc(doc(db, "usuarios", user.uid));
+      const snap    = await getDoc(doc(db, "usuarios", user.uid));
       const destino = snap.exists() && snap.data().tutorialCompleto
         ? "home.html"
         : "tutorial.html";

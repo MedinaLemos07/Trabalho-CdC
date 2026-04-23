@@ -447,3 +447,238 @@
   width: 22px !important;
   height: 22px !important;
 }
+
+.status-competitivo {
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 0.78rem;
+}
+
+.status-comp-up   { background: rgba(0,255,106,0.06);   border: 1px solid rgba(0,255,106,0.2); }
+.status-comp-mid  { background: rgba(0,180,255,0.05);   border: 1px solid rgba(0,180,255,0.18); }
+.status-comp-down { background: rgba(255,107,107,0.07); border: 1px solid rgba(255,107,107,0.25); }
+
+.comp-alerta-perigo {
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  color: #ff6b6b;
+  background: rgba(255,107,107,0.1);
+  border: 1px solid rgba(255,107,107,0.3);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  text-align: center;
+  letter-spacing: 0.03em;
+}
+.comp-alerta-perigo strong { color: #ff4444; }
+
+.comp-linha {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.comp-label {
+  color: var(--text-muted);
+  font-size: 0.72rem;
+}
+.comp-label strong { color: var(--text-primary); font-weight: 600; }
+
+.comp-valor {
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  color: var(--green-neon);
+  white-space: nowrap;
+}
+.comp-verde { color: var(--green-neon); }
+
+/* Barra de progresso dentro da zona */
+.comp-progresso-wrap { display: flex; flex-direction: column; gap: 4px; }
+
+.comp-progresso-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  font-family: var(--font-display);
+}
+
+.comp-progresso-bar {
+  height: 6px;
+  background: rgba(255,255,255,0.07);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.comp-progresso-fill {
+  height: 100%;
+  border-radius: 99px;
+  transition: width 0.6s ease;
+}
+.comp-fill-mid  { background: linear-gradient(90deg, rgba(0,180,255,0.4), #00b4ff); }
+.comp-fill-down { background: linear-gradient(90deg, rgba(255,107,107,0.4), #ff6b6b); }
+
+/* ── Tag rival na lista ─────────────────────────────── */
+.tag-rival {
+  font-size: 0.55rem;
+  color: #ffaa00;
+  background: rgba(255,170,0,0.1);
+  border: 1px solid rgba(255,170,0,0.3);
+  border-radius: 99px;
+  padding: 1px 6px;
+  font-family: var(--font-display);
+  letter-spacing: 0.04em;
+}
+
+/* Card do rival: borda lateral destaque amarelo */
+.ranking-item.rival-proximo {
+  border-left-color: #ffaa00;
+  background: rgba(255,170,0,0.04);
+}
+
+/* ── Modal de resultado da temporada ────────────────── */
+/* SweetAlert2 overrides — visual gamer neon */
+.swal-ranking-popup {
+  border-radius: 16px !important;
+  border: 1px solid rgba(0,255,106,0.2) !important;
+  padding: 24px !important;
+}
+
+.swal-ranking-title {
+  font-family: var(--font-display) !important;
+  font-size: 1rem !important;
+  letter-spacing: 0.1em !important;
+  color: var(--green-neon) !important;
+  text-transform: uppercase !important;
+  margin-bottom: 16px !important;
+}
+
+.swal-ranking-btn {
+  background: rgba(0,255,106,0.12) !important;
+  border: 1px solid rgba(0,255,106,0.4) !important;
+  color: var(--green-neon) !important;
+  font-family: var(--font-display) !important;
+  font-size: 0.8rem !important;
+  letter-spacing: 0.1em !important;
+  border-radius: 8px !important;
+  padding: 10px 32px !important;
+  text-transform: uppercase !important;
+  transition: background 0.2s, box-shadow 0.2s !important;
+}
+.swal-ranking-btn:hover {
+  background: rgba(0,255,106,0.22) !important;
+  box-shadow: 0 0 12px rgba(0,255,106,0.25) !important;
+}
+
+/* Conteúdo do modal */
+.modal-resultado {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 4px 0;
+}
+
+.modal-res-ligas {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.modal-res-ligas-centro {
+  justify-content: center;
+}
+
+.modal-res-liga {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+}
+
+.modal-res-escudo {
+  width: 56px;
+  height: 64px;
+}
+
+.modal-res-escudo-glow {
+  filter: drop-shadow(0 0 14px rgba(0,255,106,0.5));
+  animation: escudo-pulse 2.5s ease-in-out infinite;
+}
+
+.modal-res-seta {
+  font-size: 1.6rem;
+  line-height: 1;
+  animation: seta-pulse 1.2s ease-in-out infinite;
+}
+
+.modal-seta-down { animation: none; }
+
+@keyframes seta-pulse {
+  0%, 100% { transform: translateY(0);   opacity: 1; }
+  50%       { transform: translateY(-4px); opacity: 0.7; }
+}
+
+.modal-res-stats {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.modal-res-stat {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  padding: 8px 16px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.modal-res-stat span {
+  font-size: 0.65rem;
+  color: rgba(255,255,255,0.45);
+  font-family: var(--font-display);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.modal-res-stat strong {
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  color: #e0ffe8;
+}
+
+.modal-res-msg {
+  font-size: 0.82rem;
+  line-height: 1.5;
+  text-align: center;
+  border-radius: 8px;
+  padding: 10px 16px;
+  margin: 0;
+}
+
+.modal-msg-subiu {
+  color: var(--green-neon);
+  background: rgba(0,255,106,0.07);
+  border: 1px solid rgba(0,255,106,0.2);
+}
+
+.modal-msg-ficou {
+  color: #00b4ff;
+  background: rgba(0,180,255,0.07);
+  border: 1px solid rgba(0,180,255,0.2);
+}
+
+.modal-msg-desceu {
+  color: #ff8080;
+  background: rgba(255,107,107,0.07);
+  border: 1px solid rgba(255,107,107,0.2);
+}

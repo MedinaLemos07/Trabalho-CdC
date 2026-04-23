@@ -147,3 +147,70 @@
   border-radius: 99px;
   padding: 3px 10px;
 }
+/* ============================================================
+   RECYCLE AGENTS — missoes.css (adição: botão de resgate)
+   Cole este bloco no final do seu missoes.css existente.
+   ============================================================ */
+
+/* ── Botão de resgate base ────────────────────────────────── */
+.missao-btn-resgatar {
+  display: block;
+  width: 100%;
+  margin-top: 12px;
+  padding: 8px 0;
+  border-radius: var(--radius-sm, 6px);
+  border: 1px solid transparent;
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* ── Estado 1: Pendente ───────────────────────────────────── */
+.missao-btn-resgatar.estado-pendente {
+  background: transparent;
+  border-color: #555;
+  color: #555;
+  cursor: not-allowed;
+}
+
+/* ── Estado 2: Pronta para resgatar ──────────────────────── */
+.missao-btn-resgatar.estado-resgatar {
+  background: rgba(0, 255, 106, 0.1);
+  border-color: #00ff6a;
+  color: #00ff6a;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(0, 255, 106, 0.25);
+  animation: pulseGreen 2s infinite;
+}
+
+.missao-btn-resgatar.estado-resgatar:hover {
+  background: rgba(0, 255, 106, 0.2);
+  box-shadow: 0 0 18px rgba(0, 255, 106, 0.45);
+}
+
+.missao-btn-resgatar.estado-resgatar:active {
+  transform: scale(0.97);
+}
+
+/* ── Estado 3: Já resgatado ───────────────────────────────── */
+.missao-btn-resgatar.estado-resgatado {
+  background: transparent;
+  border-color: rgba(0, 255, 106, 0.2);
+  color: rgba(0, 255, 106, 0.35);
+  cursor: not-allowed;
+}
+
+/* ── Animação de pulso no botão ativo ─────────────────────── */
+@keyframes pulseGreen {
+  0%, 100% { box-shadow: 0 0 8px  rgba(0, 255, 106, 0.25); }
+  50%       { box-shadow: 0 0 18px rgba(0, 255, 106, 0.55); }
+}
+
+/* ── Ajuste: cards resgatados ficam mais discretos ────────── */
+.missao-card.completa .missao-card-nome,
+.missao-card.completa .missao-card-desc {
+  opacity: 0.45;
+}

@@ -1,0 +1,43 @@
+# ============================================================
+#  RECYCLE AGENTS — .gitignore
+# ============================================================
+
+# ─── Dependências ────────────────────────────────────────────
+node_modules/
+.npm/
+
+# ─── Variáveis de ambiente e segredos ────────────────────────
+.env
+.env.local
+.env.development
+.env.production
+firebase-config.local.js
+
+# ─── Firebase ────────────────────────────────────────────────
+.firebase/
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+
+# ─── Build e cache ───────────────────────────────────────────
+dist/
+build/
+.cache/
+.parcel-cache/
+
+# ─── Editores e IDEs ─────────────────────────────────────────
+.vscode/settings.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# ─── Sistema operacional ─────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ─── Logs ────────────────────────────────────────────────────
+*.log
+logs/
