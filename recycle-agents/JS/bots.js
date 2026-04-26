@@ -10,6 +10,7 @@ import {
   serverTimestamp, query, where
 } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 import { AVATARES } from "./avatares.js";
+import { diasParaReset } from "./utils.js";
 
 const XP_MATERIAIS = [5, 10, 15, 20];
 
@@ -131,11 +132,6 @@ function obterChaveSemana() {
   return `${now.getFullYear()}-W${String(weekNum).padStart(2, "0")}`;
 }
 
-export function calcularDiasParaReset() {
-  const d = new Date().getDay();
-  return d === 0 ? 1 : (8 - d) % 7 || 7;
-}
-
 // ─── Inicializar bots no Firestore ────────────────────────────
 // FIX v5: salva divisaoId = "{liga}_bots" no Firestore.
 // Na v4 esse campo existia só no código — query por divisaoId
@@ -150,7 +146,7 @@ export async function inicializarBots() {
 
   const nomesEmbaralhados = embaralhar(POOL_NOMES);
   const totalAvatares     = AVATARES.length;
-  const diasRestantes     = calcularDiasParaReset();
+  const diasRestantes     = diasParaReset();
 
   for (let i = 0; i < BOTS_BASE.length; i++) {
     const bot       = BOTS_BASE[i];
@@ -180,7 +176,7 @@ export async function migrarBotsLegados() {
 
   const snap          = await getDocs(collection(db, "bots"));
   const totalAvatares = AVATARES.length;
-  const diasRestantes = calcularDiasParaReset();
+  const diasRestantes = diasParaReset();
   const promises      = [];
 
   snap.docs.forEach(docSnap => {
@@ -215,7 +211,7 @@ export async function migrarBotsLegados() {
 // ─── Atualizar XP diário ──────────────────────────────────────
 export async function atualizarBotsXP() {
   const hoje          = new Date().toISOString().split("T")[0];
-  const diasRestantes = calcularDiasParaReset();
+  const diasRestantes = diasParaReset();
   const snap          = await getDocs(collection(db, "bots"));
   const promises      = [];
 
@@ -252,15 +248,17 @@ export async function buscarBotsDaLiga(liga) {
     .sort((a, b) => (b.xpSemana || 0) - (a.xpSemana || 0));
 }
 
+// FIX: usar Promise.all para rodar todas as atualizações em paralelo
+// em vez de sequencial (35 awaits em série → 1 await paralelo)
 export async function rotacionarNomesBots() {
   const snap              = await getDocs(collection(db, "bots"));
   const nomesEmbaralhados = embaralhar(POOL_NOMES);
-  const docs              = snap.docs;
-  for (let i = 0; i < docs.length; i++) {
-    await updateDoc(doc(db, "bots", docs[i].id), {
+  const promises          = snap.docs.map((d, i) =>
+    updateDoc(doc(db, "bots", d.id), {
       nome: nomesEmbaralhados[i % nomesEmbaralhados.length],
-    });
-  }
+    })
+  );
+  await Promise.all(promises);
   console.log("[Bots] Nomes rotacionados");
 }
 

@@ -12,8 +12,7 @@
 
 import { auth, db } from "../FIREBASE/firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
-import { doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
-
+import { doc, getDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 // ─────────────────────────────────────────────────────────────
 // Chave de estado no sessionStorage
 // ─────────────────────────────────────────────────────────────
@@ -571,9 +570,14 @@ async function finalizarTour() {
 
   if (usuarioUID) {
     try {
-      await updateDoc(doc(db, "usuarios", usuarioUID), { tutorialCompleto: true });
+      // FIX: creditar os +50 XP de bônus prometidos na tela final
+      await updateDoc(doc(db, "usuarios", usuarioUID), {
+        tutorialCompleto: true,
+        xp:       increment(50),
+        xpSemana: increment(50),
+      });
     } catch (e) {
-      console.error("Erro ao salvar tutorial:", e);
+      console.error("Erro ao finalizar tutorial:", e);
     }
   }
 

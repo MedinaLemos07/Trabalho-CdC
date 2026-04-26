@@ -74,10 +74,22 @@ function iniciarUploadFoto() {
     const upload      = document.getElementById(`fotoUpload${capitalize(form)}`);
     if (!input) return;
 
-    upload.addEventListener("click", () => input.click());
+    // iOS fix: não redirecionar clique via JS — deixar o input receber diretamente.
+    // O input já cobre toda a área com z-index:2 e opacity:0, então o toque
+    // já chega nele. Redirecionar via .click() cria duplo trigger no Safari/iOS.
+    upload.addEventListener("click", (e) => {
+      // Só aciona programaticamente se o clique NÃO veio do input em si
+      if (e.target !== input) input.click();
+    });
+
     input.addEventListener("change", async (e) => {
-      const file = e.target.files[0];
+      // iOS às vezes dispara change com files vazio na primeira vez —
+      // aguarda um tick antes de ler
+      await new Promise(r => setTimeout(r, 80));
+
+      const file = input.files[0]; // lê direto do input, não do event
       if (!file) return;
+
       try {
         const base64 = await comprimirImagem(file, 800);
         fotoBase64[form]           = base64;
@@ -86,6 +98,7 @@ function iniciarUploadFoto() {
         placeholder.style.display  = "none";
         upload.classList.add("tem-foto");
       } catch (err) {
+        console.error("[Foto]", err);
         mostrarErro("Erro ao processar a foto. Tente novamente.");
       }
     });

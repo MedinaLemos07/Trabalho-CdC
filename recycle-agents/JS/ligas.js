@@ -233,14 +233,12 @@ export async function processarFimDeSemana() {
     }
   }
 
-  // ── 4. Atualizar controle de divisões no sistema ──────────────
-  // Salvar qual foi a última letra usada em cada liga
+  // FIX: remover desestruturação incorreta que gerava liga/letra erradas
+  // para ligas com underscore no nome (ex: "agente_eco_A").
+  // ligaKey e letraFinal já extraem os valores corretos sozinhos.
   const letrasUsadas = {};
   for (const divisaoId of Object.values(novosDivisaoIds)) {
-    const [liga, letra] = divisaoId.split("_").slice(0, 2).concat(
-      divisaoId.split("_").slice(-1)
-    );
-    const ligaKey = divisaoId.replace(/_[A-Z]$/, "");
+    const ligaKey    = divisaoId.replace(/_[A-Z]$/, "");
     const letraFinal = divisaoId.slice(-1);
     if (!letrasUsadas[ligaKey] || letraFinal > letrasUsadas[ligaKey]) {
       letrasUsadas[ligaKey] = letraFinal;

@@ -219,20 +219,19 @@ async function confirmarAnalise() {
       revisadoEm:  Date.now(),
     });
 
-    // Notificar usuário que análise foi aprovada
-    const XP_FINAL = {
-      papel: 15, plastico: 20, vidro: 25, metal: 30, desconhecido: 5
-    };
+    // FIX: usar XP_CONTRIBUICAO (mesma tabela usada em concederXPAnalise)
+    // e informar o valor exato na notificação ao usuário
+    const xpConcedido = XP_CONTRIBUICAO[analiseAtual.material] ?? 5;
     await criarNotificacao(analiseAtual.uid, {
-      tipo:      "aprovado",
-      titulo:    "Análise aprovada! ✅",
-      mensagem:  analiseAtual.tipo === "produto"
-        ? `"${analiseAtual.nomeProduto}" foi adicionado ao banco de dados oficial.`
-        : `Sua reciclagem de ${analiseAtual.material} foi validada.`,
-      material:  analiseAtual.material,
+      tipo:     "aprovado",
+      titulo:   "Análise aprovada! ✅",
+      mensagem: analiseAtual.tipo === "produto"
+        ? `"${analiseAtual.nomeProduto}" foi adicionado ao banco de dados oficial. +${xpConcedido} XP creditados!`
+        : `Sua reciclagem de ${analiseAtual.material} foi validada. +${xpConcedido} XP creditados!`,
+      material: analiseAtual.material,
     });
 
-    // Conceder XP com increment (fix permissão)
+    // Conceder XP
     await concederXPAnalise(analiseAtual.uid, analiseAtual.material);
 
     removerAnaliseDaLista(analiseAtual.id, analiseAtual.tipo);

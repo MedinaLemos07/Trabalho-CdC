@@ -249,7 +249,6 @@ if (isLogin) {
         showAlert("Confirme seu email antes de entrar.");
         await signOut(auth);
         loginFalhando = false;
-        setLoading(btnLogin, false);
         return;
       }
 
@@ -262,7 +261,15 @@ if (isLogin) {
     } catch (err) {
       console.error(err);
       showAlert(traduzirErro(err.code));
-      setLoading(btnLogin, false);
+    } finally {
+      // Garante que o botão SEMPRE seja liberado, independente do caminho
+      // Exceção: se redirecionou com sucesso, o botão pode ficar "loading"
+      // até a página mudar — comportamento correto e intencional.
+      if (!window.location.href.includes("home.html") &&
+          !window.location.href.includes("tutorial.html")) {
+        setLoading(btnLogin, false);
+        loginFalhando = false;
+      }
     }
   });
 }

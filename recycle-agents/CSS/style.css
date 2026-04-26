@@ -358,3 +358,269 @@ a:hover { color: var(--green-mid); }
   border-color: var(--green-neon);
   color: var(--green-neon);
 }
+/* ═══════════════════════════════════════════════════════════
+   RESPONSIVIDADE MOBILE — ajustes globais
+   Breakpoints: 480px (mobile padrão) e 360px (mobile pequeno)
+═══════════════════════════════════════════════════════════ */
+
+/* ─── Mobile padrão (≤ 480px) ───────────────────────────── */
+@media (max-width: 480px) {
+
+  /* Painel de notificações — altura máxima segura */
+  .notif-panel {
+    max-height: 88vh;
+    width: calc(100vw - 24px) !important;
+    max-width: none !important;
+  }
+
+  /* Abas do painel — fonte menor para caber 3 abas */
+  .notif-aba {
+    font-size: 0.65rem;
+    padding: 10px 4px;
+    gap: 4px;
+  }
+
+  .notif-aba svg { width: 13px; height: 13px; }
+
+  /* Home — stats row em 2 colunas no mobile */
+  .stats-row {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  /* Ranking — stats em 2 colunas */
+  .ranking-stats {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  /* Missões — garantir que texto não transborde */
+  .missao-card,
+  .missao-info {
+    min-width: 0;
+  }
+
+  .missao-nome,
+  .missao-desc {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Conquistas — 2 colunas em vez de 3 em mobile pequeno */
+  .conquistas-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Recordes — manter 2 colunas mas reduzir padding */
+  .recorde-item {
+    padding: 10px 8px;
+  }
+
+  .recorde-valor {
+    font-size: 0.95rem;
+  }
+
+  /* Stats detalhados — label menor */
+  .material-row {
+    grid-template-columns: 60px 1fr 24px;
+  }
+
+  .material-row-label {
+    font-size: 0.65rem;
+  }
+
+  /* Toast de conquista — centralizado e sem transbordar */
+  .conquista-toast {
+    min-width: unset;
+    width: calc(100vw - 48px);
+    max-width: none;
+  }
+
+  /* XP float — centralizar melhor */
+  .xp-float {
+    font-size: 1.35rem;
+  }
+}
+
+/* ─── Mobile pequeno (≤ 360px) ──────────────────────────── */
+@media (max-width: 360px) {
+
+  /* Avatar grid — 3 colunas em vez de 4 */
+  .avatar-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+
+  /* Ranking stats — empilhar em coluna única */
+  .ranking-stats {
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+
+  /* Abas do painel — esconder texto, manter ícone */
+  .notif-aba span:not(.notif-aba-badge) {
+    display: none;
+  }
+
+  .notif-aba svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .notif-aba {
+    padding: 12px;
+  }
+
+  /* Conquistas — 2 colunas compactas */
+  .conquista-badge {
+    padding: 12px 6px 10px;
+  }
+
+  .conquista-icone {
+    font-size: 1.4rem;
+  }
+
+  .conquista-nome {
+    font-size: 0.55rem;
+  }
+
+  /* Material breakdown — label só ícone */
+  .material-row-label span:last-child {
+    display: none;
+  }
+
+  .material-row {
+    grid-template-columns: 28px 1fr 24px;
+  }
+}
+
+/* ─── Desktop largo (≥ 768px) ───────────────────────────── */
+@media (min-width: 768px) {
+
+  /* Centralizar e limitar largura do app no desktop */
+  body > .home-wrapper,
+  body > .scanner-wrapper,
+  body > .missoes-wrapper,
+  body > .ranking-wrapper,
+  body > .perfil-wrapper {
+    max-width: 480px;
+    margin: 0 auto;
+  }
+
+  /* Painel de notificações — tamanho fixo no desktop */
+  .notif-panel {
+    width: 380px !important;
+    max-width: 380px !important;
+  }
+
+  /* Conquistas — 4 colunas no desktop */
+  .conquistas-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+/* ═══════════════════════════════════════════════════════════
+   SKELETON LOADING
+═══════════════════════════════════════════════════════════ */
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(255,255,255,0.04) 25%,
+    rgba(255,255,255,0.08) 50%,
+    rgba(255,255,255,0.04) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeletonShimmer 1.4s ease-in-out infinite;
+  border-radius: 6px;
+}
+
+@keyframes skeletonShimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ─── Skeleton do ranking ────────────────────────────────── */
+.skeleton-ranking-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(0,255,106,0.05);
+}
+
+.skeleton-ranking-pos {
+  width: 24px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.skeleton-ranking-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.skeleton-ranking-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.skeleton-ranking-nome {
+  height: 13px;
+  width: 55%;
+  border-radius: 4px;
+}
+
+.skeleton-ranking-xp {
+  height: 10px;
+  width: 35%;
+  border-radius: 4px;
+}
+
+/* ─── Skeleton do perfil ─────────────────────────────────── */
+.skeleton-perfil-wrap {
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.skeleton-perfil-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  margin: 0 auto 8px;
+}
+
+.skeleton-perfil-nome {
+  height: 18px;
+  width: 45%;
+  margin: 0 auto;
+  border-radius: 4px;
+}
+
+.skeleton-perfil-xp {
+  height: 12px;
+  width: 60%;
+  margin: 0 auto;
+  border-radius: 4px;
+}
+
+.skeleton-perfil-bar {
+  height: 8px;
+  width: 100%;
+  border-radius: 99px;
+}
+
+.skeleton-perfil-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.skeleton-perfil-stat {
+  height: 64px;
+  border-radius: 12px;
+}

@@ -1,6 +1,6 @@
 // ============================================================
 //  RECYCLE AGENTS — scanner.js
-//  v4.0 — precisão máxima + validação EAN
+//  v4.3 — lógica original restaurada + otimizações de performance
 // ============================================================
 
 import { auth, db } from "../FIREBASE/firebase-config.js";
@@ -8,6 +8,7 @@ import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.11.0/f
 import {
   doc, getDoc, updateDoc, increment, setDoc
 } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+import { verificarConquistas } from "./conquistas.js";
 
 // ─── Materiais ────────────────────────────────────────────────
 const MATERIAIS = {
@@ -19,11 +20,10 @@ const MATERIAIS = {
 };
 
 // ─── Configuração de precisão ─────────────────────────────────
-// Exige que o mesmo código apareça N vezes consecutivas
-// antes de confirmar — elimina leituras erradas/parciais
-const CONFIRMACOES_NECESSARIAS = 5;
-const confirmacoesMap   = {}; // { codigo: count }
+const CONFIRMACOES_NECESSARIAS = 3;
+const confirmacoesMap   = {};
 let ultimoCodigoValido  = null;
+let processando         = false;
 
 let usuarioAtual         = null;
 let scanAtivo            = true;
@@ -42,6 +42,7 @@ function iniciarScanner() {
   const status = document.getElementById("cameraStatus");
   for (const key in confirmacoesMap) delete confirmacoesMap[key];
   ultimoCodigoValido = null;
+  processando        = false;
 
   if (quaggaRodando) { Quagga.stop(); quaggaRodando = false; }
 
@@ -52,31 +53,28 @@ function iniciarScanner() {
       target: document.getElementById("viewfinder-wrap"),
       constraints: {
         facingMode: "environment",
-        width:      { ideal: 1920 },
-        height:     { ideal: 1080 },
+        width:      { ideal: 1280 },
+        height:     { ideal: 720  },
         focusMode:  "continuous",
       },
     },
     decoder: {
-      // Apenas leitores EAN/UPC — mais precisos para produtos
-      // Code128/39 removidos pois causam leituras fantasmas
       readers: [
         "ean_reader",
         "ean_8_reader",
         "upc_reader",
         "upc_e_reader",
       ],
-      // Múltiplas tentativas por frame
       multiple: false,
     },
     locate:   true,
     numOfWorkers: navigator.hardwareConcurrency
       ? Math.min(navigator.hardwareConcurrency, 4)
       : 2,
-    frequency: 10, // frames por segundo analisados
+    frequency: 15,
     locator: {
-      patchSize:   "medium",
-      halfSample:  false, // mais preciso, um pouco mais lento
+      patchSize:  "medium",
+      halfSample: true,
     },
   }, (err) => {
     if (err) {
@@ -88,15 +86,21 @@ function iniciarScanner() {
     quaggaRodando = true;
     if (status) status.textContent = "✅ Câmera ativa — escaneando...";
 
+    setTimeout(() => {
+      try {
+        const canvasLive = document.querySelector("#viewfinder-wrap canvas");
+        if (canvasLive) canvasLive.getContext("2d", { willReadFrequently: true });
+      } catch (e) { /* ignora */ }
+    }, 500);
+
     if (!onDetectedRegistered) {
       Quagga.onDetected(onCodigoDetectado);
       onDetectedRegistered = true;
     }
   });
 
-  // Canvas com willReadFrequently para performance
   Quagga.onProcessed((result) => {
-    const ctx = Quagga.canvas.ctx.overlay;
+    const ctx    = Quagga.canvas.ctx.overlay;
     const canvas = Quagga.canvas.dom.overlay;
     if (!ctx || !canvas) return;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -119,73 +123,59 @@ function iniciarScanner() {
   });
 }
 
-// ─── Validar dígito verificador EAN-13 ───────────────────────
-// Elimina leituras com erros de checksum
+// ─── Validar EAN-13 ───────────────────────────────────────────
 function validarEAN13(codigo) {
   if (codigo.length !== 13) return false;
   if (!/^\d+$/.test(codigo)) return false;
-
   let soma = 0;
   for (let i = 0; i < 12; i++) {
     soma += parseInt(codigo[i]) * (i % 2 === 0 ? 1 : 3);
   }
-  const digitoEsperado = (10 - (soma % 10)) % 10;
-  return digitoEsperado === parseInt(codigo[12]);
+  return (10 - (soma % 10)) % 10 === parseInt(codigo[12]);
 }
 
 // ─── Validar EAN-8 ────────────────────────────────────────────
 function validarEAN8(codigo) {
   if (codigo.length !== 8) return false;
   if (!/^\d+$/.test(codigo)) return false;
-
   let soma = 0;
   for (let i = 0; i < 7; i++) {
     soma += parseInt(codigo[i]) * (i % 2 === 0 ? 3 : 1);
   }
-  const digitoEsperado = (10 - (soma % 10)) % 10;
-  return digitoEsperado === parseInt(codigo[7]);
+  return (10 - (soma % 10)) % 10 === parseInt(codigo[7]);
 }
 
 // ─── Validar UPC-A ────────────────────────────────────────────
 function validarUPC(codigo) {
   if (codigo.length !== 12) return false;
   if (!/^\d+$/.test(codigo)) return false;
-
   let soma = 0;
   for (let i = 0; i < 11; i++) {
     soma += parseInt(codigo[i]) * (i % 2 === 0 ? 3 : 1);
   }
-  const digitoEsperado = (10 - (soma % 10)) % 10;
-  return digitoEsperado === parseInt(codigo[11]);
+  return (10 - (soma % 10)) % 10 === parseInt(codigo[11]);
 }
 
-// ─── Verificar se código é válido ─────────────────────────────
+// ─── Verificar código ─────────────────────────────────────────
 function codigoValido(codigo) {
   if (!codigo || typeof codigo !== "string") return false;
   if (!/^\d+$/.test(codigo)) return false;
-
-  // Aceita EAN-13, EAN-8 ou UPC-A com checksum correto
   if (codigo.length === 13) return validarEAN13(codigo);
   if (codigo.length === 8)  return validarEAN8(codigo);
   if (codigo.length === 12) return validarUPC(codigo);
-
   return false;
 }
 
-// ─── Código detectado — confirmação + validação ───────────────
+// ─── Código detectado ─────────────────────────────────────────
 async function onCodigoDetectado(result) {
-  if (!scanAtivo) return;
+  if (!scanAtivo || processando) return;
 
   const codigo = result?.codeResult?.code;
   if (!codigo) return;
 
-  // Validação de checksum — rejeita leituras com erro
-  if (!codigoValido(codigo)) {
-    console.log(`[Scanner] Código inválido (checksum): ${codigo}`);
-    return;
-  }
+  if (!codigoValido(codigo)) return;
 
-  // Se mudou o código durante leitura, zera confirmações
+  // Zera confirmações apenas se trocou de código válido
   if (ultimoCodigoValido && ultimoCodigoValido !== codigo) {
     for (const key in confirmacoesMap) delete confirmacoesMap[key];
   }
@@ -203,11 +193,12 @@ async function onCodigoDetectado(result) {
     return;
   }
 
-  scanAtivo = false;
+  processando   = true;
+  scanAtivo     = false;
   Quagga.stop();
   quaggaRodando = false;
 
-  console.log(`[Scanner] Código confirmado ${CONFIRMACOES_NECESSARIAS}x: ${codigo}`);
+  console.log(`[Scanner] Código confirmado ${count}x: ${codigo}`);
   await processarCodigo(codigo);
 }
 
@@ -239,8 +230,10 @@ async function processarCodigo(codigo) {
       await registrarScan(limiteRef, scanCount, codigo, dados.nome, dados.material, "firestore");
       await atualizarUsuario(material);
       await atualizarStreak();
+      verificarConquistasPosScan();
 
       mostrarResultado(material, dados.nome);
+      animarXPGanho(material.xp);
       return;
     }
   } catch (e) {
@@ -285,9 +278,39 @@ async function atualizarStreak() {
   const ultimo = dados.ultimoScanDia || "";
   if (ultimo === hoje) return;
 
-  const ontem      = new Date(Date.now() - 86400000).toISOString().split("T")[0];
-  const novoStreak = ultimo === ontem ? (dados.streak || 0) + 1 : 1;
-  await updateDoc(userRef, { streak: novoStreak, ultimoScanDia: hoje });
+  const ontem        = new Date(Date.now() - 86400000).toISOString().split("T")[0];
+  const novoStreak   = ultimo === ontem ? (dados.streak || 0) + 1 : 1;
+  const melhorStreak = Math.max(novoStreak, dados.melhorStreak || 0);
+
+  await updateDoc(userRef, {
+    streak:        novoStreak,
+    melhorStreak:  melhorStreak,
+    ultimoScanDia: hoje,
+  });
+}
+
+// ─── Verificar conquistas após scan ──────────────────────────
+async function verificarConquistasPosScan() {
+  try {
+    const snap = await getDoc(doc(db, "usuarios", usuarioAtual.uid));
+    if (!snap.exists()) return;
+    await verificarConquistas(usuarioAtual.uid, snap.data());
+  } catch (e) {
+    console.error("[Scanner] Erro ao verificar conquistas:", e);
+  }
+}
+
+// ─── Animação de XP flutuante ─────────────────────────────────
+function animarXPGanho(xp) {
+  const el       = document.createElement("div");
+  el.className   = "xp-float";
+  el.textContent = `+${xp} XP`;
+  el.style.left  = "50%";
+  el.style.top   = "40%";
+  document.body.appendChild(el);
+  void el.offsetWidth;
+  el.classList.add("ativo");
+  setTimeout(() => el.remove(), 1000);
 }
 
 // ─── UI ───────────────────────────────────────────────────────
@@ -328,7 +351,10 @@ function reiniciarScanner() {
   document.getElementById("resultadoCard")?.classList.remove("show");
   document.getElementById("limiteAviso")?.classList.remove("show");
   document.getElementById("balaoNaoEncontrado")?.classList.remove("show");
-  scanAtivo = true;
+  scanAtivo   = true;
+  processando = false;
+  for (const key in confirmacoesMap) delete confirmacoesMap[key];
+  ultimoCodigoValido = null;
   iniciarScanner();
 }
 

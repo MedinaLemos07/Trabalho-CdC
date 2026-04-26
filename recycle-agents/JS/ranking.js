@@ -21,6 +21,30 @@ let usuarioAtual = null;
 let ligaAtual    = "sucata";
 let divisaoAtual = null;
 
+// ─── Cache do ranking (sessionStorage, TTL 2 min) ────────────
+const CACHE_TTL = 2 * 60 * 1000; // 2 minutos em ms
+function chaveCache() { return `ranking_${ligaAtual}_${divisaoAtual}`; }
+
+function lerCache() {
+  try {
+    const raw = sessionStorage.getItem(chaveCache());
+    if (!raw) return null;
+    const { html, ts } = JSON.parse(raw);
+    if (Date.now() - ts > CACHE_TTL) return null;
+    return html;
+  } catch { return null; }
+}
+
+function salvarCache(html) {
+  try {
+    sessionStorage.setItem(chaveCache(), JSON.stringify({ html, ts: Date.now() }));
+  } catch { /* sessionStorage cheio — ignora */ }
+}
+
+function limparCache() {
+  try { sessionStorage.removeItem(chaveCache()); } catch { }
+}
+
 onAuthStateChanged(auth, async (user) => {
   if (!user) { window.location.href = "login.html"; return; }
   usuarioAtual = user;
@@ -154,11 +178,33 @@ function renderizarEscudos() {
   });
 }
 
-async function carregarRanking() {
+async function carregarRanking(forcarAtualizacao = false) {
   const container = document.getElementById("rankingContainer");
   if (!container) return;
 
-  container.innerHTML = `<div class="ranking-loading"><span class="spin-icon">⟳</span> Carregando...</div>`;
+  // ── Tentar cache primeiro ─────────────────────────────────
+  if (!forcarAtualizacao) {
+    const cached = lerCache();
+    if (cached) {
+      container.innerHTML = cached;
+      console.log("[Ranking] Carregado do cache.");
+      return;
+    }
+  } else {
+    limparCache();
+  }
+
+  // Skeleton loading — 6 itens placeholder
+  container.innerHTML = Array.from({ length: 6 }, (_, i) => `
+    <div class="skeleton-ranking-item">
+      <div class="skeleton skeleton-ranking-pos"></div>
+      <div class="skeleton skeleton-ranking-avatar"></div>
+      <div class="skeleton-ranking-info">
+        <div class="skeleton skeleton-ranking-nome" style="width:${45 + (i % 3) * 10}%"></div>
+        <div class="skeleton skeleton-ranking-xp"   style="width:${25 + (i % 4) * 8}%"></div>
+      </div>
+    </div>
+  `).join("");
 
   let participantesRaw = [];
   try {
@@ -317,4 +363,72 @@ async function carregarRanking() {
   }
 
   container.innerHTML = html;
+  salvarCache(html);
 }
+
+// ─── Pull-to-refresh ──────────────────────────────────────────
+(function iniciaPullToRefresh() {
+  let startY       = 0;
+  let puxando      = false;
+  let jaRefrescou  = false;
+  const LIMIAR     = 72; // px necessários para acionar
+
+  const indicador = document.createElement("div");
+  indicador.id    = "pullIndicador";
+  indicador.innerHTML = `<span class="pull-icone">↓</span><span class="pull-texto">Puxe para atualizar</span>`;
+  document.body.prepend(indicador);
+
+  document.addEventListener("touchstart", (e) => {
+    // Só ativa se estiver no topo da página
+    if (window.scrollY > 0) return;
+    startY      = e.touches[0].clientY;
+    puxando     = true;
+    jaRefrescou = false;
+  }, { passive: true });
+
+  document.addEventListener("touchmove", (e) => {
+    if (!puxando) return;
+    const delta = e.touches[0].clientY - startY;
+    if (delta <= 0) return;
+
+    const progresso = Math.min(delta / LIMIAR, 1);
+    indicador.style.transform  = `translateY(${Math.min(delta * 0.4, 40)}px)`;
+    indicador.style.opacity    = `${progresso}`;
+    indicador.querySelector(".pull-icone").style.transform =
+      `rotate(${progresso * 180}deg)`;
+
+    if (delta >= LIMIAR && !jaRefrescou) {
+      indicador.querySelector(".pull-texto").textContent = "Solte para atualizar";
+      indicador.classList.add("pronto");
+    } else if (delta < LIMIAR) {
+      indicador.querySelector(".pull-texto").textContent = "Puxe para atualizar";
+      indicador.classList.remove("pronto");
+    }
+  }, { passive: true });
+
+  document.addEventListener("touchend", async (e) => {
+    if (!puxando) return;
+    puxando = false;
+
+    const delta = e.changedTouches[0].clientY - startY;
+    if (delta >= LIMIAR && !jaRefrescou) {
+      jaRefrescou = true;
+      indicador.querySelector(".pull-texto").textContent = "Atualizando...";
+      indicador.querySelector(".pull-icone").textContent = "⟳";
+      indicador.classList.add("atualizando");
+
+      await carregarRanking(true);
+
+      indicador.classList.remove("atualizando", "pronto");
+    }
+
+    // Resetar indicador
+    indicador.style.transform = "translateY(-60px)";
+    indicador.style.opacity   = "0";
+    setTimeout(() => {
+      indicador.querySelector(".pull-icone").textContent  = "↓";
+      indicador.querySelector(".pull-texto").textContent  = "Puxe para atualizar";
+      indicador.querySelector(".pull-icone").style.transform = "rotate(0deg)";
+    }, 300);
+  }, { passive: true });
+})();
