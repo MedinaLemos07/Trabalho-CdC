@@ -37,14 +37,42 @@ onAuthStateChanged(auth, (user) => {
   iniciarScanner();
 });
 
+// ─── Detectar ambiente ────────────────────────────────────────
+// Retorna true se está rodando num celular real (não webcam/desktop).
+// Usado para ajustar as configurações do QuaggaJS automaticamente.
+function isMobile() {
+  return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+}
+
 // ─── Iniciar câmera ───────────────────────────────────────────
 function iniciarScanner() {
   const status = document.getElementById("cameraStatus");
+  const mobile = isMobile();
+
   for (const key in confirmacoesMap) delete confirmacoesMap[key];
   ultimoCodigoValido = null;
   processando        = false;
 
   if (quaggaRodando) { Quagga.stop(); quaggaRodando = false; }
+
+  // Configurações adaptativas:
+  //
+  // MOBILE (câmera traseira com autofoco):
+  //   - resolução alta (1280x720) para capturar barcodes com clareza
+  //   - frequency 8: frames espaçados, câmera tem tempo de focar
+  //   - patchSize "large": melhor para EAN-13 em embalagens brasileiras
+  //   - halfSample false: resolução completa, sem perda de detalhe
+  //
+  // DESKTOP/LIVE SERVER (webcam sem autofoco):
+  //   - resolução menor (640x480) para não sobrecarregar
+  //   - frequency 10: um pouco mais rápido pois webcam é estável
+  //   - patchSize "medium": webcam não tem zoom, barcode ocupa área menor
+  //   - halfSample true: alivia processamento na webcam já limitada
+  const config = mobile
+    ? { width: 1280, height: 720, frequency: 8,  patchSize: "large",  halfSample: false }
+    : { width: 640,  height: 480, frequency: 10, patchSize: "medium", halfSample: true  };
+
+  console.log(`[Scanner] Modo: ${mobile ? "📱 mobile" : "💻 desktop"} — config:`, config);
 
   Quagga.init({
     inputStream: {
@@ -53,8 +81,8 @@ function iniciarScanner() {
       target: document.getElementById("viewfinder-wrap"),
       constraints: {
         facingMode: "environment",
-        width:      { ideal: 1280 },
-        height:     { ideal: 720  },
+        width:      { ideal: config.width  },
+        height:     { ideal: config.height },
         focusMode:  "continuous",
       },
     },
@@ -71,10 +99,10 @@ function iniciarScanner() {
     numOfWorkers: navigator.hardwareConcurrency
       ? Math.min(navigator.hardwareConcurrency, 4)
       : 2,
-    frequency: 15,
+    frequency: config.frequency,
     locator: {
-      patchSize:  "medium",
-      halfSample: true,
+      patchSize:  config.patchSize,
+      halfSample: config.halfSample,
     },
   }, (err) => {
     if (err) {
@@ -166,14 +194,30 @@ function codigoValido(codigo) {
   return false;
 }
 
+// ─── Normalizar código ────────────────────────────────────────
+// FIX: o QuaggaJS às vezes lê o mesmo EAN-13 com zero à esquerda
+// suprimido (UPC-A de 12 dígitos) ou com variações entre frames.
+// Normalizamos para sempre comparar no mesmo formato:
+//   - UPC-A (12) → EAN-13 (13) adicionando "0" na frente
+//   - EAN-8 e EAN-13 ficam como estão
+function normalizarCodigo(codigo) {
+  if (codigo.length === 12) return "0" + codigo; // UPC-A → EAN-13
+  return codigo;
+}
+
 // ─── Código detectado ─────────────────────────────────────────
 async function onCodigoDetectado(result) {
   if (!scanAtivo || processando) return;
 
-  const codigo = result?.codeResult?.code;
-  if (!codigo) return;
+  const codigoRaw = result?.codeResult?.code;
+  if (!codigoRaw) return;
 
-  if (!codigoValido(codigo)) return;
+  if (!codigoValido(codigoRaw)) return;
+
+  // FIX: normaliza antes de comparar — evita reset do contador
+  // quando o mesmo produto é lido como UPC-A num frame e EAN-13
+  // no próximo (diferença só do zero à esquerda).
+  const codigo = normalizarCodigo(codigoRaw);
 
   // Zera confirmações apenas se trocou de código válido
   if (ultimoCodigoValido && ultimoCodigoValido !== codigo) {
