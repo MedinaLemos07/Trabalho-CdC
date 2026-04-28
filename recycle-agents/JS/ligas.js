@@ -159,6 +159,14 @@ export async function buscarParticipantesDaLiga(liga, divisaoId) {
 //
 // Bots não são tocados no reset — apenas têm xpSemana zerado.
 //
+// REGRAS DE PROMOÇÃO/REBAIXAMENTO:
+//   - Sucata: nunca rebaixa (é a liga de entrada do jogo)
+//   - Divisões com <= 3 usuários reais: nunca rebaixa (evita
+//     que o único usuário suba e desça ao mesmo tempo)
+//   - Top 3 sempre sobe (exceto lenda_verde, que é o topo)
+//   - Últimos 3 descem apenas se divisão tiver > 3 usuários reais
+//     e a liga não for sucata
+//
 export async function processarFimDeSemana() {
   const { rotacionarNomesBots, buscarBotsDaLiga } = await import("./bots.js");
 
@@ -183,15 +191,22 @@ export async function processarFimDeSemana() {
     const total  = sorted.length;
 
     sorted.forEach((u, i) => {
-      const pos        = i + 1;
-      const ligaAtual  = u.liga || "sucata";
-      const idxLiga    = ORDEM_LIGAS.indexOf(ligaAtual);
-      const ligaAcima  = ORDEM_LIGAS[idxLiga + 1] || null;
+      const pos       = i + 1;
+      const ligaAtual = u.liga || "sucata";
+      const idxLiga   = ORDEM_LIGAS.indexOf(ligaAtual);
+      const ligaAcima = ORDEM_LIGAS[idxLiga + 1] || null;
       const ligaAbaixo = ORDEM_LIGAS[idxLiga - 1] || null;
 
       let novaLiga = ligaAtual;
-      if (ligaAcima  && pos <= 3)        novaLiga = ligaAcima;
-      if (ligaAbaixo && pos > total - 3) novaLiga = ligaAbaixo;
+
+      // Promoção: Top 3 sobe, desde que não seja a liga do topo
+      if (ligaAcima && pos <= 3) novaLiga = ligaAcima;
+
+      // Rebaixamento: só ocorre se:
+      //   1. Existe liga abaixo (não é sucata)
+      //   2. A divisão tem mais de 3 usuários reais (evita sobe+desce simultâneo)
+      //   3. O usuário está nas últimas 3 posições
+      if (ligaAbaixo && total > 3 && pos > total - 3) novaLiga = ligaAbaixo;
 
       resultados[u.id] = {
         novaLiga,
@@ -219,8 +234,8 @@ export async function processarFimDeSemana() {
     // Embaralha para misturar origens diferentes na mesma divisão
     const embaralhados = [...uids].sort(() => Math.random() - 0.5);
 
-    let letraIdx   = 0;
-    let contSlot   = 0;
+    let letraIdx = 0;
+    let contSlot = 0;
 
     for (const uid of embaralhados) {
       if (contSlot >= MAX_USUARIOS_POR_DIVISAO) {
@@ -256,7 +271,7 @@ export async function processarFimDeSemana() {
   const batch = writeBatch(db);
 
   for (const u of todos) {
-    const res        = resultados[u.id];
+    const res         = resultados[u.id];
     const novaDivisao = novosDivisaoIds[u.id] || u.divisaoId || `${res.novaLiga}_A`;
 
     batch.update(doc(db, "usuarios", u.id), {

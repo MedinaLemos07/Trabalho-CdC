@@ -35,7 +35,7 @@ export function calcularNivel(xp) {
 // Usado em ranking.js para exibir o timer de reset.
 export function diasParaReset() {
   const d = new Date().getDay(); // 0 = domingo, 1 = segunda...
-  return d === 0 ? 1 : (8 - d) % 7 || 7;
+  return d === 1 ? 0 : d === 0 ? 1 : 8 - d;
 }
 
 // ─── Gerar avatarIdx padrão a partir de uma string (uid) ──────
