@@ -94,7 +94,7 @@ exports.resetDiario = onSchedule(
 
 exports.resetSemanal = onSchedule(
     {
-        schedule: "0 3 * * 1",
+        schedule: "10 3 * * 1",
         timeZone: "America/Sao_Paulo",
         region: "us-central1",
     },
@@ -156,10 +156,11 @@ exports.resetStreak = onSchedule(
 );
 
 // ============================================================
-//  Reset de Ligas — toda segunda-feira às 03:05 BRT
+//  Reset de Ligas — toda segunda-feira às 03:00 BRT
 //
-//  Roda 5 minutos após o resetSemanal (03:00) para garantir
-//  que o xpSemana já foi zerado antes de calcular posições.
+//  Roda ANTES do resetSemanal (03:10) para calcular promoções/
+//  rebaixamentos com o xpSemana da semana que passou.
+//  O resetSemanal zera o xpSemana logo em seguida.
 //
 //  Lógica:
 //    1. Busca todos os usuários e agrupa por divisão
@@ -208,7 +209,7 @@ function embaralhar(arr) {
 
 exports.resetLigas = onSchedule(
     {
-        schedule: "5 3 * * 1",
+        schedule: "0 3 * * 1",
         timeZone: "America/Sao_Paulo",
         region: "us-central1",
     },

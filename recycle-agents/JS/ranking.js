@@ -11,7 +11,7 @@ import {
 import {
   LIGAS, ORDEM_LIGAS, ESCUDOS,
   buscarParticipantesDaLiga, obterLigaUsuario,
-  obterDivisaoUsuario, verificarResetSemanal
+  obterDivisaoUsuario
 } from "./ligas.js";
 import { inicializarBots, atualizarBotsXP, migrarBotsLegados } from "./bots.js";
 import { renderAvatarHtml } from "./avatares.js";
@@ -52,7 +52,6 @@ onAuthStateChanged(auth, async (user) => {
   try { await inicializarBots();        } catch (e) { console.error("[Ranking] inicializarBots:", e); }
   try { await migrarBotsLegados();      } catch (e) { console.error("[Ranking] migrarBotsLegados:", e); }
   try { await atualizarBotsXPSeLimpo(); } catch (e) { console.error("[Ranking] atualizarBotsXP:", e); }
-  try { await verificarResetSemanal();  } catch (e) { console.error("[Ranking] verificarResetSemanal:", e); }
 
   try {
     ligaAtual    = await obterLigaUsuario(user.uid);
