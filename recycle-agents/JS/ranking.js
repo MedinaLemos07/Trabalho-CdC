@@ -1,6 +1,5 @@
 // ============================================================
-//  RECYCLE AGENTS — ranking.js v5
-//  Base: v4 real — fix: obterDivisaoUsuario no import estático
+//  RECYCLE AGENTS — ranking.js v6
 // ============================================================
 
 import { auth, db } from "../FIREBASE/firebase-config.js";
@@ -11,7 +10,7 @@ import {
 import {
   LIGAS, ORDEM_LIGAS, ESCUDOS,
   buscarParticipantesDaLiga, obterLigaUsuario,
-  obterDivisaoUsuario
+  obterDivisaoUsuario, verificarResetSemanal
 } from "./ligas.js";
 import { inicializarBots, atualizarBotsXP, migrarBotsLegados } from "./bots.js";
 import { renderAvatarHtml } from "./avatares.js";
@@ -22,7 +21,7 @@ let ligaAtual    = "sucata";
 let divisaoAtual = null;
 
 // ─── Cache do ranking (sessionStorage, TTL 2 min) ────────────
-const CACHE_TTL = 2 * 60 * 1000; // 2 minutos em ms
+const CACHE_TTL = 2 * 60 * 1000;
 function chaveCache() { return `ranking_${ligaAtual}_${divisaoAtual}`; }
 
 function lerCache() {
@@ -38,7 +37,7 @@ function lerCache() {
 function salvarCache(html) {
   try {
     sessionStorage.setItem(chaveCache(), JSON.stringify({ html, ts: Date.now() }));
-  } catch { /* sessionStorage cheio — ignora */ }
+  } catch { }
 }
 
 function limparCache() {
@@ -52,6 +51,12 @@ onAuthStateChanged(auth, async (user) => {
   try { await inicializarBots();        } catch (e) { console.error("[Ranking] inicializarBots:", e); }
   try { await migrarBotsLegados();      } catch (e) { console.error("[Ranking] migrarBotsLegados:", e); }
   try { await atualizarBotsXPSeLimpo(); } catch (e) { console.error("[Ranking] atualizarBotsXP:", e); }
+
+  // Reset semanal — processa o próprio usuário se for segunda após 03:00
+  try {
+    const resetou = await verificarResetSemanal(user.uid);
+    if (resetou) limparCache(); // forçar recarregamento após reset
+  } catch (e) { console.error("[Ranking] verificarResetSemanal:", e); }
 
   try {
     ligaAtual    = await obterLigaUsuario(user.uid);
@@ -181,7 +186,6 @@ async function carregarRanking(forcarAtualizacao = false) {
   const container = document.getElementById("rankingContainer");
   if (!container) return;
 
-  // ── Tentar cache primeiro ─────────────────────────────────
   if (!forcarAtualizacao) {
     const cached = lerCache();
     if (cached) {
@@ -193,7 +197,6 @@ async function carregarRanking(forcarAtualizacao = false) {
     limparCache();
   }
 
-  // Skeleton loading — 6 itens placeholder
   container.innerHTML = Array.from({ length: 6 }, (_, i) => `
     <div class="skeleton-ranking-item">
       <div class="skeleton skeleton-ranking-pos"></div>
@@ -370,7 +373,7 @@ async function carregarRanking(forcarAtualizacao = false) {
   let startY       = 0;
   let puxando      = false;
   let jaRefrescou  = false;
-  const LIMIAR     = 72; // px necessários para acionar
+  const LIMIAR     = 72;
 
   const indicador = document.createElement("div");
   indicador.id    = "pullIndicador";
@@ -378,7 +381,6 @@ async function carregarRanking(forcarAtualizacao = false) {
   document.body.prepend(indicador);
 
   document.addEventListener("touchstart", (e) => {
-    // Só ativa se estiver no topo da página
     if (window.scrollY > 0) return;
     startY      = e.touches[0].clientY;
     puxando     = true;
@@ -421,7 +423,6 @@ async function carregarRanking(forcarAtualizacao = false) {
       indicador.classList.remove("atualizando", "pronto");
     }
 
-    // Resetar indicador
     indicador.style.transform = "translateY(-60px)";
     indicador.style.opacity   = "0";
     setTimeout(() => {

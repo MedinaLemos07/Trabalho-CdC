@@ -1,7 +1,6 @@
 // ============================================================
-//  RECYCLE AGENTS — ligas.js v5
-//  buscarParticipantesDaLiga: usuários por divisão + bots por liga
-//  processarFimDeSemana: reagrupa usuários reais na nova liga
+//  RECYCLE AGENTS — ligas.js v6
+//  Reset sem Cloud Functions — cada usuário processa a si mesmo
 // ============================================================
 
 import { db } from "../FIREBASE/firebase-config.js";
@@ -69,28 +68,12 @@ export async function obterDivisaoUsuario(uid) {
 }
 
 // ─── Buscar participantes da liga do usuário ──────────────────
-//
-// ARQUITETURA v5 — separação clara entre usuários e bots:
-//
-// Usuários reais: buscados por divisaoId (cada um compete só
-//   com quem está na sua divisão)
-//
-// Bots: buscados por liga (são âncoras globais por liga,
-//   não têm divisão de usuário — existem para completar o ranking)
-//
-// Regra de preenchimento:
-//   - Se divisão tem menos de 12 participantes totais,
-//     completar com bots da mesma liga
-//   - Bots aparecem até o máximo de 12 total
-//   - Prioridade sempre para usuários reais
-//
 export async function buscarParticipantesDaLiga(liga, divisaoId) {
   const { buscarBotsDaLiga } = await import("./bots.js");
 
   const lista = [];
   const MAX_TOTAL = 12;
 
-  // 1. Usuários reais da divisão
   if (divisaoId) {
     const usersSnap = await getDocs(
       query(collection(db, "usuarios"), where("divisaoId", "==", divisaoId))
@@ -107,7 +90,6 @@ export async function buscarParticipantesDaLiga(liga, divisaoId) {
       });
     });
   } else {
-    // Fallback: usuário antigo sem divisaoId — busca por liga
     const usersSnap = await getDocs(
       query(collection(db, "usuarios"), where("liga", "==", liga))
     );
@@ -124,12 +106,10 @@ export async function buscarParticipantesDaLiga(liga, divisaoId) {
     });
   }
 
-  // 2. Completar com bots da liga até MAX_TOTAL
   const vagasParaBots = MAX_TOTAL - lista.length;
   if (vagasParaBots > 0) {
     const bots = await buscarBotsDaLiga(liga);
-    const botsParaAdicionar = bots.slice(0, vagasParaBots);
-    botsParaAdicionar.forEach((b, i) => lista.push({
+    bots.slice(0, vagasParaBots).forEach((b, i) => lista.push({
       id:        b.id,
       nome:      b.nome || "Agente",
       xpSemana:  b.xpSemana || 0,
@@ -141,198 +121,170 @@ export async function buscarParticipantesDaLiga(liga, divisaoId) {
   return lista.sort((a, b) => b.xpSemana - a.xpSemana);
 }
 
-// ─── Processar fim de semana ──────────────────────────────────
+// ─── Verificar reset semanal ──────────────────────────────────
 //
-// ARQUITETURA v5 — reagrupamento de usuários reais:
+// ARQUITETURA v6 — sem Cloud Functions (plano Spark):
 //
-// Problema anterior: usuários que subiam de liga ficavam com
-// divisaoId da liga antiga. Na nova liga, apareciam sozinhos
-// ou no ranking errado.
+// Problema: cada usuário só pode escrever no próprio documento.
+// Solução em 3 partes:
 //
-// Solução: ao processar o reset, para cada liga fazemos:
-//   1. Buscar todos os usuários que vão CHEGAR nessa liga
-//      (os que estavam na liga abaixo no Top 3)
-//   2. Distribuir esses usuários em divisões de até 5 reais
-//      (gerando novo divisaoId: "{liga}_{letra}")
-//   3. Atualizar o documento do usuário com a nova liga e divisaoId
-//   4. Salvar ultimaTemporada para o modal
+//   PARTE 1 — Detectar se passou da segunda-feira 03:00 BRT
+//     Compara a data atual com o ultimoReset salvo em
+//     sistema/controle_semanal. Se passou mais de 6 dias
+//     ou é segunda após 03:00 e o reset ainda não ocorreu
+//     nesta semana, o reset deve acontecer.
 //
-// Bots não são tocados no reset — apenas têm xpSemana zerado.
+//   PARTE 2 — Processar o próprio usuário
+//     Busca todos os membros da sua divisão (leitura — permitida),
+//     calcula a posição do usuário atual, determina nova liga
+//     e grava APENAS no seu próprio documento.
 //
-// REGRAS DE PROMOÇÃO/REBAIXAMENTO:
-//   - Sucata: nunca rebaixa (é a liga de entrada do jogo)
-//   - Divisões com <= 3 usuários reais: nunca rebaixa (evita
-//     que o único usuário suba e desça ao mesmo tempo)
-//   - Top 3 sempre sobe (exceto lenda_verde, que é o topo)
-//   - Últimos 3 descem apenas se divisão tiver > 3 usuários reais
-//     e a liga não for sucata
+//   PARTE 3 — Atualizar controle_semanal + bots (Rules permitem)
+//     sistema/controle_semanal: qualquer autenticado pode escrever.
+//     bots/{botId}: qualquer autenticado pode escrever.
+//     Usa transaction para garantir que só UM usuário executa
+//     essa parte (o primeiro a abrir o app após o reset).
 //
-export async function processarFimDeSemana() {
-  const { rotacionarNomesBots, buscarBotsDaLiga } = await import("./bots.js");
+// Resultado: cada usuário processa a si mesmo. O controle e
+// os bots são atualizados pelo primeiro usuário que abrir o app.
+// Usuários que não abrem o app na semana ficam na liga antiga
+// até abrirem — comportamento aceitável para projeto acadêmico.
+//
+export async function verificarResetSemanal(uid) {
+  if (!uid) return false;
 
-  // ── 1. Coletar todos os usuários e calcular resultado ────────
-  const usersSnap = await getDocs(collection(db, "usuarios"));
-  const todos     = usersSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+  try {
+    const controleRef  = doc(db, "sistema", "controle_semanal");
+    const controleSnap = await getDoc(controleRef);
+    const controle     = controleSnap.data() || {};
+    const ultimoReset  = controle.ultimoReset?.toDate?.() || null;
 
-  // Agrupar usuários por divisão atual
-  const porDivisao = {};
-  todos.forEach(u => {
-    const div = u.divisaoId || `_liga_${u.liga || "sucata"}`;
-    if (!porDivisao[div]) porDivisao[div] = [];
-    porDivisao[div].push(u);
-  });
+    // ── Checar se precisa resetar ────────────────────────────
+    const agora = new Date();
 
-  // Para cada divisão, calcular quem sobe, fica e desce
-  // resultado: { uid: { novaLiga, posicaoFinal, xpFinal, ligaAntes } }
-  const resultados = {};
+    // Calcula a última segunda-feira às 03:00 BRT (UTC-3)
+    const agoraBRT     = new Date(agora.getTime() - 3 * 3600000);
+    const diaSemana    = agoraBRT.getUTCDay(); // 0=dom, 1=seg...
+    const diasDesdeSegunda = diaSemana === 0 ? 6 : diaSemana - 1;
+    const ultimaSegunda = new Date(agoraBRT);
+    ultimaSegunda.setUTCDate(agoraBRT.getUTCDate() - diasDesdeSegunda);
+    ultimaSegunda.setUTCHours(3, 0, 0, 0); // 03:00 BRT = 06:00 UTC
+    const ultimaSegundaUTC = new Date(ultimaSegunda.getTime() + 3 * 3600000);
 
-  for (const [divisaoId, membros] of Object.entries(porDivisao)) {
-    const sorted = [...membros].sort((a, b) => (b.xpSemana || 0) - (a.xpSemana || 0));
-    const total  = sorted.length;
+    // Não resetar se o último reset já foi após a última segunda 03:00
+    if (ultimoReset && ultimoReset >= ultimaSegundaUTC) return false;
 
-    sorted.forEach((u, i) => {
-      const pos       = i + 1;
-      const ligaAtual = u.liga || "sucata";
-      const idxLiga   = ORDEM_LIGAS.indexOf(ligaAtual);
-      const ligaAcima = ORDEM_LIGAS[idxLiga + 1] || null;
-      const ligaAbaixo = ORDEM_LIGAS[idxLiga - 1] || null;
+    // Não resetar se ainda não chegou às 03:00 de segunda (BRT)
+    if (agora < ultimaSegundaUTC) return false;
 
-      let novaLiga = ligaAtual;
+    // ── PARTE 2: processar o próprio usuário ─────────────────
+    const userSnap = await getDoc(doc(db, "usuarios", uid));
+    if (!userSnap.exists()) return false;
 
-      // Promoção: Top 3 sobe, desde que não seja a liga do topo
-      if (ligaAcima && pos <= 3) novaLiga = ligaAcima;
+    const userData  = userSnap.data();
+    const ligaAtual = userData.liga || "sucata";
+    const divisaoId = userData.divisaoId || `_liga_${ligaAtual}`;
 
-      // Rebaixamento: só ocorre se:
-      //   1. Existe liga abaixo (não é sucata)
-      //   2. A divisão tem mais de 3 usuários reais (evita sobe+desce simultâneo)
-      //   3. O usuário está nas últimas 3 posições
-      if (ligaAbaixo && total > 3 && pos > total - 3) novaLiga = ligaAbaixo;
+    // Buscar todos da divisão (leitura — permitida pelas Rules)
+    const divisaoSnap = await getDocs(
+      query(collection(db, "usuarios"), where("divisaoId", "==", divisaoId))
+    );
+    const membros = divisaoSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+    const total   = membros.length;
 
-      resultados[u.id] = {
-        novaLiga,
-        ligaAntes:    ligaAtual,
-        posicaoFinal: pos,
-        xpFinal:      u.xpSemana || 0,
-      };
-    });
-  }
+    // Ordenar por xpSemana e encontrar posição do usuário atual
+    const sorted  = [...membros].sort((a, b) => (b.xpSemana || 0) - (a.xpSemana || 0));
+    const pos     = sorted.findIndex(m => m.id === uid) + 1;
 
-  // ── 2. Agrupar usuários por liga destino ─────────────────────
-  // Usuários que vão para a mesma liga devem competir entre si
-  const porLigaDestino = {};
-  for (const [uid, res] of Object.entries(resultados)) {
-    if (!porLigaDestino[res.novaLiga]) porLigaDestino[res.novaLiga] = [];
-    porLigaDestino[res.novaLiga].push(uid);
-  }
+    const idxLiga    = ORDEM_LIGAS.indexOf(ligaAtual);
+    const ligaAcima  = ORDEM_LIGAS[idxLiga + 1] || null;
+    const ligaAbaixo = ORDEM_LIGAS[idxLiga - 1] || null;
 
-  // ── 3. Gerar divisões para cada liga destino ─────────────────
-  // Distribuir usuários reais em grupos de até MAX_USUARIOS_POR_DIVISAO
-  // Novos divisaoIds: "{liga}_A", "{liga}_B", ...
-  const novosDivisaoIds = {}; // { uid: novoDivisaoId }
+    let novaLiga = ligaAtual;
+    if (ligaAcima  && pos <= 3)                      novaLiga = ligaAcima;
+    if (ligaAbaixo && total > 3 && pos > total - 3)  novaLiga = ligaAbaixo;
 
-  for (const [liga, uids] of Object.entries(porLigaDestino)) {
-    // Embaralha para misturar origens diferentes na mesma divisão
-    const embaralhados = [...uids].sort(() => Math.random() - 0.5);
+    // Gerar novo divisaoId — usar a mesma letra da divisão atual
+    // ou promover para nova liga mantendo a letra (simples e justo)
+    const letraAtual = divisaoId.slice(-1).match(/[A-Z]/) ? divisaoId.slice(-1) : "A";
+    const novaDivisao = `${novaLiga}_${letraAtual}`;
 
-    let letraIdx = 0;
-    let contSlot = 0;
-
-    for (const uid of embaralhados) {
-      if (contSlot >= MAX_USUARIOS_POR_DIVISAO) {
-        letraIdx++;
-        contSlot = 0;
-      }
-      const letra = String.fromCharCode(65 + letraIdx); // A, B, C...
-      novosDivisaoIds[uid] = `${liga}_${letra}`;
-      contSlot++;
-    }
-  }
-
-  // FIX: remover desestruturação incorreta que gerava liga/letra erradas
-  // para ligas com underscore no nome (ex: "agente_eco_A").
-  // ligaKey e letraFinal já extraem os valores corretos sozinhos.
-  const letrasUsadas = {};
-  for (const divisaoId of Object.values(novosDivisaoIds)) {
-    const ligaKey    = divisaoId.replace(/_[A-Z]$/, "");
-    const letraFinal = divisaoId.slice(-1);
-    if (!letrasUsadas[ligaKey] || letraFinal > letrasUsadas[ligaKey]) {
-      letrasUsadas[ligaKey] = letraFinal;
-    }
-  }
-
-  const controleRef = doc(db, "sistema", "controle_semanal");
-  const divisoesUpdate = {};
-  for (const [ligaKey, ultima] of Object.entries(letrasUsadas)) {
-    divisoesUpdate[`divisoes.${ligaKey}.ultima`] = ultima;
-    divisoesUpdate[`divisoes.${ligaKey}.count`]  = 0;
-  }
-
-  // ── 5. Gravar tudo em batch ───────────────────────────────────
-  const batch = writeBatch(db);
-
-  for (const u of todos) {
-    const res         = resultados[u.id];
-    const novaDivisao = novosDivisaoIds[u.id] || u.divisaoId || `${res.novaLiga}_A`;
-
-    batch.update(doc(db, "usuarios", u.id), {
-      liga:      res.novaLiga,
+    // Gravar APENAS no próprio documento (Rules permitem)
+    await updateDoc(doc(db, "usuarios", uid), {
+      liga:      novaLiga,
       divisaoId: novaDivisao,
       xpSemana:  0,
+      // Resetar também campos semanais
+      itensSemana:    0,
+      plasticoSemana: 0,
+      metalSemana:    0,
+      papelSemana:    0,
+      vidroSemana:    0,
+      // Missões semanais
+      "missoes.ms1.concluida": false,
+      "missoes.ms1.resgatada": false,
+      "missoes.ms2.concluida": false,
+      "missoes.ms2.resgatada": false,
+      "missoes.ms3.concluida": false,
+      "missoes.ms3.resgatada": false,
       ultimaTemporada: {
-        ligaAntes:    res.ligaAntes,
-        ligaDepois:   res.novaLiga,
-        posicaoFinal: res.posicaoFinal,
-        xpFinal:      res.xpFinal,
+        ligaAntes:    ligaAtual,
+        ligaDepois:   novaLiga,
+        posicaoFinal: pos,
+        xpFinal:      userData.xpSemana || 0,
         modalVisto:   null,
       },
     });
-  }
 
-  // Zerar XP dos bots (eles não mudam de liga)
-  const botsSnap = await getDocs(collection(db, "bots"));
-  botsSnap.docs.forEach(d => {
-    batch.update(doc(db, "bots", d.id), { xpSemana: 0 });
-  });
+    // ── PARTE 3: controle_semanal + bots (primeiro usuário) ──
+    // Transaction garante que só um usuário executa essa parte
+    try {
+      await runTransaction(db, async (tx) => {
+        const ctrlSnap  = await tx.get(controleRef);
+        const ctrlDados = ctrlSnap.data() || {};
+        const resetAtual = ctrlDados.ultimoReset?.toDate?.() || null;
 
-  await batch.commit();
+        // Se outro usuário já executou essa parte, abortar
+        if (resetAtual && resetAtual >= ultimaSegundaUTC) return;
 
-  // Atualizar controle de divisões
-  if (Object.keys(divisoesUpdate).length > 0) {
-    await updateDoc(controleRef, divisoesUpdate);
-  }
+        // Marcar reset como concluído
+        tx.set(controleRef, { ultimoReset: serverTimestamp() }, { merge: true });
+      });
 
-  await rotacionarNomesBots();
-  console.log("[Ligas] Reset semanal v5 concluído — divisões reagrupadas");
-}
+      // Zerar e restaurar bots (fora da transaction — sem limite de leitura)
+      const { rotacionarNomesBots } = await import("./bots.js");
+      const botsSnap = await getDocs(collection(db, "bots"));
 
-// ─── Verificar reset semanal ──────────────────────────────────
-export async function verificarResetSemanal() {
-  const agora       = new Date();
-  const controleRef = doc(db, "sistema", "controle_semanal");
+      const LIGA_POR_PREFIXO = {
+        bot_s: "sucata", bot_r: "reciclador", bot_g: "guardiao",
+        bot_e: "agente_eco", bot_l: "lenda_verde",
+      };
 
-  try {
-    let deveResetar = false;
+      const batchBots = writeBatch(db);
+      botsSnap.docs.forEach(d => {
+        let ligaBot = "sucata";
+        for (const [pref, liga] of Object.entries(LIGA_POR_PREFIXO)) {
+          if (d.id.startsWith(pref)) { ligaBot = liga; break; }
+        }
+        batchBots.update(d.ref, {
+          xpSemana:  0,
+          liga:      ligaBot,
+          divisaoId: `${ligaBot}_bots`,
+        });
+      });
+      await batchBots.commit();
+      await rotacionarNomesBots();
 
-    await runTransaction(db, async (tx) => {
-      const controleSnap = await tx.get(controleRef);
-      const dados        = controleSnap.data() || {};
-      const ultimoReset  = dados.ultimoReset?.toDate?.();
-      const diasDesdeReset = ultimoReset ? (agora - ultimoReset) / 86400000 : 999;
-
-      if (diasDesdeReset < 6) return;
-
-      tx.set(controleRef, { ...dados, ultimoReset: serverTimestamp() }, { merge: true });
-      deveResetar = true;
-    });
-
-    if (deveResetar) {
-      await processarFimDeSemana();
-      console.log("[Ligas] Reset concluído");
-      return true;
+    } catch (e) {
+      // Outro usuário já executou a parte 3 — normal, ignorar
+      console.log("[Ligas] Parte 3 já executada por outro usuário.");
     }
+
+    console.log(`[Ligas] Reset v6 concluído — ${uid} → ${novaLiga} (pos ${pos}/${total})`);
+    return true;
+
   } catch (e) {
     console.error("[Ligas] Erro ao verificar reset:", e);
+    return false;
   }
-
-  return false;
 }
