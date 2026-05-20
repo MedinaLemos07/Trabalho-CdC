@@ -64,7 +64,7 @@ Trabalho-CdC/
 
 | Nome | RA | Função |
 |---|---|---|
-| Luan Vinicius Medina Lemos | R276FH-1 | Desenvolvedor Frontend/Backend — continuidade do frontend e configuração do Firebase |
+| Luan Vinicius Medina Lemos | R276FH1 | Desenvolvedor Frontend/Backend — continuidade do frontend e configuração do Firebase |
 | Enthony Guilherme Silva | R3108F3 | Desenvolvedor Frontend — desenvolvimento das telas, estilos e integração com Firebase |
 | Luiz Manoel de Oliveira Souza | H9571I8 | Testes e Qualidade — testes funcionais e reporte de bugs |
 | Júlia Keller Galvão Dias | R1415G3 | Revisão e UX — revisão de fluxos, validação das telas e feedback de usabilidade |
